@@ -25,7 +25,6 @@ import pertpy
 from scanpy import settings
 settings.datasetdir = "/data"
 
-
 # Helical imports
 try:
     from helical.models.geneformer.model import Geneformer
@@ -50,6 +49,9 @@ try:
     DISTRIBUTED_AVAILABLE = True
 except ImportError:
     DISTRIBUTED_AVAILABLE = False
+
+# Quantization using nvidia-modelopt
+import modelopt.torch.quantization as mtq
 
 # Configure logging
 logging.basicConfig(
@@ -609,7 +611,7 @@ class GeneformerPerturbationPipeline:
         
         # Temporarily modify batch size
         old_batch_size = self.cfg.model.batch_size
-        self.cfg.model.forward_batch_size = optimized_batch_size
+        model.forward_batch_size = optimized_batch_size
         
         # Extract embeddings
         embeddings = self.extract_embeddings(model, data)
@@ -618,7 +620,7 @@ class GeneformerPerturbationPipeline:
         perturbation_results = self.perform_perturbation(model, adata, genes)
         
         # Restore batch size
-        self.cfg.model.forward_batch_size = old_batch_size
+        model.forward_batch_size = old_batch_size
         
         end_time = time.time()
         end_metrics = self.monitor.get_metrics()
@@ -673,11 +675,17 @@ class GeneformerPerturbationPipeline:
         if dtype_str == "qint8":
             # Apply dynamic quantization
             logger.info("Applying dynamic int8 quantization...")
-            quantized_model = torch.quantization.quantize_dynamic(
-                model.model, 
-                {torch.nn.Linear}, 
-                dtype=torch.qint8
-            )
+
+            # quantize_dynamic not implemented for cuda
+            # quantized_model = torch.quantization.quantize_dynamic(
+            #    model.model, 
+            #    {torch.nn.Linear}, 
+            #    dtype=torch.qint8
+            #)
+            def forward_loop():
+                model(data)
+                
+            quantized_model = mtq.quantize(model, mtq.NVFP4_DEFAULT_CFG, forward_loop)
             model.model = quantized_model
         elif dtype_str == "float16":
             # Apply half precision
@@ -1096,7 +1104,7 @@ class GeneformerPerturbationPipeline:
         method_runners = {
             'batching': self.run_with_batching,
             'quantization': self.run_with_quantization,
-            'onnx': self.run_with_onnx,
+            # 'onnx': self.run_with_onnx, # Commented out for now to avoid extra compute
             'distributed': self.run_with_distributed,
         }
         

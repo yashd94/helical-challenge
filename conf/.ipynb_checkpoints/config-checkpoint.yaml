@@ -1,6 +1,3 @@
-# config.yaml
-# Comprehensive CONFIGS for Geneformer perturbation analysis
-
 # ============================================================================
 # GLOBAL SETTINGS
 # ============================================================================
@@ -36,8 +33,8 @@ data:
   min_cells: 3        # Minimum cells per gene
   
   # Subset data for testing
-  max_cells: 1000   # Limit number of cells for faster testing
-  max_genes: 100   # Limit number of genes
+  # max_cells: 1000   # Limit number of cells for faster testing
+  # max_genes: 100   # Limit number of genes
 
 # ============================================================================
 # PERTURBATION CONFIGS
@@ -48,7 +45,7 @@ perturbation:
   # gene_list: ["BRCA1", "TP53", "MYC", "EGFR", "KRAS"]
   
   # Option 2: Number of top variable genes (set gene_list to null if using this)
-  num_genes: 10
+  num_genes: 100
   
   # Perturbation settings
   perturbation_type: "knockout"  # Options: knockout, overexpression
@@ -75,10 +72,7 @@ optimization:
   # Quantization optimization
   quantization:
     enabled: true
-    dtype: "qint8"           # Options: qint8, float16
-    quantize_layers:
-      - "torch.nn.Linear"
-    dynamic: true            # Use dynamic quantization
+    dtype: "float16"           # Options: qint8, float16
   
   # ONNX optimization
   onnx:
@@ -136,7 +130,7 @@ hardware:
 # EXPERIMENT TRACKING
 # ============================================================================
 experiment:
-  name: "geneformer_perturbation"
+  name: "geneformer_perturbation_100_genes"
   tags: []
   notes: ""
 
