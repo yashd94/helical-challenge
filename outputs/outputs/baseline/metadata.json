@@ -18,5 +18,5 @@
     "RPL22"
   ],
   "precision": "float32",
-  "compression": null
+  "compression": true
 }

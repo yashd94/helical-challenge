@@ -16,7 +16,6 @@ from omegaconf import DictConfig, OmegaConf
 import pandas as pd
 import numpy as np
 import torch
-from torch.utils.data import DataLoader
 import anndata as ad
 from scipy.stats import pearsonr, spearmanr
 from scipy.spatial.distance import cosine
@@ -38,20 +37,13 @@ except ImportError:
     HELICAL_AVAILABLE = False
     warnings.warn("Helical library not found. Please install: pip install helical")
 
-# Optional imports for optimization
-try:
-    import onnx
-    import onnxruntime as ort
-    ONNX_AVAILABLE = True
-except ImportError:
-    ONNX_AVAILABLE = False
-
 # ONNX inference using torch_ort (not working)
 try:
     from torch_ort import ORTInferenceModule, OpenVINOProviderOptions
 except ImportError:
     pass
-    
+
+# Distributed inference using torch.distributed
 try:
     from torch.distributed import init_process_group, destroy_process_group
     import torch.multiprocessing as mp
@@ -617,7 +609,7 @@ class GeneformerPerturbationPipeline:
         
         # Temporarily modify batch size
         old_batch_size = self.cfg.model.batch_size
-        self.cfg.model.batch_size = optimized_batch_size
+        self.cfg.model.forward_batch_size = optimized_batch_size
         
         # Extract embeddings
         embeddings = self.extract_embeddings(model, data)
@@ -626,7 +618,7 @@ class GeneformerPerturbationPipeline:
         perturbation_results = self.perform_perturbation(model, adata, genes)
         
         # Restore batch size
-        self.cfg.model.batch_size = old_batch_size
+        self.cfg.model.forward_batch_size = old_batch_size
         
         end_time = time.time()
         end_metrics = self.monitor.get_metrics()
@@ -682,29 +674,28 @@ class GeneformerPerturbationPipeline:
             # Apply dynamic quantization
             logger.info("Applying dynamic int8 quantization...")
             quantized_model = torch.quantization.quantize_dynamic(
-                model, 
+                model.model, 
                 {torch.nn.Linear}, 
                 dtype=torch.qint8
             )
+            model.model = quantized_model
         elif dtype_str == "float16":
             # Apply half precision
             logger.info("Applying float16 precision...")
-            quantized_model = model.half()
+            quantized_model = model.model.half()
+            model.model = quantized_model
         else:
             logger.warning(f"Unknown dtype: {dtype_str}, using original model")
-            quantized_model = model
-        
-        quantized_model.to(self.device)
-        quantized_model.eval()
+            # quantized_model = model
         
         start_time = time.time()
         start_metrics = self.monitor.get_metrics()
         
         # Extract embeddings
-        embeddings = self.extract_embeddings(quantized_model, data)
+        embeddings = self.extract_embeddings(model, data)
         
         # Perform perturbations
-        perturbation_results = self.perform_perturbation(quantized_model, adata, genes)
+        perturbation_results = self.perform_perturbation(model, adata, genes)
         
         end_time = time.time()
         end_metrics = self.monitor.get_metrics()

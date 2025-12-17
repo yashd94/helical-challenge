@@ -1,0 +1,947 @@
+[2025-12-17 22:09:38,934][__main__][INFO] - Using device: cuda
+[2025-12-17 22:09:38,937][__main__][INFO] - ====================================================================================================
+[2025-12-17 22:09:38,937][__main__][INFO] - GENEFORMER PERTURBATION PIPELINE
+[2025-12-17 22:09:38,937][__main__][INFO] - ====================================================================================================
+[2025-12-17 22:09:38,937][__main__][INFO] - Experiment: geneformer_perturbation
+[2025-12-17 22:09:38,942][__main__][INFO] - 
+Configuration:
+seed: 42
+model:
+  name: gf-12L-38M-i4096
+  batch_size: 128
+  max_length: 2048
+  device: cuda:0
+data:
+  pertpy_data_identifier: norman_2019
+  condition_filter: control
+  gene_names_column: index
+  use_raw_counts: false
+  preprocess: true
+  normalize: true
+  filter_genes: true
+  min_genes: 200
+  min_cells: 3
+  max_cells: 1000
+  max_genes: 100
+perturbation:
+  gene_list: null
+  num_genes: 10
+  perturbation_type: knockout
+  selection_method: top_expressed
+  perturbation_strength: 2.0
+optimization:
+  methods:
+  - distributed
+  - batching
+  - quantization
+  batching:
+    enabled: true
+    batch_size_multiplier: 2
+  quantization:
+    enabled: true
+    dtype: qint8
+    quantize_layers:
+    - torch.nn.Linear
+    dynamic: true
+  onnx:
+    enabled: true
+    opset_version: 14
+    optimize: true
+    use_gpu: true
+    precision: FP16
+  distributed:
+    enabled: true
+    backend: nccl
+    world_size: null
+    use_data_parallel: true
+output:
+  dir: outputs
+  save_outputs: true
+  compression: true
+  precision: float32
+  save_embeddings: true
+  save_perturbations: true
+  save_metadata: true
+  save_cell_ids: true
+  save_gene_names: true
+  save_detailed_comparisons: true
+  log_level: INFO
+  log_to_file: true
+  log_file: pipeline.log
+hardware:
+  device: auto
+  mixed_precision: true
+  cudnn_benchmark: true
+  empty_cache_between_methods: true
+experiment:
+  name: geneformer_perturbation
+  tags: []
+  notes: ''
+reproducibility:
+  deterministic: true
+advanced:
+  compile_model: false
+  compile_backend: inductor
+  continue_on_error: true
+validation:
+  min_correlation: 0.95
+  max_mse: 0.01
+  warn_on_threshold: true
+  check_nan: true
+  check_inf: true
+
+[2025-12-17 22:09:38,943][__main__][INFO] - Loading Geneformer model...
+[2025-12-17 22:09:41,015][helical.models.geneformer.model][INFO] - Model finished initializing.
+[2025-12-17 22:09:41,015][helical.models.geneformer.model][INFO] - 'gf-12L-38M-i4096' model is in 'eval' mode, on device 'cuda:0' with embedding mode 'cell'.
+[2025-12-17 22:09:41,016][__main__][INFO] - Enabling automatic mixed precision
+[2025-12-17 22:09:41,016][__main__][INFO] - Model loaded: gf-12L-38M-i4096
+[2025-12-17 22:09:41,017][__main__][INFO] - Loading data: norman_2019
+[2025-12-17 22:10:06,394][__main__][INFO] - Loaded 11835 cells, 19018 genes
+[2025-12-17 22:10:06,394][__main__][INFO] - Preprocessing data...
+[2025-12-17 22:10:06,841][py.warnings][WARNING] - /opt/conda/lib/python3.10/site-packages/scanpy/preprocessing/_simple.py:176: ImplicitModificationWarning: Trying to modify attribute `.obs` of view, initializing view as actual.
+  adata.obs["n_genes"] = number
+
+[2025-12-17 22:10:08,823][__main__][INFO] - After filtering: 11835 cells, 18215 genes
+[2025-12-17 22:10:08,985][__main__][INFO] - Data normalized
+[2025-12-17 22:10:08,991][__main__][INFO] - Subsetted to 1000 cells for testing
+[2025-12-17 22:10:08,993][__main__][INFO] - Subsetted to 100 genes for testing
+[2025-12-17 22:10:08,993][__main__][INFO] - Tokenizing data...
+[2025-12-17 22:10:08,993][helical.models.geneformer.model][INFO] - Processing data for Geneformer.
+[2025-12-17 22:10:08,993][py.warnings][WARNING] - /opt/conda/lib/python3.10/site-packages/helical/models/base_models.py:88: ImplicitModificationWarning: Trying to modify attribute `.var` of view, initializing view as actual.
+  adata.var["index"] = adata.var.index
+
+[2025-12-17 22:10:09,357][helical.utils.mapping][INFO] - Mapped 68 / 100 genes to Ensembl IDs.
+[2025-12-17 22:10:09,375][helical.models.geneformer.geneformer_tokenizer][INFO] - AnnData object with n_obs × n_vars = 1000 × 100
+    obs: 'guide_identity', 'read_count', 'UMI_count', 'coverage', 'gemgroup', 'good_coverage', 'number_of_cells', 'guide_AHR', 'guide_ARID1A', 'guide_ARRDC3', 'guide_ATL1', 'guide_BAK1', 'guide_BCL2L11', 'guide_BCORL1', 'guide_BPGM', 'guide_C19orf26', 'guide_C3orf72', 'guide_CBFA2T3', 'guide_CBL', 'guide_CDKN1A', 'guide_CDKN1B', 'guide_CDKN1C', 'guide_CEBPA', 'guide_CEBPB', 'guide_CEBPE', 'guide_CELF2', 'guide_CITED1', 'guide_CKS1B', 'guide_CLDN6', 'guide_CNN1', 'guide_CNNM4', 'guide_COL1A1', 'guide_COL2A1', 'guide_CSRNP1', 'guide_DLX2', 'guide_DUSP9', 'guide_EGR1', 'guide_ELMSAN1', 'guide_ETS2', 'guide_FEV', 'guide_FOSB', 'guide_FOXA1', 'guide_FOXA3', 'guide_FOXF1', 'guide_FOXL2', 'guide_FOXO4', 'guide_GLB1L2', 'guide_HES7', 'guide_HK2', 'guide_HNF4A', 'guide_HOXA13', 'guide_HOXB9', 'guide_HOXC13', 'guide_IER5L', 'guide_IGDCC3', 'guide_IKZF3', 'guide_IRF1', 'guide_ISL2', 'guide_JUN', 'guide_KIAA1804', 'guide_KIF18B', 'guide_KIF2C', 'guide_KLF1', 'guide_KMT2A', 'guide_LHX1', 'guide_LYL1', 'guide_MAML2', 'guide_MAP2K3', 'guide_MAP2K6', 'guide_MAP4K3', 'guide_MAP4K5', 'guide_MAP7D1', 'guide_MAPK1', 'guide_MEIS1', 'guide_MIDN', 'guide_NCL', 'guide_NIT1', 'guide_OSR2', 'guide_PLK4', 'guide_POU3F2', 'guide_PRDM1', 'guide_PRTG', 'guide_PTPN1', 'guide_PTPN12', 'guide_PTPN13', 'guide_PTPN9', 'guide_RHOXF2', 'guide_RREB1', 'guide_RUNX1T1', 'guide_S1PR2', 'guide_SAMD1', 'guide_SET', 'guide_SGK1', 'guide_SLC38A2', 'guide_SLC4A1', 'guide_SLC6A9', 'guide_SNAI1', 'guide_SPI1', 'guide_STIL', 'guide_TBX2', 'guide_TBX3', 'guide_TGFBR2', 'guide_TMSB4X', 'guide_TP73', 'guide_TSC22D1', 'guide_UBASH3A', 'guide_UBASH3B', 'guide_ZBTB1', 'guide_ZBTB10', 'guide_ZBTB25', 'guide_ZC3HAV1', 'guide_ZNF318', 'guide_ids', 'n_genes', 'n_genes_by_counts', 'total_counts', 'total_counts_mt', 'pct_counts_mt', 'leiden', 'perturbation_name', 'perturbation_type', 'perturbation_value', 'perturbation_unit'
+    var: 'index', 'n_cells', 'mt', 'n_cells_by_counts', 'mean_counts', 'pct_dropout_by_counts', 'total_counts', 'highly_variable', 'means', 'dispersions', 'dispersions_norm', 'ensembl_id', 'ensembl_id_collapsed'
+    uns: 'doi', 'hvg', 'leiden', 'neighbors', 'pca', 'preprocessing_nb_link', 'umap', 'log1p'
+    obsm: 'X_pca', 'X_umap'
+    varm: 'PCs'
+    layers: 'counts'
+    obsp: 'connectivities', 'distances' has no column attribute 'filter_pass'; tokenizing all cells.
+[2025-12-17 22:10:09,495][helical.models.geneformer.geneformer_tokenizer][INFO] - Creating dataset.
+[2025-12-17 22:10:09,899][helical.models.geneformer.model][INFO] - Successfully processed the data for Geneformer.
+[2025-12-17 22:10:09,900][__main__][INFO] - Tokenization complete
+[2025-12-17 22:10:09,900][__main__][INFO] - Selected 10 genes using method: top_expressed
+[2025-12-17 22:10:09,901][__main__][INFO] - 
+====================================================================================================
+[2025-12-17 22:10:09,901][__main__][INFO] - Running BASELINE (no optimization)...
+[2025-12-17 22:10:09,903][__main__][INFO] - Extracting embeddings...
+[2025-12-17 22:10:09,904][py.warnings][WARNING] - /root/capsule/code/helical-challenge/main.py:495: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast():
+
+[2025-12-17 22:10:09,904][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-17 22:10:09,904][helical.models.geneformer.geneformer_utils][WARNING] - CLS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:09,904][helical.models.geneformer.geneformer_utils][WARNING] - EOS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:11,120][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-17 22:10:11,121][__main__][INFO] - Extracted embeddings shape: (1000, 512)
+[2025-12-17 22:10:11,121][__main__][INFO] - Performing perturbation on 10 genes...
+[2025-12-17 22:10:11,121][__main__][INFO] - Perturbing gene: UBE2J2 (type: knockout)
+[2025-12-17 22:10:11,121][__main__][WARNING] - Using manual perturbation for UBE2J2
+[2025-12-17 22:10:11,124][py.warnings][WARNING] - /opt/conda/lib/python3.10/site-packages/scipy/sparse/_index.py:151: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  self._set_arrayXarray(i, j, x)
+
+[2025-12-17 22:10:11,128][helical.models.geneformer.model][INFO] - Processing data for Geneformer.
+[2025-12-17 22:10:11,475][helical.utils.mapping][INFO] - Mapped 68 / 100 genes to Ensembl IDs.
+[2025-12-17 22:10:11,493][helical.models.geneformer.geneformer_tokenizer][INFO] - AnnData object with n_obs × n_vars = 1000 × 100
+    obs: 'guide_identity', 'read_count', 'UMI_count', 'coverage', 'gemgroup', 'good_coverage', 'number_of_cells', 'guide_AHR', 'guide_ARID1A', 'guide_ARRDC3', 'guide_ATL1', 'guide_BAK1', 'guide_BCL2L11', 'guide_BCORL1', 'guide_BPGM', 'guide_C19orf26', 'guide_C3orf72', 'guide_CBFA2T3', 'guide_CBL', 'guide_CDKN1A', 'guide_CDKN1B', 'guide_CDKN1C', 'guide_CEBPA', 'guide_CEBPB', 'guide_CEBPE', 'guide_CELF2', 'guide_CITED1', 'guide_CKS1B', 'guide_CLDN6', 'guide_CNN1', 'guide_CNNM4', 'guide_COL1A1', 'guide_COL2A1', 'guide_CSRNP1', 'guide_DLX2', 'guide_DUSP9', 'guide_EGR1', 'guide_ELMSAN1', 'guide_ETS2', 'guide_FEV', 'guide_FOSB', 'guide_FOXA1', 'guide_FOXA3', 'guide_FOXF1', 'guide_FOXL2', 'guide_FOXO4', 'guide_GLB1L2', 'guide_HES7', 'guide_HK2', 'guide_HNF4A', 'guide_HOXA13', 'guide_HOXB9', 'guide_HOXC13', 'guide_IER5L', 'guide_IGDCC3', 'guide_IKZF3', 'guide_IRF1', 'guide_ISL2', 'guide_JUN', 'guide_KIAA1804', 'guide_KIF18B', 'guide_KIF2C', 'guide_KLF1', 'guide_KMT2A', 'guide_LHX1', 'guide_LYL1', 'guide_MAML2', 'guide_MAP2K3', 'guide_MAP2K6', 'guide_MAP4K3', 'guide_MAP4K5', 'guide_MAP7D1', 'guide_MAPK1', 'guide_MEIS1', 'guide_MIDN', 'guide_NCL', 'guide_NIT1', 'guide_OSR2', 'guide_PLK4', 'guide_POU3F2', 'guide_PRDM1', 'guide_PRTG', 'guide_PTPN1', 'guide_PTPN12', 'guide_PTPN13', 'guide_PTPN9', 'guide_RHOXF2', 'guide_RREB1', 'guide_RUNX1T1', 'guide_S1PR2', 'guide_SAMD1', 'guide_SET', 'guide_SGK1', 'guide_SLC38A2', 'guide_SLC4A1', 'guide_SLC6A9', 'guide_SNAI1', 'guide_SPI1', 'guide_STIL', 'guide_TBX2', 'guide_TBX3', 'guide_TGFBR2', 'guide_TMSB4X', 'guide_TP73', 'guide_TSC22D1', 'guide_UBASH3A', 'guide_UBASH3B', 'guide_ZBTB1', 'guide_ZBTB10', 'guide_ZBTB25', 'guide_ZC3HAV1', 'guide_ZNF318', 'guide_ids', 'n_genes', 'n_genes_by_counts', 'total_counts', 'total_counts_mt', 'pct_counts_mt', 'leiden', 'perturbation_name', 'perturbation_type', 'perturbation_value', 'perturbation_unit'
+    var: 'index', 'n_cells', 'mt', 'n_cells_by_counts', 'mean_counts', 'pct_dropout_by_counts', 'total_counts', 'highly_variable', 'means', 'dispersions', 'dispersions_norm', 'ensembl_id', 'ensembl_id_collapsed'
+    uns: 'doi', 'hvg', 'leiden', 'neighbors', 'pca', 'preprocessing_nb_link', 'umap', 'log1p'
+    obsm: 'X_pca', 'X_umap'
+    varm: 'PCs'
+    layers: 'counts'
+    obsp: 'connectivities', 'distances' has no column attribute 'filter_pass'; tokenizing all cells.
+[2025-12-17 22:10:11,608][helical.models.geneformer.geneformer_tokenizer][INFO] - Creating dataset.
+[2025-12-17 22:10:11,626][helical.models.geneformer.model][INFO] - Successfully processed the data for Geneformer.
+[2025-12-17 22:10:11,626][__main__][INFO] - Extracting embeddings...
+[2025-12-17 22:10:11,626][py.warnings][WARNING] - /root/capsule/code/helical-challenge/main.py:495: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast():
+
+[2025-12-17 22:10:11,627][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-17 22:10:11,627][helical.models.geneformer.geneformer_utils][WARNING] - CLS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:11,627][helical.models.geneformer.geneformer_utils][WARNING] - EOS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:12,024][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-17 22:10:12,024][__main__][INFO] - Extracted embeddings shape: (1000, 512)
+[2025-12-17 22:10:12,024][__main__][INFO] - Perturbing gene: SDF4 (type: knockout)
+[2025-12-17 22:10:12,024][__main__][WARNING] - Using manual perturbation for SDF4
+[2025-12-17 22:10:12,027][py.warnings][WARNING] - /opt/conda/lib/python3.10/site-packages/scipy/sparse/_index.py:151: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  self._set_arrayXarray(i, j, x)
+
+[2025-12-17 22:10:12,031][helical.models.geneformer.model][INFO] - Processing data for Geneformer.
+[2025-12-17 22:10:12,374][helical.utils.mapping][INFO] - Mapped 68 / 100 genes to Ensembl IDs.
+[2025-12-17 22:10:12,392][helical.models.geneformer.geneformer_tokenizer][INFO] - AnnData object with n_obs × n_vars = 1000 × 100
+    obs: 'guide_identity', 'read_count', 'UMI_count', 'coverage', 'gemgroup', 'good_coverage', 'number_of_cells', 'guide_AHR', 'guide_ARID1A', 'guide_ARRDC3', 'guide_ATL1', 'guide_BAK1', 'guide_BCL2L11', 'guide_BCORL1', 'guide_BPGM', 'guide_C19orf26', 'guide_C3orf72', 'guide_CBFA2T3', 'guide_CBL', 'guide_CDKN1A', 'guide_CDKN1B', 'guide_CDKN1C', 'guide_CEBPA', 'guide_CEBPB', 'guide_CEBPE', 'guide_CELF2', 'guide_CITED1', 'guide_CKS1B', 'guide_CLDN6', 'guide_CNN1', 'guide_CNNM4', 'guide_COL1A1', 'guide_COL2A1', 'guide_CSRNP1', 'guide_DLX2', 'guide_DUSP9', 'guide_EGR1', 'guide_ELMSAN1', 'guide_ETS2', 'guide_FEV', 'guide_FOSB', 'guide_FOXA1', 'guide_FOXA3', 'guide_FOXF1', 'guide_FOXL2', 'guide_FOXO4', 'guide_GLB1L2', 'guide_HES7', 'guide_HK2', 'guide_HNF4A', 'guide_HOXA13', 'guide_HOXB9', 'guide_HOXC13', 'guide_IER5L', 'guide_IGDCC3', 'guide_IKZF3', 'guide_IRF1', 'guide_ISL2', 'guide_JUN', 'guide_KIAA1804', 'guide_KIF18B', 'guide_KIF2C', 'guide_KLF1', 'guide_KMT2A', 'guide_LHX1', 'guide_LYL1', 'guide_MAML2', 'guide_MAP2K3', 'guide_MAP2K6', 'guide_MAP4K3', 'guide_MAP4K5', 'guide_MAP7D1', 'guide_MAPK1', 'guide_MEIS1', 'guide_MIDN', 'guide_NCL', 'guide_NIT1', 'guide_OSR2', 'guide_PLK4', 'guide_POU3F2', 'guide_PRDM1', 'guide_PRTG', 'guide_PTPN1', 'guide_PTPN12', 'guide_PTPN13', 'guide_PTPN9', 'guide_RHOXF2', 'guide_RREB1', 'guide_RUNX1T1', 'guide_S1PR2', 'guide_SAMD1', 'guide_SET', 'guide_SGK1', 'guide_SLC38A2', 'guide_SLC4A1', 'guide_SLC6A9', 'guide_SNAI1', 'guide_SPI1', 'guide_STIL', 'guide_TBX2', 'guide_TBX3', 'guide_TGFBR2', 'guide_TMSB4X', 'guide_TP73', 'guide_TSC22D1', 'guide_UBASH3A', 'guide_UBASH3B', 'guide_ZBTB1', 'guide_ZBTB10', 'guide_ZBTB25', 'guide_ZC3HAV1', 'guide_ZNF318', 'guide_ids', 'n_genes', 'n_genes_by_counts', 'total_counts', 'total_counts_mt', 'pct_counts_mt', 'leiden', 'perturbation_name', 'perturbation_type', 'perturbation_value', 'perturbation_unit'
+    var: 'index', 'n_cells', 'mt', 'n_cells_by_counts', 'mean_counts', 'pct_dropout_by_counts', 'total_counts', 'highly_variable', 'means', 'dispersions', 'dispersions_norm', 'ensembl_id', 'ensembl_id_collapsed'
+    uns: 'doi', 'hvg', 'leiden', 'neighbors', 'pca', 'preprocessing_nb_link', 'umap', 'log1p'
+    obsm: 'X_pca', 'X_umap'
+    varm: 'PCs'
+    layers: 'counts'
+    obsp: 'connectivities', 'distances' has no column attribute 'filter_pass'; tokenizing all cells.
+[2025-12-17 22:10:12,507][helical.models.geneformer.geneformer_tokenizer][INFO] - Creating dataset.
+[2025-12-17 22:10:12,524][helical.models.geneformer.model][INFO] - Successfully processed the data for Geneformer.
+[2025-12-17 22:10:12,525][__main__][INFO] - Extracting embeddings...
+[2025-12-17 22:10:12,525][py.warnings][WARNING] - /root/capsule/code/helical-challenge/main.py:495: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast():
+
+[2025-12-17 22:10:12,525][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-17 22:10:12,525][helical.models.geneformer.geneformer_utils][WARNING] - CLS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:12,525][helical.models.geneformer.geneformer_utils][WARNING] - EOS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:12,886][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-17 22:10:12,887][__main__][INFO] - Extracted embeddings shape: (1000, 512)
+[2025-12-17 22:10:12,887][__main__][INFO] - Perturbing gene: RER1 (type: knockout)
+[2025-12-17 22:10:12,887][__main__][WARNING] - Using manual perturbation for RER1
+[2025-12-17 22:10:12,889][py.warnings][WARNING] - /opt/conda/lib/python3.10/site-packages/scipy/sparse/_index.py:151: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  self._set_arrayXarray(i, j, x)
+
+[2025-12-17 22:10:12,892][helical.models.geneformer.model][INFO] - Processing data for Geneformer.
+[2025-12-17 22:10:13,242][helical.utils.mapping][INFO] - Mapped 68 / 100 genes to Ensembl IDs.
+[2025-12-17 22:10:13,260][helical.models.geneformer.geneformer_tokenizer][INFO] - AnnData object with n_obs × n_vars = 1000 × 100
+    obs: 'guide_identity', 'read_count', 'UMI_count', 'coverage', 'gemgroup', 'good_coverage', 'number_of_cells', 'guide_AHR', 'guide_ARID1A', 'guide_ARRDC3', 'guide_ATL1', 'guide_BAK1', 'guide_BCL2L11', 'guide_BCORL1', 'guide_BPGM', 'guide_C19orf26', 'guide_C3orf72', 'guide_CBFA2T3', 'guide_CBL', 'guide_CDKN1A', 'guide_CDKN1B', 'guide_CDKN1C', 'guide_CEBPA', 'guide_CEBPB', 'guide_CEBPE', 'guide_CELF2', 'guide_CITED1', 'guide_CKS1B', 'guide_CLDN6', 'guide_CNN1', 'guide_CNNM4', 'guide_COL1A1', 'guide_COL2A1', 'guide_CSRNP1', 'guide_DLX2', 'guide_DUSP9', 'guide_EGR1', 'guide_ELMSAN1', 'guide_ETS2', 'guide_FEV', 'guide_FOSB', 'guide_FOXA1', 'guide_FOXA3', 'guide_FOXF1', 'guide_FOXL2', 'guide_FOXO4', 'guide_GLB1L2', 'guide_HES7', 'guide_HK2', 'guide_HNF4A', 'guide_HOXA13', 'guide_HOXB9', 'guide_HOXC13', 'guide_IER5L', 'guide_IGDCC3', 'guide_IKZF3', 'guide_IRF1', 'guide_ISL2', 'guide_JUN', 'guide_KIAA1804', 'guide_KIF18B', 'guide_KIF2C', 'guide_KLF1', 'guide_KMT2A', 'guide_LHX1', 'guide_LYL1', 'guide_MAML2', 'guide_MAP2K3', 'guide_MAP2K6', 'guide_MAP4K3', 'guide_MAP4K5', 'guide_MAP7D1', 'guide_MAPK1', 'guide_MEIS1', 'guide_MIDN', 'guide_NCL', 'guide_NIT1', 'guide_OSR2', 'guide_PLK4', 'guide_POU3F2', 'guide_PRDM1', 'guide_PRTG', 'guide_PTPN1', 'guide_PTPN12', 'guide_PTPN13', 'guide_PTPN9', 'guide_RHOXF2', 'guide_RREB1', 'guide_RUNX1T1', 'guide_S1PR2', 'guide_SAMD1', 'guide_SET', 'guide_SGK1', 'guide_SLC38A2', 'guide_SLC4A1', 'guide_SLC6A9', 'guide_SNAI1', 'guide_SPI1', 'guide_STIL', 'guide_TBX2', 'guide_TBX3', 'guide_TGFBR2', 'guide_TMSB4X', 'guide_TP73', 'guide_TSC22D1', 'guide_UBASH3A', 'guide_UBASH3B', 'guide_ZBTB1', 'guide_ZBTB10', 'guide_ZBTB25', 'guide_ZC3HAV1', 'guide_ZNF318', 'guide_ids', 'n_genes', 'n_genes_by_counts', 'total_counts', 'total_counts_mt', 'pct_counts_mt', 'leiden', 'perturbation_name', 'perturbation_type', 'perturbation_value', 'perturbation_unit'
+    var: 'index', 'n_cells', 'mt', 'n_cells_by_counts', 'mean_counts', 'pct_dropout_by_counts', 'total_counts', 'highly_variable', 'means', 'dispersions', 'dispersions_norm', 'ensembl_id', 'ensembl_id_collapsed'
+    uns: 'doi', 'hvg', 'leiden', 'neighbors', 'pca', 'preprocessing_nb_link', 'umap', 'log1p'
+    obsm: 'X_pca', 'X_umap'
+    varm: 'PCs'
+    layers: 'counts'
+    obsp: 'connectivities', 'distances' has no column attribute 'filter_pass'; tokenizing all cells.
+[2025-12-17 22:10:13,376][helical.models.geneformer.geneformer_tokenizer][INFO] - Creating dataset.
+[2025-12-17 22:10:13,393][helical.models.geneformer.model][INFO] - Successfully processed the data for Geneformer.
+[2025-12-17 22:10:13,393][__main__][INFO] - Extracting embeddings...
+[2025-12-17 22:10:13,394][py.warnings][WARNING] - /root/capsule/code/helical-challenge/main.py:495: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast():
+
+[2025-12-17 22:10:13,394][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-17 22:10:13,394][helical.models.geneformer.geneformer_utils][WARNING] - CLS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:13,394][helical.models.geneformer.geneformer_utils][WARNING] - EOS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:13,751][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-17 22:10:13,752][__main__][INFO] - Extracted embeddings shape: (1000, 512)
+[2025-12-17 22:10:13,752][__main__][INFO] - Perturbing gene: NOC2L (type: knockout)
+[2025-12-17 22:10:13,752][__main__][WARNING] - Using manual perturbation for NOC2L
+[2025-12-17 22:10:13,753][py.warnings][WARNING] - /opt/conda/lib/python3.10/site-packages/scipy/sparse/_index.py:151: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  self._set_arrayXarray(i, j, x)
+
+[2025-12-17 22:10:13,757][helical.models.geneformer.model][INFO] - Processing data for Geneformer.
+[2025-12-17 22:10:14,106][helical.utils.mapping][INFO] - Mapped 68 / 100 genes to Ensembl IDs.
+[2025-12-17 22:10:14,124][helical.models.geneformer.geneformer_tokenizer][INFO] - AnnData object with n_obs × n_vars = 1000 × 100
+    obs: 'guide_identity', 'read_count', 'UMI_count', 'coverage', 'gemgroup', 'good_coverage', 'number_of_cells', 'guide_AHR', 'guide_ARID1A', 'guide_ARRDC3', 'guide_ATL1', 'guide_BAK1', 'guide_BCL2L11', 'guide_BCORL1', 'guide_BPGM', 'guide_C19orf26', 'guide_C3orf72', 'guide_CBFA2T3', 'guide_CBL', 'guide_CDKN1A', 'guide_CDKN1B', 'guide_CDKN1C', 'guide_CEBPA', 'guide_CEBPB', 'guide_CEBPE', 'guide_CELF2', 'guide_CITED1', 'guide_CKS1B', 'guide_CLDN6', 'guide_CNN1', 'guide_CNNM4', 'guide_COL1A1', 'guide_COL2A1', 'guide_CSRNP1', 'guide_DLX2', 'guide_DUSP9', 'guide_EGR1', 'guide_ELMSAN1', 'guide_ETS2', 'guide_FEV', 'guide_FOSB', 'guide_FOXA1', 'guide_FOXA3', 'guide_FOXF1', 'guide_FOXL2', 'guide_FOXO4', 'guide_GLB1L2', 'guide_HES7', 'guide_HK2', 'guide_HNF4A', 'guide_HOXA13', 'guide_HOXB9', 'guide_HOXC13', 'guide_IER5L', 'guide_IGDCC3', 'guide_IKZF3', 'guide_IRF1', 'guide_ISL2', 'guide_JUN', 'guide_KIAA1804', 'guide_KIF18B', 'guide_KIF2C', 'guide_KLF1', 'guide_KMT2A', 'guide_LHX1', 'guide_LYL1', 'guide_MAML2', 'guide_MAP2K3', 'guide_MAP2K6', 'guide_MAP4K3', 'guide_MAP4K5', 'guide_MAP7D1', 'guide_MAPK1', 'guide_MEIS1', 'guide_MIDN', 'guide_NCL', 'guide_NIT1', 'guide_OSR2', 'guide_PLK4', 'guide_POU3F2', 'guide_PRDM1', 'guide_PRTG', 'guide_PTPN1', 'guide_PTPN12', 'guide_PTPN13', 'guide_PTPN9', 'guide_RHOXF2', 'guide_RREB1', 'guide_RUNX1T1', 'guide_S1PR2', 'guide_SAMD1', 'guide_SET', 'guide_SGK1', 'guide_SLC38A2', 'guide_SLC4A1', 'guide_SLC6A9', 'guide_SNAI1', 'guide_SPI1', 'guide_STIL', 'guide_TBX2', 'guide_TBX3', 'guide_TGFBR2', 'guide_TMSB4X', 'guide_TP73', 'guide_TSC22D1', 'guide_UBASH3A', 'guide_UBASH3B', 'guide_ZBTB1', 'guide_ZBTB10', 'guide_ZBTB25', 'guide_ZC3HAV1', 'guide_ZNF318', 'guide_ids', 'n_genes', 'n_genes_by_counts', 'total_counts', 'total_counts_mt', 'pct_counts_mt', 'leiden', 'perturbation_name', 'perturbation_type', 'perturbation_value', 'perturbation_unit'
+    var: 'index', 'n_cells', 'mt', 'n_cells_by_counts', 'mean_counts', 'pct_dropout_by_counts', 'total_counts', 'highly_variable', 'means', 'dispersions', 'dispersions_norm', 'ensembl_id', 'ensembl_id_collapsed'
+    uns: 'doi', 'hvg', 'leiden', 'neighbors', 'pca', 'preprocessing_nb_link', 'umap', 'log1p'
+    obsm: 'X_pca', 'X_umap'
+    varm: 'PCs'
+    layers: 'counts'
+    obsp: 'connectivities', 'distances' has no column attribute 'filter_pass'; tokenizing all cells.
+[2025-12-17 22:10:14,240][helical.models.geneformer.geneformer_tokenizer][INFO] - Creating dataset.
+[2025-12-17 22:10:14,257][helical.models.geneformer.model][INFO] - Successfully processed the data for Geneformer.
+[2025-12-17 22:10:14,258][__main__][INFO] - Extracting embeddings...
+[2025-12-17 22:10:14,258][py.warnings][WARNING] - /root/capsule/code/helical-challenge/main.py:495: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast():
+
+[2025-12-17 22:10:14,258][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-17 22:10:14,258][helical.models.geneformer.geneformer_utils][WARNING] - CLS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:14,258][helical.models.geneformer.geneformer_utils][WARNING] - EOS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:14,617][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-17 22:10:14,617][__main__][INFO] - Extracted embeddings shape: (1000, 512)
+[2025-12-17 22:10:14,617][__main__][INFO] - Perturbing gene: GNB1 (type: knockout)
+[2025-12-17 22:10:14,617][__main__][WARNING] - Using manual perturbation for GNB1
+[2025-12-17 22:10:14,619][py.warnings][WARNING] - /opt/conda/lib/python3.10/site-packages/scipy/sparse/_index.py:151: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  self._set_arrayXarray(i, j, x)
+
+[2025-12-17 22:10:14,622][helical.models.geneformer.model][INFO] - Processing data for Geneformer.
+[2025-12-17 22:10:14,985][helical.utils.mapping][INFO] - Mapped 68 / 100 genes to Ensembl IDs.
+[2025-12-17 22:10:15,003][helical.models.geneformer.geneformer_tokenizer][INFO] - AnnData object with n_obs × n_vars = 1000 × 100
+    obs: 'guide_identity', 'read_count', 'UMI_count', 'coverage', 'gemgroup', 'good_coverage', 'number_of_cells', 'guide_AHR', 'guide_ARID1A', 'guide_ARRDC3', 'guide_ATL1', 'guide_BAK1', 'guide_BCL2L11', 'guide_BCORL1', 'guide_BPGM', 'guide_C19orf26', 'guide_C3orf72', 'guide_CBFA2T3', 'guide_CBL', 'guide_CDKN1A', 'guide_CDKN1B', 'guide_CDKN1C', 'guide_CEBPA', 'guide_CEBPB', 'guide_CEBPE', 'guide_CELF2', 'guide_CITED1', 'guide_CKS1B', 'guide_CLDN6', 'guide_CNN1', 'guide_CNNM4', 'guide_COL1A1', 'guide_COL2A1', 'guide_CSRNP1', 'guide_DLX2', 'guide_DUSP9', 'guide_EGR1', 'guide_ELMSAN1', 'guide_ETS2', 'guide_FEV', 'guide_FOSB', 'guide_FOXA1', 'guide_FOXA3', 'guide_FOXF1', 'guide_FOXL2', 'guide_FOXO4', 'guide_GLB1L2', 'guide_HES7', 'guide_HK2', 'guide_HNF4A', 'guide_HOXA13', 'guide_HOXB9', 'guide_HOXC13', 'guide_IER5L', 'guide_IGDCC3', 'guide_IKZF3', 'guide_IRF1', 'guide_ISL2', 'guide_JUN', 'guide_KIAA1804', 'guide_KIF18B', 'guide_KIF2C', 'guide_KLF1', 'guide_KMT2A', 'guide_LHX1', 'guide_LYL1', 'guide_MAML2', 'guide_MAP2K3', 'guide_MAP2K6', 'guide_MAP4K3', 'guide_MAP4K5', 'guide_MAP7D1', 'guide_MAPK1', 'guide_MEIS1', 'guide_MIDN', 'guide_NCL', 'guide_NIT1', 'guide_OSR2', 'guide_PLK4', 'guide_POU3F2', 'guide_PRDM1', 'guide_PRTG', 'guide_PTPN1', 'guide_PTPN12', 'guide_PTPN13', 'guide_PTPN9', 'guide_RHOXF2', 'guide_RREB1', 'guide_RUNX1T1', 'guide_S1PR2', 'guide_SAMD1', 'guide_SET', 'guide_SGK1', 'guide_SLC38A2', 'guide_SLC4A1', 'guide_SLC6A9', 'guide_SNAI1', 'guide_SPI1', 'guide_STIL', 'guide_TBX2', 'guide_TBX3', 'guide_TGFBR2', 'guide_TMSB4X', 'guide_TP73', 'guide_TSC22D1', 'guide_UBASH3A', 'guide_UBASH3B', 'guide_ZBTB1', 'guide_ZBTB10', 'guide_ZBTB25', 'guide_ZC3HAV1', 'guide_ZNF318', 'guide_ids', 'n_genes', 'n_genes_by_counts', 'total_counts', 'total_counts_mt', 'pct_counts_mt', 'leiden', 'perturbation_name', 'perturbation_type', 'perturbation_value', 'perturbation_unit'
+    var: 'index', 'n_cells', 'mt', 'n_cells_by_counts', 'mean_counts', 'pct_dropout_by_counts', 'total_counts', 'highly_variable', 'means', 'dispersions', 'dispersions_norm', 'ensembl_id', 'ensembl_id_collapsed'
+    uns: 'doi', 'hvg', 'leiden', 'neighbors', 'pca', 'preprocessing_nb_link', 'umap', 'log1p'
+    obsm: 'X_pca', 'X_umap'
+    varm: 'PCs'
+    layers: 'counts'
+    obsp: 'connectivities', 'distances' has no column attribute 'filter_pass'; tokenizing all cells.
+[2025-12-17 22:10:15,122][helical.models.geneformer.geneformer_tokenizer][INFO] - Creating dataset.
+[2025-12-17 22:10:15,139][helical.models.geneformer.model][INFO] - Successfully processed the data for Geneformer.
+[2025-12-17 22:10:15,139][__main__][INFO] - Extracting embeddings...
+[2025-12-17 22:10:15,139][py.warnings][WARNING] - /root/capsule/code/helical-challenge/main.py:495: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast():
+
+[2025-12-17 22:10:15,139][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-17 22:10:15,140][helical.models.geneformer.geneformer_utils][WARNING] - CLS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:15,140][helical.models.geneformer.geneformer_utils][WARNING] - EOS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:15,501][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-17 22:10:15,501][__main__][INFO] - Extracted embeddings shape: (1000, 512)
+[2025-12-17 22:10:15,501][__main__][INFO] - Perturbing gene: FAAP20 (type: knockout)
+[2025-12-17 22:10:15,501][__main__][WARNING] - Using manual perturbation for FAAP20
+[2025-12-17 22:10:15,503][py.warnings][WARNING] - /opt/conda/lib/python3.10/site-packages/scipy/sparse/_index.py:151: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  self._set_arrayXarray(i, j, x)
+
+[2025-12-17 22:10:15,505][helical.models.geneformer.model][INFO] - Processing data for Geneformer.
+[2025-12-17 22:10:15,853][helical.utils.mapping][INFO] - Mapped 68 / 100 genes to Ensembl IDs.
+[2025-12-17 22:10:15,871][helical.models.geneformer.geneformer_tokenizer][INFO] - AnnData object with n_obs × n_vars = 1000 × 100
+    obs: 'guide_identity', 'read_count', 'UMI_count', 'coverage', 'gemgroup', 'good_coverage', 'number_of_cells', 'guide_AHR', 'guide_ARID1A', 'guide_ARRDC3', 'guide_ATL1', 'guide_BAK1', 'guide_BCL2L11', 'guide_BCORL1', 'guide_BPGM', 'guide_C19orf26', 'guide_C3orf72', 'guide_CBFA2T3', 'guide_CBL', 'guide_CDKN1A', 'guide_CDKN1B', 'guide_CDKN1C', 'guide_CEBPA', 'guide_CEBPB', 'guide_CEBPE', 'guide_CELF2', 'guide_CITED1', 'guide_CKS1B', 'guide_CLDN6', 'guide_CNN1', 'guide_CNNM4', 'guide_COL1A1', 'guide_COL2A1', 'guide_CSRNP1', 'guide_DLX2', 'guide_DUSP9', 'guide_EGR1', 'guide_ELMSAN1', 'guide_ETS2', 'guide_FEV', 'guide_FOSB', 'guide_FOXA1', 'guide_FOXA3', 'guide_FOXF1', 'guide_FOXL2', 'guide_FOXO4', 'guide_GLB1L2', 'guide_HES7', 'guide_HK2', 'guide_HNF4A', 'guide_HOXA13', 'guide_HOXB9', 'guide_HOXC13', 'guide_IER5L', 'guide_IGDCC3', 'guide_IKZF3', 'guide_IRF1', 'guide_ISL2', 'guide_JUN', 'guide_KIAA1804', 'guide_KIF18B', 'guide_KIF2C', 'guide_KLF1', 'guide_KMT2A', 'guide_LHX1', 'guide_LYL1', 'guide_MAML2', 'guide_MAP2K3', 'guide_MAP2K6', 'guide_MAP4K3', 'guide_MAP4K5', 'guide_MAP7D1', 'guide_MAPK1', 'guide_MEIS1', 'guide_MIDN', 'guide_NCL', 'guide_NIT1', 'guide_OSR2', 'guide_PLK4', 'guide_POU3F2', 'guide_PRDM1', 'guide_PRTG', 'guide_PTPN1', 'guide_PTPN12', 'guide_PTPN13', 'guide_PTPN9', 'guide_RHOXF2', 'guide_RREB1', 'guide_RUNX1T1', 'guide_S1PR2', 'guide_SAMD1', 'guide_SET', 'guide_SGK1', 'guide_SLC38A2', 'guide_SLC4A1', 'guide_SLC6A9', 'guide_SNAI1', 'guide_SPI1', 'guide_STIL', 'guide_TBX2', 'guide_TBX3', 'guide_TGFBR2', 'guide_TMSB4X', 'guide_TP73', 'guide_TSC22D1', 'guide_UBASH3A', 'guide_UBASH3B', 'guide_ZBTB1', 'guide_ZBTB10', 'guide_ZBTB25', 'guide_ZC3HAV1', 'guide_ZNF318', 'guide_ids', 'n_genes', 'n_genes_by_counts', 'total_counts', 'total_counts_mt', 'pct_counts_mt', 'leiden', 'perturbation_name', 'perturbation_type', 'perturbation_value', 'perturbation_unit'
+    var: 'index', 'n_cells', 'mt', 'n_cells_by_counts', 'mean_counts', 'pct_dropout_by_counts', 'total_counts', 'highly_variable', 'means', 'dispersions', 'dispersions_norm', 'ensembl_id', 'ensembl_id_collapsed'
+    uns: 'doi', 'hvg', 'leiden', 'neighbors', 'pca', 'preprocessing_nb_link', 'umap', 'log1p'
+    obsm: 'X_pca', 'X_umap'
+    varm: 'PCs'
+    layers: 'counts'
+    obsp: 'connectivities', 'distances' has no column attribute 'filter_pass'; tokenizing all cells.
+[2025-12-17 22:10:15,988][helical.models.geneformer.geneformer_tokenizer][INFO] - Creating dataset.
+[2025-12-17 22:10:16,006][helical.models.geneformer.model][INFO] - Successfully processed the data for Geneformer.
+[2025-12-17 22:10:16,006][__main__][INFO] - Extracting embeddings...
+[2025-12-17 22:10:16,006][py.warnings][WARNING] - /root/capsule/code/helical-challenge/main.py:495: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast():
+
+[2025-12-17 22:10:16,006][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-17 22:10:16,006][helical.models.geneformer.geneformer_utils][WARNING] - CLS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:16,006][helical.models.geneformer.geneformer_utils][WARNING] - EOS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:16,364][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-17 22:10:16,365][__main__][INFO] - Extracted embeddings shape: (1000, 512)
+[2025-12-17 22:10:16,365][__main__][INFO] - Perturbing gene: SSU72 (type: knockout)
+[2025-12-17 22:10:16,365][__main__][WARNING] - Using manual perturbation for SSU72
+[2025-12-17 22:10:16,367][py.warnings][WARNING] - /opt/conda/lib/python3.10/site-packages/scipy/sparse/_index.py:151: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  self._set_arrayXarray(i, j, x)
+
+[2025-12-17 22:10:16,368][helical.models.geneformer.model][INFO] - Processing data for Geneformer.
+[2025-12-17 22:10:16,715][helical.utils.mapping][INFO] - Mapped 68 / 100 genes to Ensembl IDs.
+[2025-12-17 22:10:16,733][helical.models.geneformer.geneformer_tokenizer][INFO] - AnnData object with n_obs × n_vars = 1000 × 100
+    obs: 'guide_identity', 'read_count', 'UMI_count', 'coverage', 'gemgroup', 'good_coverage', 'number_of_cells', 'guide_AHR', 'guide_ARID1A', 'guide_ARRDC3', 'guide_ATL1', 'guide_BAK1', 'guide_BCL2L11', 'guide_BCORL1', 'guide_BPGM', 'guide_C19orf26', 'guide_C3orf72', 'guide_CBFA2T3', 'guide_CBL', 'guide_CDKN1A', 'guide_CDKN1B', 'guide_CDKN1C', 'guide_CEBPA', 'guide_CEBPB', 'guide_CEBPE', 'guide_CELF2', 'guide_CITED1', 'guide_CKS1B', 'guide_CLDN6', 'guide_CNN1', 'guide_CNNM4', 'guide_COL1A1', 'guide_COL2A1', 'guide_CSRNP1', 'guide_DLX2', 'guide_DUSP9', 'guide_EGR1', 'guide_ELMSAN1', 'guide_ETS2', 'guide_FEV', 'guide_FOSB', 'guide_FOXA1', 'guide_FOXA3', 'guide_FOXF1', 'guide_FOXL2', 'guide_FOXO4', 'guide_GLB1L2', 'guide_HES7', 'guide_HK2', 'guide_HNF4A', 'guide_HOXA13', 'guide_HOXB9', 'guide_HOXC13', 'guide_IER5L', 'guide_IGDCC3', 'guide_IKZF3', 'guide_IRF1', 'guide_ISL2', 'guide_JUN', 'guide_KIAA1804', 'guide_KIF18B', 'guide_KIF2C', 'guide_KLF1', 'guide_KMT2A', 'guide_LHX1', 'guide_LYL1', 'guide_MAML2', 'guide_MAP2K3', 'guide_MAP2K6', 'guide_MAP4K3', 'guide_MAP4K5', 'guide_MAP7D1', 'guide_MAPK1', 'guide_MEIS1', 'guide_MIDN', 'guide_NCL', 'guide_NIT1', 'guide_OSR2', 'guide_PLK4', 'guide_POU3F2', 'guide_PRDM1', 'guide_PRTG', 'guide_PTPN1', 'guide_PTPN12', 'guide_PTPN13', 'guide_PTPN9', 'guide_RHOXF2', 'guide_RREB1', 'guide_RUNX1T1', 'guide_S1PR2', 'guide_SAMD1', 'guide_SET', 'guide_SGK1', 'guide_SLC38A2', 'guide_SLC4A1', 'guide_SLC6A9', 'guide_SNAI1', 'guide_SPI1', 'guide_STIL', 'guide_TBX2', 'guide_TBX3', 'guide_TGFBR2', 'guide_TMSB4X', 'guide_TP73', 'guide_TSC22D1', 'guide_UBASH3A', 'guide_UBASH3B', 'guide_ZBTB1', 'guide_ZBTB10', 'guide_ZBTB25', 'guide_ZC3HAV1', 'guide_ZNF318', 'guide_ids', 'n_genes', 'n_genes_by_counts', 'total_counts', 'total_counts_mt', 'pct_counts_mt', 'leiden', 'perturbation_name', 'perturbation_type', 'perturbation_value', 'perturbation_unit'
+    var: 'index', 'n_cells', 'mt', 'n_cells_by_counts', 'mean_counts', 'pct_dropout_by_counts', 'total_counts', 'highly_variable', 'means', 'dispersions', 'dispersions_norm', 'ensembl_id', 'ensembl_id_collapsed'
+    uns: 'doi', 'hvg', 'leiden', 'neighbors', 'pca', 'preprocessing_nb_link', 'umap', 'log1p'
+    obsm: 'X_pca', 'X_umap'
+    varm: 'PCs'
+    layers: 'counts'
+    obsp: 'connectivities', 'distances' has no column attribute 'filter_pass'; tokenizing all cells.
+[2025-12-17 22:10:16,848][helical.models.geneformer.geneformer_tokenizer][INFO] - Creating dataset.
+[2025-12-17 22:10:16,865][helical.models.geneformer.model][INFO] - Successfully processed the data for Geneformer.
+[2025-12-17 22:10:16,865][__main__][INFO] - Extracting embeddings...
+[2025-12-17 22:10:16,866][py.warnings][WARNING] - /root/capsule/code/helical-challenge/main.py:495: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast():
+
+[2025-12-17 22:10:16,866][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-17 22:10:16,866][helical.models.geneformer.geneformer_utils][WARNING] - CLS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:16,866][helical.models.geneformer.geneformer_utils][WARNING] - EOS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:17,225][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-17 22:10:17,226][__main__][INFO] - Extracted embeddings shape: (1000, 512)
+[2025-12-17 22:10:17,226][__main__][INFO] - Perturbing gene: MRPL20 (type: knockout)
+[2025-12-17 22:10:17,226][__main__][WARNING] - Using manual perturbation for MRPL20
+[2025-12-17 22:10:17,228][py.warnings][WARNING] - /opt/conda/lib/python3.10/site-packages/scipy/sparse/_index.py:151: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  self._set_arrayXarray(i, j, x)
+
+[2025-12-17 22:10:17,228][helical.models.geneformer.model][INFO] - Processing data for Geneformer.
+[2025-12-17 22:10:17,578][helical.utils.mapping][INFO] - Mapped 68 / 100 genes to Ensembl IDs.
+[2025-12-17 22:10:17,595][helical.models.geneformer.geneformer_tokenizer][INFO] - AnnData object with n_obs × n_vars = 1000 × 100
+    obs: 'guide_identity', 'read_count', 'UMI_count', 'coverage', 'gemgroup', 'good_coverage', 'number_of_cells', 'guide_AHR', 'guide_ARID1A', 'guide_ARRDC3', 'guide_ATL1', 'guide_BAK1', 'guide_BCL2L11', 'guide_BCORL1', 'guide_BPGM', 'guide_C19orf26', 'guide_C3orf72', 'guide_CBFA2T3', 'guide_CBL', 'guide_CDKN1A', 'guide_CDKN1B', 'guide_CDKN1C', 'guide_CEBPA', 'guide_CEBPB', 'guide_CEBPE', 'guide_CELF2', 'guide_CITED1', 'guide_CKS1B', 'guide_CLDN6', 'guide_CNN1', 'guide_CNNM4', 'guide_COL1A1', 'guide_COL2A1', 'guide_CSRNP1', 'guide_DLX2', 'guide_DUSP9', 'guide_EGR1', 'guide_ELMSAN1', 'guide_ETS2', 'guide_FEV', 'guide_FOSB', 'guide_FOXA1', 'guide_FOXA3', 'guide_FOXF1', 'guide_FOXL2', 'guide_FOXO4', 'guide_GLB1L2', 'guide_HES7', 'guide_HK2', 'guide_HNF4A', 'guide_HOXA13', 'guide_HOXB9', 'guide_HOXC13', 'guide_IER5L', 'guide_IGDCC3', 'guide_IKZF3', 'guide_IRF1', 'guide_ISL2', 'guide_JUN', 'guide_KIAA1804', 'guide_KIF18B', 'guide_KIF2C', 'guide_KLF1', 'guide_KMT2A', 'guide_LHX1', 'guide_LYL1', 'guide_MAML2', 'guide_MAP2K3', 'guide_MAP2K6', 'guide_MAP4K3', 'guide_MAP4K5', 'guide_MAP7D1', 'guide_MAPK1', 'guide_MEIS1', 'guide_MIDN', 'guide_NCL', 'guide_NIT1', 'guide_OSR2', 'guide_PLK4', 'guide_POU3F2', 'guide_PRDM1', 'guide_PRTG', 'guide_PTPN1', 'guide_PTPN12', 'guide_PTPN13', 'guide_PTPN9', 'guide_RHOXF2', 'guide_RREB1', 'guide_RUNX1T1', 'guide_S1PR2', 'guide_SAMD1', 'guide_SET', 'guide_SGK1', 'guide_SLC38A2', 'guide_SLC4A1', 'guide_SLC6A9', 'guide_SNAI1', 'guide_SPI1', 'guide_STIL', 'guide_TBX2', 'guide_TBX3', 'guide_TGFBR2', 'guide_TMSB4X', 'guide_TP73', 'guide_TSC22D1', 'guide_UBASH3A', 'guide_UBASH3B', 'guide_ZBTB1', 'guide_ZBTB10', 'guide_ZBTB25', 'guide_ZC3HAV1', 'guide_ZNF318', 'guide_ids', 'n_genes', 'n_genes_by_counts', 'total_counts', 'total_counts_mt', 'pct_counts_mt', 'leiden', 'perturbation_name', 'perturbation_type', 'perturbation_value', 'perturbation_unit'
+    var: 'index', 'n_cells', 'mt', 'n_cells_by_counts', 'mean_counts', 'pct_dropout_by_counts', 'total_counts', 'highly_variable', 'means', 'dispersions', 'dispersions_norm', 'ensembl_id', 'ensembl_id_collapsed'
+    uns: 'doi', 'hvg', 'leiden', 'neighbors', 'pca', 'preprocessing_nb_link', 'umap', 'log1p'
+    obsm: 'X_pca', 'X_umap'
+    varm: 'PCs'
+    layers: 'counts'
+    obsp: 'connectivities', 'distances' has no column attribute 'filter_pass'; tokenizing all cells.
+[2025-12-17 22:10:17,709][helical.models.geneformer.geneformer_tokenizer][INFO] - Creating dataset.
+[2025-12-17 22:10:17,728][helical.models.geneformer.model][INFO] - Successfully processed the data for Geneformer.
+[2025-12-17 22:10:17,728][__main__][INFO] - Extracting embeddings...
+[2025-12-17 22:10:17,729][py.warnings][WARNING] - /root/capsule/code/helical-challenge/main.py:495: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast():
+
+[2025-12-17 22:10:17,729][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-17 22:10:17,729][helical.models.geneformer.geneformer_utils][WARNING] - CLS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:17,729][helical.models.geneformer.geneformer_utils][WARNING] - EOS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:18,086][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-17 22:10:18,086][__main__][INFO] - Extracted embeddings shape: (1000, 512)
+[2025-12-17 22:10:18,086][__main__][INFO] - Perturbing gene: AURKAIP1 (type: knockout)
+[2025-12-17 22:10:18,086][__main__][WARNING] - Using manual perturbation for AURKAIP1
+[2025-12-17 22:10:18,088][py.warnings][WARNING] - /opt/conda/lib/python3.10/site-packages/scipy/sparse/_index.py:151: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  self._set_arrayXarray(i, j, x)
+
+[2025-12-17 22:10:18,089][helical.models.geneformer.model][INFO] - Processing data for Geneformer.
+[2025-12-17 22:10:18,442][helical.utils.mapping][INFO] - Mapped 68 / 100 genes to Ensembl IDs.
+[2025-12-17 22:10:18,461][helical.models.geneformer.geneformer_tokenizer][INFO] - AnnData object with n_obs × n_vars = 1000 × 100
+    obs: 'guide_identity', 'read_count', 'UMI_count', 'coverage', 'gemgroup', 'good_coverage', 'number_of_cells', 'guide_AHR', 'guide_ARID1A', 'guide_ARRDC3', 'guide_ATL1', 'guide_BAK1', 'guide_BCL2L11', 'guide_BCORL1', 'guide_BPGM', 'guide_C19orf26', 'guide_C3orf72', 'guide_CBFA2T3', 'guide_CBL', 'guide_CDKN1A', 'guide_CDKN1B', 'guide_CDKN1C', 'guide_CEBPA', 'guide_CEBPB', 'guide_CEBPE', 'guide_CELF2', 'guide_CITED1', 'guide_CKS1B', 'guide_CLDN6', 'guide_CNN1', 'guide_CNNM4', 'guide_COL1A1', 'guide_COL2A1', 'guide_CSRNP1', 'guide_DLX2', 'guide_DUSP9', 'guide_EGR1', 'guide_ELMSAN1', 'guide_ETS2', 'guide_FEV', 'guide_FOSB', 'guide_FOXA1', 'guide_FOXA3', 'guide_FOXF1', 'guide_FOXL2', 'guide_FOXO4', 'guide_GLB1L2', 'guide_HES7', 'guide_HK2', 'guide_HNF4A', 'guide_HOXA13', 'guide_HOXB9', 'guide_HOXC13', 'guide_IER5L', 'guide_IGDCC3', 'guide_IKZF3', 'guide_IRF1', 'guide_ISL2', 'guide_JUN', 'guide_KIAA1804', 'guide_KIF18B', 'guide_KIF2C', 'guide_KLF1', 'guide_KMT2A', 'guide_LHX1', 'guide_LYL1', 'guide_MAML2', 'guide_MAP2K3', 'guide_MAP2K6', 'guide_MAP4K3', 'guide_MAP4K5', 'guide_MAP7D1', 'guide_MAPK1', 'guide_MEIS1', 'guide_MIDN', 'guide_NCL', 'guide_NIT1', 'guide_OSR2', 'guide_PLK4', 'guide_POU3F2', 'guide_PRDM1', 'guide_PRTG', 'guide_PTPN1', 'guide_PTPN12', 'guide_PTPN13', 'guide_PTPN9', 'guide_RHOXF2', 'guide_RREB1', 'guide_RUNX1T1', 'guide_S1PR2', 'guide_SAMD1', 'guide_SET', 'guide_SGK1', 'guide_SLC38A2', 'guide_SLC4A1', 'guide_SLC6A9', 'guide_SNAI1', 'guide_SPI1', 'guide_STIL', 'guide_TBX2', 'guide_TBX3', 'guide_TGFBR2', 'guide_TMSB4X', 'guide_TP73', 'guide_TSC22D1', 'guide_UBASH3A', 'guide_UBASH3B', 'guide_ZBTB1', 'guide_ZBTB10', 'guide_ZBTB25', 'guide_ZC3HAV1', 'guide_ZNF318', 'guide_ids', 'n_genes', 'n_genes_by_counts', 'total_counts', 'total_counts_mt', 'pct_counts_mt', 'leiden', 'perturbation_name', 'perturbation_type', 'perturbation_value', 'perturbation_unit'
+    var: 'index', 'n_cells', 'mt', 'n_cells_by_counts', 'mean_counts', 'pct_dropout_by_counts', 'total_counts', 'highly_variable', 'means', 'dispersions', 'dispersions_norm', 'ensembl_id', 'ensembl_id_collapsed'
+    uns: 'doi', 'hvg', 'leiden', 'neighbors', 'pca', 'preprocessing_nb_link', 'umap', 'log1p'
+    obsm: 'X_pca', 'X_umap'
+    varm: 'PCs'
+    layers: 'counts'
+    obsp: 'connectivities', 'distances' has no column attribute 'filter_pass'; tokenizing all cells.
+[2025-12-17 22:10:18,578][helical.models.geneformer.geneformer_tokenizer][INFO] - Creating dataset.
+[2025-12-17 22:10:18,596][helical.models.geneformer.model][INFO] - Successfully processed the data for Geneformer.
+[2025-12-17 22:10:18,596][__main__][INFO] - Extracting embeddings...
+[2025-12-17 22:10:18,596][py.warnings][WARNING] - /root/capsule/code/helical-challenge/main.py:495: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast():
+
+[2025-12-17 22:10:18,596][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-17 22:10:18,596][helical.models.geneformer.geneformer_utils][WARNING] - CLS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:18,596][helical.models.geneformer.geneformer_utils][WARNING] - EOS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:18,953][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-17 22:10:18,953][__main__][INFO] - Extracted embeddings shape: (1000, 512)
+[2025-12-17 22:10:18,953][__main__][INFO] - Perturbing gene: RPL22 (type: knockout)
+[2025-12-17 22:10:18,953][__main__][WARNING] - Using manual perturbation for RPL22
+[2025-12-17 22:10:18,955][helical.models.geneformer.model][INFO] - Processing data for Geneformer.
+[2025-12-17 22:10:19,299][helical.utils.mapping][INFO] - Mapped 68 / 100 genes to Ensembl IDs.
+[2025-12-17 22:10:19,316][helical.models.geneformer.geneformer_tokenizer][INFO] - AnnData object with n_obs × n_vars = 1000 × 100
+    obs: 'guide_identity', 'read_count', 'UMI_count', 'coverage', 'gemgroup', 'good_coverage', 'number_of_cells', 'guide_AHR', 'guide_ARID1A', 'guide_ARRDC3', 'guide_ATL1', 'guide_BAK1', 'guide_BCL2L11', 'guide_BCORL1', 'guide_BPGM', 'guide_C19orf26', 'guide_C3orf72', 'guide_CBFA2T3', 'guide_CBL', 'guide_CDKN1A', 'guide_CDKN1B', 'guide_CDKN1C', 'guide_CEBPA', 'guide_CEBPB', 'guide_CEBPE', 'guide_CELF2', 'guide_CITED1', 'guide_CKS1B', 'guide_CLDN6', 'guide_CNN1', 'guide_CNNM4', 'guide_COL1A1', 'guide_COL2A1', 'guide_CSRNP1', 'guide_DLX2', 'guide_DUSP9', 'guide_EGR1', 'guide_ELMSAN1', 'guide_ETS2', 'guide_FEV', 'guide_FOSB', 'guide_FOXA1', 'guide_FOXA3', 'guide_FOXF1', 'guide_FOXL2', 'guide_FOXO4', 'guide_GLB1L2', 'guide_HES7', 'guide_HK2', 'guide_HNF4A', 'guide_HOXA13', 'guide_HOXB9', 'guide_HOXC13', 'guide_IER5L', 'guide_IGDCC3', 'guide_IKZF3', 'guide_IRF1', 'guide_ISL2', 'guide_JUN', 'guide_KIAA1804', 'guide_KIF18B', 'guide_KIF2C', 'guide_KLF1', 'guide_KMT2A', 'guide_LHX1', 'guide_LYL1', 'guide_MAML2', 'guide_MAP2K3', 'guide_MAP2K6', 'guide_MAP4K3', 'guide_MAP4K5', 'guide_MAP7D1', 'guide_MAPK1', 'guide_MEIS1', 'guide_MIDN', 'guide_NCL', 'guide_NIT1', 'guide_OSR2', 'guide_PLK4', 'guide_POU3F2', 'guide_PRDM1', 'guide_PRTG', 'guide_PTPN1', 'guide_PTPN12', 'guide_PTPN13', 'guide_PTPN9', 'guide_RHOXF2', 'guide_RREB1', 'guide_RUNX1T1', 'guide_S1PR2', 'guide_SAMD1', 'guide_SET', 'guide_SGK1', 'guide_SLC38A2', 'guide_SLC4A1', 'guide_SLC6A9', 'guide_SNAI1', 'guide_SPI1', 'guide_STIL', 'guide_TBX2', 'guide_TBX3', 'guide_TGFBR2', 'guide_TMSB4X', 'guide_TP73', 'guide_TSC22D1', 'guide_UBASH3A', 'guide_UBASH3B', 'guide_ZBTB1', 'guide_ZBTB10', 'guide_ZBTB25', 'guide_ZC3HAV1', 'guide_ZNF318', 'guide_ids', 'n_genes', 'n_genes_by_counts', 'total_counts', 'total_counts_mt', 'pct_counts_mt', 'leiden', 'perturbation_name', 'perturbation_type', 'perturbation_value', 'perturbation_unit'
+    var: 'index', 'n_cells', 'mt', 'n_cells_by_counts', 'mean_counts', 'pct_dropout_by_counts', 'total_counts', 'highly_variable', 'means', 'dispersions', 'dispersions_norm', 'ensembl_id', 'ensembl_id_collapsed'
+    uns: 'doi', 'hvg', 'leiden', 'neighbors', 'pca', 'preprocessing_nb_link', 'umap', 'log1p'
+    obsm: 'X_pca', 'X_umap'
+    varm: 'PCs'
+    layers: 'counts'
+    obsp: 'connectivities', 'distances' has no column attribute 'filter_pass'; tokenizing all cells.
+[2025-12-17 22:10:19,432][helical.models.geneformer.geneformer_tokenizer][INFO] - Creating dataset.
+[2025-12-17 22:10:19,449][helical.models.geneformer.model][INFO] - Successfully processed the data for Geneformer.
+[2025-12-17 22:10:19,449][__main__][INFO] - Extracting embeddings...
+[2025-12-17 22:10:19,449][py.warnings][WARNING] - /root/capsule/code/helical-challenge/main.py:495: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast():
+
+[2025-12-17 22:10:19,450][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-17 22:10:19,450][helical.models.geneformer.geneformer_utils][WARNING] - CLS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:19,450][helical.models.geneformer.geneformer_utils][WARNING] - EOS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:19,806][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-17 22:10:19,806][__main__][INFO] - Extracted embeddings shape: (1000, 512)
+[2025-12-17 22:10:19,806][__main__][INFO] - Perturbation complete
+[2025-12-17 22:10:20,853][__main__][INFO] - Saved outputs for baseline to outputs/outputs/baseline
+[2025-12-17 22:10:21,020][__main__][INFO] - 
+====================================================================================================
+[2025-12-17 22:10:21,021][__main__][INFO] - Running with DISTRIBUTED optimization...
+[2025-12-17 22:10:21,021][__main__][INFO] - Using 4 GPUs with DataParallel
+[2025-12-17 22:10:21,022][__main__][INFO] - Extracting embeddings...
+[2025-12-17 22:10:21,022][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-17 22:10:21,023][helical.models.geneformer.geneformer_utils][WARNING] - CLS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:21,023][helical.models.geneformer.geneformer_utils][WARNING] - EOS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:23,992][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-17 22:10:23,992][__main__][INFO] - Extracted embeddings shape: (1000, 512)
+[2025-12-17 22:10:23,992][__main__][INFO] - Performing perturbation on 10 genes...
+[2025-12-17 22:10:23,992][__main__][INFO] - Perturbing gene: UBE2J2 (type: knockout)
+[2025-12-17 22:10:23,992][__main__][WARNING] - Using manual perturbation for UBE2J2
+[2025-12-17 22:10:23,995][py.warnings][WARNING] - /opt/conda/lib/python3.10/site-packages/scipy/sparse/_index.py:151: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  self._set_arrayXarray(i, j, x)
+
+[2025-12-17 22:10:23,999][helical.models.geneformer.model][INFO] - Processing data for Geneformer.
+[2025-12-17 22:10:24,353][helical.utils.mapping][INFO] - Mapped 68 / 100 genes to Ensembl IDs.
+[2025-12-17 22:10:24,371][helical.models.geneformer.geneformer_tokenizer][INFO] - AnnData object with n_obs × n_vars = 1000 × 100
+    obs: 'guide_identity', 'read_count', 'UMI_count', 'coverage', 'gemgroup', 'good_coverage', 'number_of_cells', 'guide_AHR', 'guide_ARID1A', 'guide_ARRDC3', 'guide_ATL1', 'guide_BAK1', 'guide_BCL2L11', 'guide_BCORL1', 'guide_BPGM', 'guide_C19orf26', 'guide_C3orf72', 'guide_CBFA2T3', 'guide_CBL', 'guide_CDKN1A', 'guide_CDKN1B', 'guide_CDKN1C', 'guide_CEBPA', 'guide_CEBPB', 'guide_CEBPE', 'guide_CELF2', 'guide_CITED1', 'guide_CKS1B', 'guide_CLDN6', 'guide_CNN1', 'guide_CNNM4', 'guide_COL1A1', 'guide_COL2A1', 'guide_CSRNP1', 'guide_DLX2', 'guide_DUSP9', 'guide_EGR1', 'guide_ELMSAN1', 'guide_ETS2', 'guide_FEV', 'guide_FOSB', 'guide_FOXA1', 'guide_FOXA3', 'guide_FOXF1', 'guide_FOXL2', 'guide_FOXO4', 'guide_GLB1L2', 'guide_HES7', 'guide_HK2', 'guide_HNF4A', 'guide_HOXA13', 'guide_HOXB9', 'guide_HOXC13', 'guide_IER5L', 'guide_IGDCC3', 'guide_IKZF3', 'guide_IRF1', 'guide_ISL2', 'guide_JUN', 'guide_KIAA1804', 'guide_KIF18B', 'guide_KIF2C', 'guide_KLF1', 'guide_KMT2A', 'guide_LHX1', 'guide_LYL1', 'guide_MAML2', 'guide_MAP2K3', 'guide_MAP2K6', 'guide_MAP4K3', 'guide_MAP4K5', 'guide_MAP7D1', 'guide_MAPK1', 'guide_MEIS1', 'guide_MIDN', 'guide_NCL', 'guide_NIT1', 'guide_OSR2', 'guide_PLK4', 'guide_POU3F2', 'guide_PRDM1', 'guide_PRTG', 'guide_PTPN1', 'guide_PTPN12', 'guide_PTPN13', 'guide_PTPN9', 'guide_RHOXF2', 'guide_RREB1', 'guide_RUNX1T1', 'guide_S1PR2', 'guide_SAMD1', 'guide_SET', 'guide_SGK1', 'guide_SLC38A2', 'guide_SLC4A1', 'guide_SLC6A9', 'guide_SNAI1', 'guide_SPI1', 'guide_STIL', 'guide_TBX2', 'guide_TBX3', 'guide_TGFBR2', 'guide_TMSB4X', 'guide_TP73', 'guide_TSC22D1', 'guide_UBASH3A', 'guide_UBASH3B', 'guide_ZBTB1', 'guide_ZBTB10', 'guide_ZBTB25', 'guide_ZC3HAV1', 'guide_ZNF318', 'guide_ids', 'n_genes', 'n_genes_by_counts', 'total_counts', 'total_counts_mt', 'pct_counts_mt', 'leiden', 'perturbation_name', 'perturbation_type', 'perturbation_value', 'perturbation_unit'
+    var: 'index', 'n_cells', 'mt', 'n_cells_by_counts', 'mean_counts', 'pct_dropout_by_counts', 'total_counts', 'highly_variable', 'means', 'dispersions', 'dispersions_norm', 'ensembl_id', 'ensembl_id_collapsed'
+    uns: 'doi', 'hvg', 'leiden', 'neighbors', 'pca', 'preprocessing_nb_link', 'umap', 'log1p'
+    obsm: 'X_pca', 'X_umap'
+    varm: 'PCs'
+    layers: 'counts'
+    obsp: 'connectivities', 'distances' has no column attribute 'filter_pass'; tokenizing all cells.
+[2025-12-17 22:10:24,485][helical.models.geneformer.geneformer_tokenizer][INFO] - Creating dataset.
+[2025-12-17 22:10:24,502][helical.models.geneformer.model][INFO] - Successfully processed the data for Geneformer.
+[2025-12-17 22:10:24,502][__main__][INFO] - Extracting embeddings...
+[2025-12-17 22:10:24,503][py.warnings][WARNING] - /root/capsule/code/helical-challenge/main.py:495: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast():
+
+[2025-12-17 22:10:24,503][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-17 22:10:24,503][helical.models.geneformer.geneformer_utils][WARNING] - CLS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:24,503][helical.models.geneformer.geneformer_utils][WARNING] - EOS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:25,481][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-17 22:10:25,481][__main__][INFO] - Extracted embeddings shape: (1000, 512)
+[2025-12-17 22:10:25,481][__main__][INFO] - Perturbing gene: SDF4 (type: knockout)
+[2025-12-17 22:10:25,481][__main__][WARNING] - Using manual perturbation for SDF4
+[2025-12-17 22:10:25,483][py.warnings][WARNING] - /opt/conda/lib/python3.10/site-packages/scipy/sparse/_index.py:151: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  self._set_arrayXarray(i, j, x)
+
+[2025-12-17 22:10:25,487][helical.models.geneformer.model][INFO] - Processing data for Geneformer.
+[2025-12-17 22:10:25,838][helical.utils.mapping][INFO] - Mapped 68 / 100 genes to Ensembl IDs.
+[2025-12-17 22:10:25,856][helical.models.geneformer.geneformer_tokenizer][INFO] - AnnData object with n_obs × n_vars = 1000 × 100
+    obs: 'guide_identity', 'read_count', 'UMI_count', 'coverage', 'gemgroup', 'good_coverage', 'number_of_cells', 'guide_AHR', 'guide_ARID1A', 'guide_ARRDC3', 'guide_ATL1', 'guide_BAK1', 'guide_BCL2L11', 'guide_BCORL1', 'guide_BPGM', 'guide_C19orf26', 'guide_C3orf72', 'guide_CBFA2T3', 'guide_CBL', 'guide_CDKN1A', 'guide_CDKN1B', 'guide_CDKN1C', 'guide_CEBPA', 'guide_CEBPB', 'guide_CEBPE', 'guide_CELF2', 'guide_CITED1', 'guide_CKS1B', 'guide_CLDN6', 'guide_CNN1', 'guide_CNNM4', 'guide_COL1A1', 'guide_COL2A1', 'guide_CSRNP1', 'guide_DLX2', 'guide_DUSP9', 'guide_EGR1', 'guide_ELMSAN1', 'guide_ETS2', 'guide_FEV', 'guide_FOSB', 'guide_FOXA1', 'guide_FOXA3', 'guide_FOXF1', 'guide_FOXL2', 'guide_FOXO4', 'guide_GLB1L2', 'guide_HES7', 'guide_HK2', 'guide_HNF4A', 'guide_HOXA13', 'guide_HOXB9', 'guide_HOXC13', 'guide_IER5L', 'guide_IGDCC3', 'guide_IKZF3', 'guide_IRF1', 'guide_ISL2', 'guide_JUN', 'guide_KIAA1804', 'guide_KIF18B', 'guide_KIF2C', 'guide_KLF1', 'guide_KMT2A', 'guide_LHX1', 'guide_LYL1', 'guide_MAML2', 'guide_MAP2K3', 'guide_MAP2K6', 'guide_MAP4K3', 'guide_MAP4K5', 'guide_MAP7D1', 'guide_MAPK1', 'guide_MEIS1', 'guide_MIDN', 'guide_NCL', 'guide_NIT1', 'guide_OSR2', 'guide_PLK4', 'guide_POU3F2', 'guide_PRDM1', 'guide_PRTG', 'guide_PTPN1', 'guide_PTPN12', 'guide_PTPN13', 'guide_PTPN9', 'guide_RHOXF2', 'guide_RREB1', 'guide_RUNX1T1', 'guide_S1PR2', 'guide_SAMD1', 'guide_SET', 'guide_SGK1', 'guide_SLC38A2', 'guide_SLC4A1', 'guide_SLC6A9', 'guide_SNAI1', 'guide_SPI1', 'guide_STIL', 'guide_TBX2', 'guide_TBX3', 'guide_TGFBR2', 'guide_TMSB4X', 'guide_TP73', 'guide_TSC22D1', 'guide_UBASH3A', 'guide_UBASH3B', 'guide_ZBTB1', 'guide_ZBTB10', 'guide_ZBTB25', 'guide_ZC3HAV1', 'guide_ZNF318', 'guide_ids', 'n_genes', 'n_genes_by_counts', 'total_counts', 'total_counts_mt', 'pct_counts_mt', 'leiden', 'perturbation_name', 'perturbation_type', 'perturbation_value', 'perturbation_unit'
+    var: 'index', 'n_cells', 'mt', 'n_cells_by_counts', 'mean_counts', 'pct_dropout_by_counts', 'total_counts', 'highly_variable', 'means', 'dispersions', 'dispersions_norm', 'ensembl_id', 'ensembl_id_collapsed'
+    uns: 'doi', 'hvg', 'leiden', 'neighbors', 'pca', 'preprocessing_nb_link', 'umap', 'log1p'
+    obsm: 'X_pca', 'X_umap'
+    varm: 'PCs'
+    layers: 'counts'
+    obsp: 'connectivities', 'distances' has no column attribute 'filter_pass'; tokenizing all cells.
+[2025-12-17 22:10:25,973][helical.models.geneformer.geneformer_tokenizer][INFO] - Creating dataset.
+[2025-12-17 22:10:25,990][helical.models.geneformer.model][INFO] - Successfully processed the data for Geneformer.
+[2025-12-17 22:10:25,990][__main__][INFO] - Extracting embeddings...
+[2025-12-17 22:10:25,990][py.warnings][WARNING] - /root/capsule/code/helical-challenge/main.py:495: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast():
+
+[2025-12-17 22:10:25,990][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-17 22:10:25,990][helical.models.geneformer.geneformer_utils][WARNING] - CLS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:25,991][helical.models.geneformer.geneformer_utils][WARNING] - EOS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:26,943][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-17 22:10:26,943][__main__][INFO] - Extracted embeddings shape: (1000, 512)
+[2025-12-17 22:10:26,943][__main__][INFO] - Perturbing gene: RER1 (type: knockout)
+[2025-12-17 22:10:26,943][__main__][WARNING] - Using manual perturbation for RER1
+[2025-12-17 22:10:26,946][py.warnings][WARNING] - /opt/conda/lib/python3.10/site-packages/scipy/sparse/_index.py:151: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  self._set_arrayXarray(i, j, x)
+
+[2025-12-17 22:10:26,949][helical.models.geneformer.model][INFO] - Processing data for Geneformer.
+[2025-12-17 22:10:27,300][helical.utils.mapping][INFO] - Mapped 68 / 100 genes to Ensembl IDs.
+[2025-12-17 22:10:27,319][helical.models.geneformer.geneformer_tokenizer][INFO] - AnnData object with n_obs × n_vars = 1000 × 100
+    obs: 'guide_identity', 'read_count', 'UMI_count', 'coverage', 'gemgroup', 'good_coverage', 'number_of_cells', 'guide_AHR', 'guide_ARID1A', 'guide_ARRDC3', 'guide_ATL1', 'guide_BAK1', 'guide_BCL2L11', 'guide_BCORL1', 'guide_BPGM', 'guide_C19orf26', 'guide_C3orf72', 'guide_CBFA2T3', 'guide_CBL', 'guide_CDKN1A', 'guide_CDKN1B', 'guide_CDKN1C', 'guide_CEBPA', 'guide_CEBPB', 'guide_CEBPE', 'guide_CELF2', 'guide_CITED1', 'guide_CKS1B', 'guide_CLDN6', 'guide_CNN1', 'guide_CNNM4', 'guide_COL1A1', 'guide_COL2A1', 'guide_CSRNP1', 'guide_DLX2', 'guide_DUSP9', 'guide_EGR1', 'guide_ELMSAN1', 'guide_ETS2', 'guide_FEV', 'guide_FOSB', 'guide_FOXA1', 'guide_FOXA3', 'guide_FOXF1', 'guide_FOXL2', 'guide_FOXO4', 'guide_GLB1L2', 'guide_HES7', 'guide_HK2', 'guide_HNF4A', 'guide_HOXA13', 'guide_HOXB9', 'guide_HOXC13', 'guide_IER5L', 'guide_IGDCC3', 'guide_IKZF3', 'guide_IRF1', 'guide_ISL2', 'guide_JUN', 'guide_KIAA1804', 'guide_KIF18B', 'guide_KIF2C', 'guide_KLF1', 'guide_KMT2A', 'guide_LHX1', 'guide_LYL1', 'guide_MAML2', 'guide_MAP2K3', 'guide_MAP2K6', 'guide_MAP4K3', 'guide_MAP4K5', 'guide_MAP7D1', 'guide_MAPK1', 'guide_MEIS1', 'guide_MIDN', 'guide_NCL', 'guide_NIT1', 'guide_OSR2', 'guide_PLK4', 'guide_POU3F2', 'guide_PRDM1', 'guide_PRTG', 'guide_PTPN1', 'guide_PTPN12', 'guide_PTPN13', 'guide_PTPN9', 'guide_RHOXF2', 'guide_RREB1', 'guide_RUNX1T1', 'guide_S1PR2', 'guide_SAMD1', 'guide_SET', 'guide_SGK1', 'guide_SLC38A2', 'guide_SLC4A1', 'guide_SLC6A9', 'guide_SNAI1', 'guide_SPI1', 'guide_STIL', 'guide_TBX2', 'guide_TBX3', 'guide_TGFBR2', 'guide_TMSB4X', 'guide_TP73', 'guide_TSC22D1', 'guide_UBASH3A', 'guide_UBASH3B', 'guide_ZBTB1', 'guide_ZBTB10', 'guide_ZBTB25', 'guide_ZC3HAV1', 'guide_ZNF318', 'guide_ids', 'n_genes', 'n_genes_by_counts', 'total_counts', 'total_counts_mt', 'pct_counts_mt', 'leiden', 'perturbation_name', 'perturbation_type', 'perturbation_value', 'perturbation_unit'
+    var: 'index', 'n_cells', 'mt', 'n_cells_by_counts', 'mean_counts', 'pct_dropout_by_counts', 'total_counts', 'highly_variable', 'means', 'dispersions', 'dispersions_norm', 'ensembl_id', 'ensembl_id_collapsed'
+    uns: 'doi', 'hvg', 'leiden', 'neighbors', 'pca', 'preprocessing_nb_link', 'umap', 'log1p'
+    obsm: 'X_pca', 'X_umap'
+    varm: 'PCs'
+    layers: 'counts'
+    obsp: 'connectivities', 'distances' has no column attribute 'filter_pass'; tokenizing all cells.
+[2025-12-17 22:10:27,437][helical.models.geneformer.geneformer_tokenizer][INFO] - Creating dataset.
+[2025-12-17 22:10:27,454][helical.models.geneformer.model][INFO] - Successfully processed the data for Geneformer.
+[2025-12-17 22:10:27,455][__main__][INFO] - Extracting embeddings...
+[2025-12-17 22:10:27,455][py.warnings][WARNING] - /root/capsule/code/helical-challenge/main.py:495: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast():
+
+[2025-12-17 22:10:27,455][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-17 22:10:27,455][helical.models.geneformer.geneformer_utils][WARNING] - CLS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:27,455][helical.models.geneformer.geneformer_utils][WARNING] - EOS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:28,406][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-17 22:10:28,406][__main__][INFO] - Extracted embeddings shape: (1000, 512)
+[2025-12-17 22:10:28,406][__main__][INFO] - Perturbing gene: NOC2L (type: knockout)
+[2025-12-17 22:10:28,406][__main__][WARNING] - Using manual perturbation for NOC2L
+[2025-12-17 22:10:28,408][py.warnings][WARNING] - /opt/conda/lib/python3.10/site-packages/scipy/sparse/_index.py:151: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  self._set_arrayXarray(i, j, x)
+
+[2025-12-17 22:10:28,412][helical.models.geneformer.model][INFO] - Processing data for Geneformer.
+[2025-12-17 22:10:28,754][helical.utils.mapping][INFO] - Mapped 68 / 100 genes to Ensembl IDs.
+[2025-12-17 22:10:28,773][helical.models.geneformer.geneformer_tokenizer][INFO] - AnnData object with n_obs × n_vars = 1000 × 100
+    obs: 'guide_identity', 'read_count', 'UMI_count', 'coverage', 'gemgroup', 'good_coverage', 'number_of_cells', 'guide_AHR', 'guide_ARID1A', 'guide_ARRDC3', 'guide_ATL1', 'guide_BAK1', 'guide_BCL2L11', 'guide_BCORL1', 'guide_BPGM', 'guide_C19orf26', 'guide_C3orf72', 'guide_CBFA2T3', 'guide_CBL', 'guide_CDKN1A', 'guide_CDKN1B', 'guide_CDKN1C', 'guide_CEBPA', 'guide_CEBPB', 'guide_CEBPE', 'guide_CELF2', 'guide_CITED1', 'guide_CKS1B', 'guide_CLDN6', 'guide_CNN1', 'guide_CNNM4', 'guide_COL1A1', 'guide_COL2A1', 'guide_CSRNP1', 'guide_DLX2', 'guide_DUSP9', 'guide_EGR1', 'guide_ELMSAN1', 'guide_ETS2', 'guide_FEV', 'guide_FOSB', 'guide_FOXA1', 'guide_FOXA3', 'guide_FOXF1', 'guide_FOXL2', 'guide_FOXO4', 'guide_GLB1L2', 'guide_HES7', 'guide_HK2', 'guide_HNF4A', 'guide_HOXA13', 'guide_HOXB9', 'guide_HOXC13', 'guide_IER5L', 'guide_IGDCC3', 'guide_IKZF3', 'guide_IRF1', 'guide_ISL2', 'guide_JUN', 'guide_KIAA1804', 'guide_KIF18B', 'guide_KIF2C', 'guide_KLF1', 'guide_KMT2A', 'guide_LHX1', 'guide_LYL1', 'guide_MAML2', 'guide_MAP2K3', 'guide_MAP2K6', 'guide_MAP4K3', 'guide_MAP4K5', 'guide_MAP7D1', 'guide_MAPK1', 'guide_MEIS1', 'guide_MIDN', 'guide_NCL', 'guide_NIT1', 'guide_OSR2', 'guide_PLK4', 'guide_POU3F2', 'guide_PRDM1', 'guide_PRTG', 'guide_PTPN1', 'guide_PTPN12', 'guide_PTPN13', 'guide_PTPN9', 'guide_RHOXF2', 'guide_RREB1', 'guide_RUNX1T1', 'guide_S1PR2', 'guide_SAMD1', 'guide_SET', 'guide_SGK1', 'guide_SLC38A2', 'guide_SLC4A1', 'guide_SLC6A9', 'guide_SNAI1', 'guide_SPI1', 'guide_STIL', 'guide_TBX2', 'guide_TBX3', 'guide_TGFBR2', 'guide_TMSB4X', 'guide_TP73', 'guide_TSC22D1', 'guide_UBASH3A', 'guide_UBASH3B', 'guide_ZBTB1', 'guide_ZBTB10', 'guide_ZBTB25', 'guide_ZC3HAV1', 'guide_ZNF318', 'guide_ids', 'n_genes', 'n_genes_by_counts', 'total_counts', 'total_counts_mt', 'pct_counts_mt', 'leiden', 'perturbation_name', 'perturbation_type', 'perturbation_value', 'perturbation_unit'
+    var: 'index', 'n_cells', 'mt', 'n_cells_by_counts', 'mean_counts', 'pct_dropout_by_counts', 'total_counts', 'highly_variable', 'means', 'dispersions', 'dispersions_norm', 'ensembl_id', 'ensembl_id_collapsed'
+    uns: 'doi', 'hvg', 'leiden', 'neighbors', 'pca', 'preprocessing_nb_link', 'umap', 'log1p'
+    obsm: 'X_pca', 'X_umap'
+    varm: 'PCs'
+    layers: 'counts'
+    obsp: 'connectivities', 'distances' has no column attribute 'filter_pass'; tokenizing all cells.
+[2025-12-17 22:10:28,892][helical.models.geneformer.geneformer_tokenizer][INFO] - Creating dataset.
+[2025-12-17 22:10:28,909][helical.models.geneformer.model][INFO] - Successfully processed the data for Geneformer.
+[2025-12-17 22:10:28,910][__main__][INFO] - Extracting embeddings...
+[2025-12-17 22:10:28,910][py.warnings][WARNING] - /root/capsule/code/helical-challenge/main.py:495: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast():
+
+[2025-12-17 22:10:28,910][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-17 22:10:28,910][helical.models.geneformer.geneformer_utils][WARNING] - CLS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:28,910][helical.models.geneformer.geneformer_utils][WARNING] - EOS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:29,862][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-17 22:10:29,862][__main__][INFO] - Extracted embeddings shape: (1000, 512)
+[2025-12-17 22:10:29,862][__main__][INFO] - Perturbing gene: GNB1 (type: knockout)
+[2025-12-17 22:10:29,862][__main__][WARNING] - Using manual perturbation for GNB1
+[2025-12-17 22:10:29,865][py.warnings][WARNING] - /opt/conda/lib/python3.10/site-packages/scipy/sparse/_index.py:151: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  self._set_arrayXarray(i, j, x)
+
+[2025-12-17 22:10:29,868][helical.models.geneformer.model][INFO] - Processing data for Geneformer.
+[2025-12-17 22:10:30,220][helical.utils.mapping][INFO] - Mapped 68 / 100 genes to Ensembl IDs.
+[2025-12-17 22:10:30,239][helical.models.geneformer.geneformer_tokenizer][INFO] - AnnData object with n_obs × n_vars = 1000 × 100
+    obs: 'guide_identity', 'read_count', 'UMI_count', 'coverage', 'gemgroup', 'good_coverage', 'number_of_cells', 'guide_AHR', 'guide_ARID1A', 'guide_ARRDC3', 'guide_ATL1', 'guide_BAK1', 'guide_BCL2L11', 'guide_BCORL1', 'guide_BPGM', 'guide_C19orf26', 'guide_C3orf72', 'guide_CBFA2T3', 'guide_CBL', 'guide_CDKN1A', 'guide_CDKN1B', 'guide_CDKN1C', 'guide_CEBPA', 'guide_CEBPB', 'guide_CEBPE', 'guide_CELF2', 'guide_CITED1', 'guide_CKS1B', 'guide_CLDN6', 'guide_CNN1', 'guide_CNNM4', 'guide_COL1A1', 'guide_COL2A1', 'guide_CSRNP1', 'guide_DLX2', 'guide_DUSP9', 'guide_EGR1', 'guide_ELMSAN1', 'guide_ETS2', 'guide_FEV', 'guide_FOSB', 'guide_FOXA1', 'guide_FOXA3', 'guide_FOXF1', 'guide_FOXL2', 'guide_FOXO4', 'guide_GLB1L2', 'guide_HES7', 'guide_HK2', 'guide_HNF4A', 'guide_HOXA13', 'guide_HOXB9', 'guide_HOXC13', 'guide_IER5L', 'guide_IGDCC3', 'guide_IKZF3', 'guide_IRF1', 'guide_ISL2', 'guide_JUN', 'guide_KIAA1804', 'guide_KIF18B', 'guide_KIF2C', 'guide_KLF1', 'guide_KMT2A', 'guide_LHX1', 'guide_LYL1', 'guide_MAML2', 'guide_MAP2K3', 'guide_MAP2K6', 'guide_MAP4K3', 'guide_MAP4K5', 'guide_MAP7D1', 'guide_MAPK1', 'guide_MEIS1', 'guide_MIDN', 'guide_NCL', 'guide_NIT1', 'guide_OSR2', 'guide_PLK4', 'guide_POU3F2', 'guide_PRDM1', 'guide_PRTG', 'guide_PTPN1', 'guide_PTPN12', 'guide_PTPN13', 'guide_PTPN9', 'guide_RHOXF2', 'guide_RREB1', 'guide_RUNX1T1', 'guide_S1PR2', 'guide_SAMD1', 'guide_SET', 'guide_SGK1', 'guide_SLC38A2', 'guide_SLC4A1', 'guide_SLC6A9', 'guide_SNAI1', 'guide_SPI1', 'guide_STIL', 'guide_TBX2', 'guide_TBX3', 'guide_TGFBR2', 'guide_TMSB4X', 'guide_TP73', 'guide_TSC22D1', 'guide_UBASH3A', 'guide_UBASH3B', 'guide_ZBTB1', 'guide_ZBTB10', 'guide_ZBTB25', 'guide_ZC3HAV1', 'guide_ZNF318', 'guide_ids', 'n_genes', 'n_genes_by_counts', 'total_counts', 'total_counts_mt', 'pct_counts_mt', 'leiden', 'perturbation_name', 'perturbation_type', 'perturbation_value', 'perturbation_unit'
+    var: 'index', 'n_cells', 'mt', 'n_cells_by_counts', 'mean_counts', 'pct_dropout_by_counts', 'total_counts', 'highly_variable', 'means', 'dispersions', 'dispersions_norm', 'ensembl_id', 'ensembl_id_collapsed'
+    uns: 'doi', 'hvg', 'leiden', 'neighbors', 'pca', 'preprocessing_nb_link', 'umap', 'log1p'
+    obsm: 'X_pca', 'X_umap'
+    varm: 'PCs'
+    layers: 'counts'
+    obsp: 'connectivities', 'distances' has no column attribute 'filter_pass'; tokenizing all cells.
+[2025-12-17 22:10:30,359][helical.models.geneformer.geneformer_tokenizer][INFO] - Creating dataset.
+[2025-12-17 22:10:30,376][helical.models.geneformer.model][INFO] - Successfully processed the data for Geneformer.
+[2025-12-17 22:10:30,377][__main__][INFO] - Extracting embeddings...
+[2025-12-17 22:10:30,377][py.warnings][WARNING] - /root/capsule/code/helical-challenge/main.py:495: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast():
+
+[2025-12-17 22:10:30,377][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-17 22:10:30,377][helical.models.geneformer.geneformer_utils][WARNING] - CLS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:30,377][helical.models.geneformer.geneformer_utils][WARNING] - EOS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:31,332][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-17 22:10:31,333][__main__][INFO] - Extracted embeddings shape: (1000, 512)
+[2025-12-17 22:10:31,333][__main__][INFO] - Perturbing gene: FAAP20 (type: knockout)
+[2025-12-17 22:10:31,333][__main__][WARNING] - Using manual perturbation for FAAP20
+[2025-12-17 22:10:31,335][py.warnings][WARNING] - /opt/conda/lib/python3.10/site-packages/scipy/sparse/_index.py:151: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  self._set_arrayXarray(i, j, x)
+
+[2025-12-17 22:10:31,337][helical.models.geneformer.model][INFO] - Processing data for Geneformer.
+[2025-12-17 22:10:31,689][helical.utils.mapping][INFO] - Mapped 68 / 100 genes to Ensembl IDs.
+[2025-12-17 22:10:31,708][helical.models.geneformer.geneformer_tokenizer][INFO] - AnnData object with n_obs × n_vars = 1000 × 100
+    obs: 'guide_identity', 'read_count', 'UMI_count', 'coverage', 'gemgroup', 'good_coverage', 'number_of_cells', 'guide_AHR', 'guide_ARID1A', 'guide_ARRDC3', 'guide_ATL1', 'guide_BAK1', 'guide_BCL2L11', 'guide_BCORL1', 'guide_BPGM', 'guide_C19orf26', 'guide_C3orf72', 'guide_CBFA2T3', 'guide_CBL', 'guide_CDKN1A', 'guide_CDKN1B', 'guide_CDKN1C', 'guide_CEBPA', 'guide_CEBPB', 'guide_CEBPE', 'guide_CELF2', 'guide_CITED1', 'guide_CKS1B', 'guide_CLDN6', 'guide_CNN1', 'guide_CNNM4', 'guide_COL1A1', 'guide_COL2A1', 'guide_CSRNP1', 'guide_DLX2', 'guide_DUSP9', 'guide_EGR1', 'guide_ELMSAN1', 'guide_ETS2', 'guide_FEV', 'guide_FOSB', 'guide_FOXA1', 'guide_FOXA3', 'guide_FOXF1', 'guide_FOXL2', 'guide_FOXO4', 'guide_GLB1L2', 'guide_HES7', 'guide_HK2', 'guide_HNF4A', 'guide_HOXA13', 'guide_HOXB9', 'guide_HOXC13', 'guide_IER5L', 'guide_IGDCC3', 'guide_IKZF3', 'guide_IRF1', 'guide_ISL2', 'guide_JUN', 'guide_KIAA1804', 'guide_KIF18B', 'guide_KIF2C', 'guide_KLF1', 'guide_KMT2A', 'guide_LHX1', 'guide_LYL1', 'guide_MAML2', 'guide_MAP2K3', 'guide_MAP2K6', 'guide_MAP4K3', 'guide_MAP4K5', 'guide_MAP7D1', 'guide_MAPK1', 'guide_MEIS1', 'guide_MIDN', 'guide_NCL', 'guide_NIT1', 'guide_OSR2', 'guide_PLK4', 'guide_POU3F2', 'guide_PRDM1', 'guide_PRTG', 'guide_PTPN1', 'guide_PTPN12', 'guide_PTPN13', 'guide_PTPN9', 'guide_RHOXF2', 'guide_RREB1', 'guide_RUNX1T1', 'guide_S1PR2', 'guide_SAMD1', 'guide_SET', 'guide_SGK1', 'guide_SLC38A2', 'guide_SLC4A1', 'guide_SLC6A9', 'guide_SNAI1', 'guide_SPI1', 'guide_STIL', 'guide_TBX2', 'guide_TBX3', 'guide_TGFBR2', 'guide_TMSB4X', 'guide_TP73', 'guide_TSC22D1', 'guide_UBASH3A', 'guide_UBASH3B', 'guide_ZBTB1', 'guide_ZBTB10', 'guide_ZBTB25', 'guide_ZC3HAV1', 'guide_ZNF318', 'guide_ids', 'n_genes', 'n_genes_by_counts', 'total_counts', 'total_counts_mt', 'pct_counts_mt', 'leiden', 'perturbation_name', 'perturbation_type', 'perturbation_value', 'perturbation_unit'
+    var: 'index', 'n_cells', 'mt', 'n_cells_by_counts', 'mean_counts', 'pct_dropout_by_counts', 'total_counts', 'highly_variable', 'means', 'dispersions', 'dispersions_norm', 'ensembl_id', 'ensembl_id_collapsed'
+    uns: 'doi', 'hvg', 'leiden', 'neighbors', 'pca', 'preprocessing_nb_link', 'umap', 'log1p'
+    obsm: 'X_pca', 'X_umap'
+    varm: 'PCs'
+    layers: 'counts'
+    obsp: 'connectivities', 'distances' has no column attribute 'filter_pass'; tokenizing all cells.
+[2025-12-17 22:10:31,826][helical.models.geneformer.geneformer_tokenizer][INFO] - Creating dataset.
+[2025-12-17 22:10:31,844][helical.models.geneformer.model][INFO] - Successfully processed the data for Geneformer.
+[2025-12-17 22:10:31,844][__main__][INFO] - Extracting embeddings...
+[2025-12-17 22:10:31,844][py.warnings][WARNING] - /root/capsule/code/helical-challenge/main.py:495: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast():
+
+[2025-12-17 22:10:31,844][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-17 22:10:31,844][helical.models.geneformer.geneformer_utils][WARNING] - CLS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:31,844][helical.models.geneformer.geneformer_utils][WARNING] - EOS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:32,792][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-17 22:10:32,792][__main__][INFO] - Extracted embeddings shape: (1000, 512)
+[2025-12-17 22:10:32,792][__main__][INFO] - Perturbing gene: SSU72 (type: knockout)
+[2025-12-17 22:10:32,792][__main__][WARNING] - Using manual perturbation for SSU72
+[2025-12-17 22:10:32,795][py.warnings][WARNING] - /opt/conda/lib/python3.10/site-packages/scipy/sparse/_index.py:151: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  self._set_arrayXarray(i, j, x)
+
+[2025-12-17 22:10:32,796][helical.models.geneformer.model][INFO] - Processing data for Geneformer.
+[2025-12-17 22:10:33,151][helical.utils.mapping][INFO] - Mapped 68 / 100 genes to Ensembl IDs.
+[2025-12-17 22:10:33,170][helical.models.geneformer.geneformer_tokenizer][INFO] - AnnData object with n_obs × n_vars = 1000 × 100
+    obs: 'guide_identity', 'read_count', 'UMI_count', 'coverage', 'gemgroup', 'good_coverage', 'number_of_cells', 'guide_AHR', 'guide_ARID1A', 'guide_ARRDC3', 'guide_ATL1', 'guide_BAK1', 'guide_BCL2L11', 'guide_BCORL1', 'guide_BPGM', 'guide_C19orf26', 'guide_C3orf72', 'guide_CBFA2T3', 'guide_CBL', 'guide_CDKN1A', 'guide_CDKN1B', 'guide_CDKN1C', 'guide_CEBPA', 'guide_CEBPB', 'guide_CEBPE', 'guide_CELF2', 'guide_CITED1', 'guide_CKS1B', 'guide_CLDN6', 'guide_CNN1', 'guide_CNNM4', 'guide_COL1A1', 'guide_COL2A1', 'guide_CSRNP1', 'guide_DLX2', 'guide_DUSP9', 'guide_EGR1', 'guide_ELMSAN1', 'guide_ETS2', 'guide_FEV', 'guide_FOSB', 'guide_FOXA1', 'guide_FOXA3', 'guide_FOXF1', 'guide_FOXL2', 'guide_FOXO4', 'guide_GLB1L2', 'guide_HES7', 'guide_HK2', 'guide_HNF4A', 'guide_HOXA13', 'guide_HOXB9', 'guide_HOXC13', 'guide_IER5L', 'guide_IGDCC3', 'guide_IKZF3', 'guide_IRF1', 'guide_ISL2', 'guide_JUN', 'guide_KIAA1804', 'guide_KIF18B', 'guide_KIF2C', 'guide_KLF1', 'guide_KMT2A', 'guide_LHX1', 'guide_LYL1', 'guide_MAML2', 'guide_MAP2K3', 'guide_MAP2K6', 'guide_MAP4K3', 'guide_MAP4K5', 'guide_MAP7D1', 'guide_MAPK1', 'guide_MEIS1', 'guide_MIDN', 'guide_NCL', 'guide_NIT1', 'guide_OSR2', 'guide_PLK4', 'guide_POU3F2', 'guide_PRDM1', 'guide_PRTG', 'guide_PTPN1', 'guide_PTPN12', 'guide_PTPN13', 'guide_PTPN9', 'guide_RHOXF2', 'guide_RREB1', 'guide_RUNX1T1', 'guide_S1PR2', 'guide_SAMD1', 'guide_SET', 'guide_SGK1', 'guide_SLC38A2', 'guide_SLC4A1', 'guide_SLC6A9', 'guide_SNAI1', 'guide_SPI1', 'guide_STIL', 'guide_TBX2', 'guide_TBX3', 'guide_TGFBR2', 'guide_TMSB4X', 'guide_TP73', 'guide_TSC22D1', 'guide_UBASH3A', 'guide_UBASH3B', 'guide_ZBTB1', 'guide_ZBTB10', 'guide_ZBTB25', 'guide_ZC3HAV1', 'guide_ZNF318', 'guide_ids', 'n_genes', 'n_genes_by_counts', 'total_counts', 'total_counts_mt', 'pct_counts_mt', 'leiden', 'perturbation_name', 'perturbation_type', 'perturbation_value', 'perturbation_unit'
+    var: 'index', 'n_cells', 'mt', 'n_cells_by_counts', 'mean_counts', 'pct_dropout_by_counts', 'total_counts', 'highly_variable', 'means', 'dispersions', 'dispersions_norm', 'ensembl_id', 'ensembl_id_collapsed'
+    uns: 'doi', 'hvg', 'leiden', 'neighbors', 'pca', 'preprocessing_nb_link', 'umap', 'log1p'
+    obsm: 'X_pca', 'X_umap'
+    varm: 'PCs'
+    layers: 'counts'
+    obsp: 'connectivities', 'distances' has no column attribute 'filter_pass'; tokenizing all cells.
+[2025-12-17 22:10:33,290][helical.models.geneformer.geneformer_tokenizer][INFO] - Creating dataset.
+[2025-12-17 22:10:33,307][helical.models.geneformer.model][INFO] - Successfully processed the data for Geneformer.
+[2025-12-17 22:10:33,308][__main__][INFO] - Extracting embeddings...
+[2025-12-17 22:10:33,308][py.warnings][WARNING] - /root/capsule/code/helical-challenge/main.py:495: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast():
+
+[2025-12-17 22:10:33,308][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-17 22:10:33,308][helical.models.geneformer.geneformer_utils][WARNING] - CLS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:33,308][helical.models.geneformer.geneformer_utils][WARNING] - EOS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:34,253][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-17 22:10:34,253][__main__][INFO] - Extracted embeddings shape: (1000, 512)
+[2025-12-17 22:10:34,253][__main__][INFO] - Perturbing gene: MRPL20 (type: knockout)
+[2025-12-17 22:10:34,254][__main__][WARNING] - Using manual perturbation for MRPL20
+[2025-12-17 22:10:34,256][py.warnings][WARNING] - /opt/conda/lib/python3.10/site-packages/scipy/sparse/_index.py:151: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  self._set_arrayXarray(i, j, x)
+
+[2025-12-17 22:10:34,257][helical.models.geneformer.model][INFO] - Processing data for Geneformer.
+[2025-12-17 22:10:34,603][helical.utils.mapping][INFO] - Mapped 68 / 100 genes to Ensembl IDs.
+[2025-12-17 22:10:34,621][helical.models.geneformer.geneformer_tokenizer][INFO] - AnnData object with n_obs × n_vars = 1000 × 100
+    obs: 'guide_identity', 'read_count', 'UMI_count', 'coverage', 'gemgroup', 'good_coverage', 'number_of_cells', 'guide_AHR', 'guide_ARID1A', 'guide_ARRDC3', 'guide_ATL1', 'guide_BAK1', 'guide_BCL2L11', 'guide_BCORL1', 'guide_BPGM', 'guide_C19orf26', 'guide_C3orf72', 'guide_CBFA2T3', 'guide_CBL', 'guide_CDKN1A', 'guide_CDKN1B', 'guide_CDKN1C', 'guide_CEBPA', 'guide_CEBPB', 'guide_CEBPE', 'guide_CELF2', 'guide_CITED1', 'guide_CKS1B', 'guide_CLDN6', 'guide_CNN1', 'guide_CNNM4', 'guide_COL1A1', 'guide_COL2A1', 'guide_CSRNP1', 'guide_DLX2', 'guide_DUSP9', 'guide_EGR1', 'guide_ELMSAN1', 'guide_ETS2', 'guide_FEV', 'guide_FOSB', 'guide_FOXA1', 'guide_FOXA3', 'guide_FOXF1', 'guide_FOXL2', 'guide_FOXO4', 'guide_GLB1L2', 'guide_HES7', 'guide_HK2', 'guide_HNF4A', 'guide_HOXA13', 'guide_HOXB9', 'guide_HOXC13', 'guide_IER5L', 'guide_IGDCC3', 'guide_IKZF3', 'guide_IRF1', 'guide_ISL2', 'guide_JUN', 'guide_KIAA1804', 'guide_KIF18B', 'guide_KIF2C', 'guide_KLF1', 'guide_KMT2A', 'guide_LHX1', 'guide_LYL1', 'guide_MAML2', 'guide_MAP2K3', 'guide_MAP2K6', 'guide_MAP4K3', 'guide_MAP4K5', 'guide_MAP7D1', 'guide_MAPK1', 'guide_MEIS1', 'guide_MIDN', 'guide_NCL', 'guide_NIT1', 'guide_OSR2', 'guide_PLK4', 'guide_POU3F2', 'guide_PRDM1', 'guide_PRTG', 'guide_PTPN1', 'guide_PTPN12', 'guide_PTPN13', 'guide_PTPN9', 'guide_RHOXF2', 'guide_RREB1', 'guide_RUNX1T1', 'guide_S1PR2', 'guide_SAMD1', 'guide_SET', 'guide_SGK1', 'guide_SLC38A2', 'guide_SLC4A1', 'guide_SLC6A9', 'guide_SNAI1', 'guide_SPI1', 'guide_STIL', 'guide_TBX2', 'guide_TBX3', 'guide_TGFBR2', 'guide_TMSB4X', 'guide_TP73', 'guide_TSC22D1', 'guide_UBASH3A', 'guide_UBASH3B', 'guide_ZBTB1', 'guide_ZBTB10', 'guide_ZBTB25', 'guide_ZC3HAV1', 'guide_ZNF318', 'guide_ids', 'n_genes', 'n_genes_by_counts', 'total_counts', 'total_counts_mt', 'pct_counts_mt', 'leiden', 'perturbation_name', 'perturbation_type', 'perturbation_value', 'perturbation_unit'
+    var: 'index', 'n_cells', 'mt', 'n_cells_by_counts', 'mean_counts', 'pct_dropout_by_counts', 'total_counts', 'highly_variable', 'means', 'dispersions', 'dispersions_norm', 'ensembl_id', 'ensembl_id_collapsed'
+    uns: 'doi', 'hvg', 'leiden', 'neighbors', 'pca', 'preprocessing_nb_link', 'umap', 'log1p'
+    obsm: 'X_pca', 'X_umap'
+    varm: 'PCs'
+    layers: 'counts'
+    obsp: 'connectivities', 'distances' has no column attribute 'filter_pass'; tokenizing all cells.
+[2025-12-17 22:10:34,741][helical.models.geneformer.geneformer_tokenizer][INFO] - Creating dataset.
+[2025-12-17 22:10:34,758][helical.models.geneformer.model][INFO] - Successfully processed the data for Geneformer.
+[2025-12-17 22:10:34,758][__main__][INFO] - Extracting embeddings...
+[2025-12-17 22:10:34,759][py.warnings][WARNING] - /root/capsule/code/helical-challenge/main.py:495: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast():
+
+[2025-12-17 22:10:34,759][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-17 22:10:34,759][helical.models.geneformer.geneformer_utils][WARNING] - CLS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:34,759][helical.models.geneformer.geneformer_utils][WARNING] - EOS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:35,706][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-17 22:10:35,706][__main__][INFO] - Extracted embeddings shape: (1000, 512)
+[2025-12-17 22:10:35,706][__main__][INFO] - Perturbing gene: AURKAIP1 (type: knockout)
+[2025-12-17 22:10:35,706][__main__][WARNING] - Using manual perturbation for AURKAIP1
+[2025-12-17 22:10:35,709][py.warnings][WARNING] - /opt/conda/lib/python3.10/site-packages/scipy/sparse/_index.py:151: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil_matrix is more efficient.
+  self._set_arrayXarray(i, j, x)
+
+[2025-12-17 22:10:35,709][helical.models.geneformer.model][INFO] - Processing data for Geneformer.
+[2025-12-17 22:10:36,057][helical.utils.mapping][INFO] - Mapped 68 / 100 genes to Ensembl IDs.
+[2025-12-17 22:10:36,075][helical.models.geneformer.geneformer_tokenizer][INFO] - AnnData object with n_obs × n_vars = 1000 × 100
+    obs: 'guide_identity', 'read_count', 'UMI_count', 'coverage', 'gemgroup', 'good_coverage', 'number_of_cells', 'guide_AHR', 'guide_ARID1A', 'guide_ARRDC3', 'guide_ATL1', 'guide_BAK1', 'guide_BCL2L11', 'guide_BCORL1', 'guide_BPGM', 'guide_C19orf26', 'guide_C3orf72', 'guide_CBFA2T3', 'guide_CBL', 'guide_CDKN1A', 'guide_CDKN1B', 'guide_CDKN1C', 'guide_CEBPA', 'guide_CEBPB', 'guide_CEBPE', 'guide_CELF2', 'guide_CITED1', 'guide_CKS1B', 'guide_CLDN6', 'guide_CNN1', 'guide_CNNM4', 'guide_COL1A1', 'guide_COL2A1', 'guide_CSRNP1', 'guide_DLX2', 'guide_DUSP9', 'guide_EGR1', 'guide_ELMSAN1', 'guide_ETS2', 'guide_FEV', 'guide_FOSB', 'guide_FOXA1', 'guide_FOXA3', 'guide_FOXF1', 'guide_FOXL2', 'guide_FOXO4', 'guide_GLB1L2', 'guide_HES7', 'guide_HK2', 'guide_HNF4A', 'guide_HOXA13', 'guide_HOXB9', 'guide_HOXC13', 'guide_IER5L', 'guide_IGDCC3', 'guide_IKZF3', 'guide_IRF1', 'guide_ISL2', 'guide_JUN', 'guide_KIAA1804', 'guide_KIF18B', 'guide_KIF2C', 'guide_KLF1', 'guide_KMT2A', 'guide_LHX1', 'guide_LYL1', 'guide_MAML2', 'guide_MAP2K3', 'guide_MAP2K6', 'guide_MAP4K3', 'guide_MAP4K5', 'guide_MAP7D1', 'guide_MAPK1', 'guide_MEIS1', 'guide_MIDN', 'guide_NCL', 'guide_NIT1', 'guide_OSR2', 'guide_PLK4', 'guide_POU3F2', 'guide_PRDM1', 'guide_PRTG', 'guide_PTPN1', 'guide_PTPN12', 'guide_PTPN13', 'guide_PTPN9', 'guide_RHOXF2', 'guide_RREB1', 'guide_RUNX1T1', 'guide_S1PR2', 'guide_SAMD1', 'guide_SET', 'guide_SGK1', 'guide_SLC38A2', 'guide_SLC4A1', 'guide_SLC6A9', 'guide_SNAI1', 'guide_SPI1', 'guide_STIL', 'guide_TBX2', 'guide_TBX3', 'guide_TGFBR2', 'guide_TMSB4X', 'guide_TP73', 'guide_TSC22D1', 'guide_UBASH3A', 'guide_UBASH3B', 'guide_ZBTB1', 'guide_ZBTB10', 'guide_ZBTB25', 'guide_ZC3HAV1', 'guide_ZNF318', 'guide_ids', 'n_genes', 'n_genes_by_counts', 'total_counts', 'total_counts_mt', 'pct_counts_mt', 'leiden', 'perturbation_name', 'perturbation_type', 'perturbation_value', 'perturbation_unit'
+    var: 'index', 'n_cells', 'mt', 'n_cells_by_counts', 'mean_counts', 'pct_dropout_by_counts', 'total_counts', 'highly_variable', 'means', 'dispersions', 'dispersions_norm', 'ensembl_id', 'ensembl_id_collapsed'
+    uns: 'doi', 'hvg', 'leiden', 'neighbors', 'pca', 'preprocessing_nb_link', 'umap', 'log1p'
+    obsm: 'X_pca', 'X_umap'
+    varm: 'PCs'
+    layers: 'counts'
+    obsp: 'connectivities', 'distances' has no column attribute 'filter_pass'; tokenizing all cells.
+[2025-12-17 22:10:36,190][helical.models.geneformer.geneformer_tokenizer][INFO] - Creating dataset.
+[2025-12-17 22:10:36,207][helical.models.geneformer.model][INFO] - Successfully processed the data for Geneformer.
+[2025-12-17 22:10:36,207][__main__][INFO] - Extracting embeddings...
+[2025-12-17 22:10:36,207][py.warnings][WARNING] - /root/capsule/code/helical-challenge/main.py:495: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast():
+
+[2025-12-17 22:10:36,207][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-17 22:10:36,208][helical.models.geneformer.geneformer_utils][WARNING] - CLS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:36,208][helical.models.geneformer.geneformer_utils][WARNING] - EOS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:37,158][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-17 22:10:37,159][__main__][INFO] - Extracted embeddings shape: (1000, 512)
+[2025-12-17 22:10:37,159][__main__][INFO] - Perturbing gene: RPL22 (type: knockout)
+[2025-12-17 22:10:37,159][__main__][WARNING] - Using manual perturbation for RPL22
+[2025-12-17 22:10:37,162][helical.models.geneformer.model][INFO] - Processing data for Geneformer.
+[2025-12-17 22:10:37,520][helical.utils.mapping][INFO] - Mapped 68 / 100 genes to Ensembl IDs.
+[2025-12-17 22:10:37,537][helical.models.geneformer.geneformer_tokenizer][INFO] - AnnData object with n_obs × n_vars = 1000 × 100
+    obs: 'guide_identity', 'read_count', 'UMI_count', 'coverage', 'gemgroup', 'good_coverage', 'number_of_cells', 'guide_AHR', 'guide_ARID1A', 'guide_ARRDC3', 'guide_ATL1', 'guide_BAK1', 'guide_BCL2L11', 'guide_BCORL1', 'guide_BPGM', 'guide_C19orf26', 'guide_C3orf72', 'guide_CBFA2T3', 'guide_CBL', 'guide_CDKN1A', 'guide_CDKN1B', 'guide_CDKN1C', 'guide_CEBPA', 'guide_CEBPB', 'guide_CEBPE', 'guide_CELF2', 'guide_CITED1', 'guide_CKS1B', 'guide_CLDN6', 'guide_CNN1', 'guide_CNNM4', 'guide_COL1A1', 'guide_COL2A1', 'guide_CSRNP1', 'guide_DLX2', 'guide_DUSP9', 'guide_EGR1', 'guide_ELMSAN1', 'guide_ETS2', 'guide_FEV', 'guide_FOSB', 'guide_FOXA1', 'guide_FOXA3', 'guide_FOXF1', 'guide_FOXL2', 'guide_FOXO4', 'guide_GLB1L2', 'guide_HES7', 'guide_HK2', 'guide_HNF4A', 'guide_HOXA13', 'guide_HOXB9', 'guide_HOXC13', 'guide_IER5L', 'guide_IGDCC3', 'guide_IKZF3', 'guide_IRF1', 'guide_ISL2', 'guide_JUN', 'guide_KIAA1804', 'guide_KIF18B', 'guide_KIF2C', 'guide_KLF1', 'guide_KMT2A', 'guide_LHX1', 'guide_LYL1', 'guide_MAML2', 'guide_MAP2K3', 'guide_MAP2K6', 'guide_MAP4K3', 'guide_MAP4K5', 'guide_MAP7D1', 'guide_MAPK1', 'guide_MEIS1', 'guide_MIDN', 'guide_NCL', 'guide_NIT1', 'guide_OSR2', 'guide_PLK4', 'guide_POU3F2', 'guide_PRDM1', 'guide_PRTG', 'guide_PTPN1', 'guide_PTPN12', 'guide_PTPN13', 'guide_PTPN9', 'guide_RHOXF2', 'guide_RREB1', 'guide_RUNX1T1', 'guide_S1PR2', 'guide_SAMD1', 'guide_SET', 'guide_SGK1', 'guide_SLC38A2', 'guide_SLC4A1', 'guide_SLC6A9', 'guide_SNAI1', 'guide_SPI1', 'guide_STIL', 'guide_TBX2', 'guide_TBX3', 'guide_TGFBR2', 'guide_TMSB4X', 'guide_TP73', 'guide_TSC22D1', 'guide_UBASH3A', 'guide_UBASH3B', 'guide_ZBTB1', 'guide_ZBTB10', 'guide_ZBTB25', 'guide_ZC3HAV1', 'guide_ZNF318', 'guide_ids', 'n_genes', 'n_genes_by_counts', 'total_counts', 'total_counts_mt', 'pct_counts_mt', 'leiden', 'perturbation_name', 'perturbation_type', 'perturbation_value', 'perturbation_unit'
+    var: 'index', 'n_cells', 'mt', 'n_cells_by_counts', 'mean_counts', 'pct_dropout_by_counts', 'total_counts', 'highly_variable', 'means', 'dispersions', 'dispersions_norm', 'ensembl_id', 'ensembl_id_collapsed'
+    uns: 'doi', 'hvg', 'leiden', 'neighbors', 'pca', 'preprocessing_nb_link', 'umap', 'log1p'
+    obsm: 'X_pca', 'X_umap'
+    varm: 'PCs'
+    layers: 'counts'
+    obsp: 'connectivities', 'distances' has no column attribute 'filter_pass'; tokenizing all cells.
+[2025-12-17 22:10:37,660][helical.models.geneformer.geneformer_tokenizer][INFO] - Creating dataset.
+[2025-12-17 22:10:37,677][helical.models.geneformer.model][INFO] - Successfully processed the data for Geneformer.
+[2025-12-17 22:10:37,677][__main__][INFO] - Extracting embeddings...
+[2025-12-17 22:10:37,678][py.warnings][WARNING] - /root/capsule/code/helical-challenge/main.py:495: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast():
+
+[2025-12-17 22:10:37,678][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-17 22:10:37,678][helical.models.geneformer.geneformer_utils][WARNING] - CLS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:37,678][helical.models.geneformer.geneformer_utils][WARNING] - EOS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:38,633][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-17 22:10:38,633][__main__][INFO] - Extracted embeddings shape: (1000, 512)
+[2025-12-17 22:10:38,633][__main__][INFO] - Perturbation complete
+[2025-12-17 22:10:39,724][__main__][INFO] - Saved outputs for distributed to outputs/outputs/distributed
+[2025-12-17 22:10:39,770][__main__][INFO] - 
+====================================================================================================
+[2025-12-17 22:10:39,770][__main__][INFO] - Running with BATCHING optimization...
+[2025-12-17 22:10:39,770][__main__][INFO] - Using batch size: 256 (original: 128)
+[2025-12-17 22:10:39,772][__main__][ERROR] - batching failed: Key 'forward_batch_size' is not in struct
+    full_key: model.forward_batch_size
+    object_type=dict
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 1123, in run
+    if self.validate_outputs(outputs):
+  File "/root/capsule/code/helical-challenge/main.py", line 619, in run_with_batching
+  File "/opt/conda/lib/python3.10/site-packages/omegaconf/dictconfig.py", line 337, in __setattr__
+    raise e
+  File "/opt/conda/lib/python3.10/site-packages/omegaconf/dictconfig.py", line 334, in __setattr__
+    self.__set_impl(key, value)
+  File "/opt/conda/lib/python3.10/site-packages/omegaconf/dictconfig.py", line 318, in __set_impl
+    self._set_item_impl(key, value)
+  File "/opt/conda/lib/python3.10/site-packages/omegaconf/basecontainer.py", line 549, in _set_item_impl
+    self._validate_set(key, value)
+  File "/opt/conda/lib/python3.10/site-packages/omegaconf/dictconfig.py", line 180, in _validate_set
+    target = self._get_node(key) if key is not None else self
+  File "/opt/conda/lib/python3.10/site-packages/omegaconf/dictconfig.py", line 475, in _get_node
+    self._validate_get(key)
+  File "/opt/conda/lib/python3.10/site-packages/omegaconf/dictconfig.py", line 164, in _validate_get
+    self._format_and_raise(
+  File "/opt/conda/lib/python3.10/site-packages/omegaconf/base.py", line 231, in _format_and_raise
+    format_and_raise(
+  File "/opt/conda/lib/python3.10/site-packages/omegaconf/_utils.py", line 899, in format_and_raise
+    _raise(ex, cause)
+  File "/opt/conda/lib/python3.10/site-packages/omegaconf/_utils.py", line 797, in _raise
+    raise ex.with_traceback(sys.exc_info()[2])  # set env var OC_CAUSE=1 for full trace
+omegaconf.errors.ConfigAttributeError: Key 'forward_batch_size' is not in struct
+    full_key: model.forward_batch_size
+    object_type=dict
+[2025-12-17 22:10:39,773][__main__][INFO] - 
+====================================================================================================
+[2025-12-17 22:10:39,773][__main__][INFO] - Running with QUANTIZATION optimization...
+[2025-12-17 22:10:39,774][__main__][INFO] - Applying dynamic int8 quantization...
+[2025-12-17 22:10:40,065][__main__][INFO] - Extracting embeddings...
+[2025-12-17 22:10:40,065][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-17 22:10:40,065][helical.models.geneformer.geneformer_utils][WARNING] - CLS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:40,065][helical.models.geneformer.geneformer_utils][WARNING] - EOS token present in token dictionary, excluding from average.
+[2025-12-17 22:10:40,214][__main__][ERROR] - quantization failed: Caught NotImplementedError in replica 0 on device 0.
+Original Traceback (most recent call last):
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/parallel/parallel_apply.py", line 97, in _worker
+    output = module(*input, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 1463, in forward
+    outputs = self.bert(
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 1144, in forward
+    encoder_outputs = self.encoder(
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 695, in forward
+    layer_outputs = layer_module(
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 585, in forward
+    self_attention_outputs = self.attention(
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 515, in forward
+    self_outputs = self.self(
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 395, in forward
+    query_layer = self.transpose_for_scores(self.query(hidden_states))
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/ao/nn/quantized/dynamic/modules/linear.py", line 57, in forward
+    Y = torch.ops.quantized.linear_dynamic(
+  File "/opt/conda/lib/python3.10/site-packages/torch/_ops.py", line 1158, in __call__
+    return self._op(*args, **(kwargs or {}))
+NotImplementedError: Could not run 'quantized::linear_dynamic' with arguments from the 'CUDA' backend. This could be because the operator doesn't exist for this backend, or was omitted during the selective/custom build process (if using custom build). If you are a Facebook employee using PyTorch on mobile, please visit https://fburl.com/ptmfixes for possible resolutions. 'quantized::linear_dynamic' is only available for these backends: [CPU, Meta, BackendSelect, Python, FuncTorchDynamicLayerBackMode, Functionalize, Named, Conjugate, Negative, ZeroTensor, ADInplaceOrView, AutogradOther, AutogradCPU, AutogradCUDA, AutogradXLA, AutogradMPS, AutogradXPU, AutogradHPU, AutogradLazy, AutogradMTIA, AutogradMeta, Tracer, AutocastCPU, AutocastMTIA, AutocastXPU, AutocastMPS, AutocastCUDA, FuncTorchBatched, BatchedNestedTensor, FuncTorchVmapMode, Batched, VmapMode, FuncTorchGradWrapper, PythonTLSSnapshot, FuncTorchDynamicLayerFrontMode, PreDispatch, PythonDispatcher].
+
+CPU: registered at /pytorch/aten/src/ATen/native/quantized/cpu/qlinear_dynamic.cpp:1027 [kernel]
+Meta: registered at /pytorch/aten/src/ATen/core/MetaFallbackKernel.cpp:23 [backend fallback]
+BackendSelect: fallthrough registered at /pytorch/aten/src/ATen/core/BackendSelectFallbackKernel.cpp:3 [backend fallback]
+Python: registered at /pytorch/aten/src/ATen/core/PythonFallbackKernel.cpp:194 [backend fallback]
+FuncTorchDynamicLayerBackMode: registered at /pytorch/aten/src/ATen/functorch/DynamicLayer.cpp:479 [backend fallback]
+Functionalize: registered at /pytorch/aten/src/ATen/FunctionalizeFallbackKernel.cpp:349 [backend fallback]
+Named: registered at /pytorch/aten/src/ATen/core/NamedRegistrations.cpp:7 [backend fallback]
+Conjugate: registered at /pytorch/aten/src/ATen/ConjugateFallback.cpp:17 [backend fallback]
+Negative: registered at /pytorch/aten/src/ATen/native/NegateFallback.cpp:18 [backend fallback]
+ZeroTensor: registered at /pytorch/aten/src/ATen/ZeroTensorFallback.cpp:86 [backend fallback]
+ADInplaceOrView: fallthrough registered at /pytorch/aten/src/ATen/core/VariableFallbackKernel.cpp:100 [backend fallback]
+AutogradOther: registered at /pytorch/aten/src/ATen/core/VariableFallbackKernel.cpp:63 [backend fallback]
+AutogradCPU: registered at /pytorch/aten/src/ATen/core/VariableFallbackKernel.cpp:67 [backend fallback]
+AutogradCUDA: registered at /pytorch/aten/src/ATen/core/VariableFallbackKernel.cpp:75 [backend fallback]
+AutogradXLA: registered at /pytorch/aten/src/ATen/core/VariableFallbackKernel.cpp:83 [backend fallback]
+AutogradMPS: registered at /pytorch/aten/src/ATen/core/VariableFallbackKernel.cpp:91 [backend fallback]
+AutogradXPU: registered at /pytorch/aten/src/ATen/core/VariableFallbackKernel.cpp:71 [backend fallback]
+AutogradHPU: registered at /pytorch/aten/src/ATen/core/VariableFallbackKernel.cpp:104 [backend fallback]
+AutogradLazy: registered at /pytorch/aten/src/ATen/core/VariableFallbackKernel.cpp:87 [backend fallback]
+AutogradMTIA: registered at /pytorch/aten/src/ATen/core/VariableFallbackKernel.cpp:79 [backend fallback]
+AutogradMeta: registered at /pytorch/aten/src/ATen/core/VariableFallbackKernel.cpp:95 [backend fallback]
+Tracer: registered at /pytorch/torch/csrc/autograd/TraceTypeManual.cpp:294 [backend fallback]
+AutocastCPU: fallthrough registered at /pytorch/aten/src/ATen/autocast_mode.cpp:322 [backend fallback]
+AutocastMTIA: fallthrough registered at /pytorch/aten/src/ATen/autocast_mode.cpp:466 [backend fallback]
+AutocastXPU: fallthrough registered at /pytorch/aten/src/ATen/autocast_mode.cpp:504 [backend fallback]
+AutocastMPS: fallthrough registered at /pytorch/aten/src/ATen/autocast_mode.cpp:209 [backend fallback]
+AutocastCUDA: fallthrough registered at /pytorch/aten/src/ATen/autocast_mode.cpp:165 [backend fallback]
+FuncTorchBatched: registered at /pytorch/aten/src/ATen/functorch/LegacyBatchingRegistrations.cpp:731 [backend fallback]
+BatchedNestedTensor: registered at /pytorch/aten/src/ATen/functorch/LegacyBatchingRegistrations.cpp:758 [backend fallback]
+FuncTorchVmapMode: fallthrough registered at /pytorch/aten/src/ATen/functorch/VmapModeRegistrations.cpp:27 [backend fallback]
+Batched: registered at /pytorch/aten/src/ATen/LegacyBatchingRegistrations.cpp:1075 [backend fallback]
+VmapMode: fallthrough registered at /pytorch/aten/src/ATen/VmapModeRegistrations.cpp:33 [backend fallback]
+FuncTorchGradWrapper: registered at /pytorch/aten/src/ATen/functorch/TensorWrapper.cpp:208 [backend fallback]
+PythonTLSSnapshot: registered at /pytorch/aten/src/ATen/core/PythonFallbackKernel.cpp:202 [backend fallback]
+FuncTorchDynamicLayerFrontMode: registered at /pytorch/aten/src/ATen/functorch/DynamicLayer.cpp:475 [backend fallback]
+PreDispatch: registered at /pytorch/aten/src/ATen/core/PythonFallbackKernel.cpp:206 [backend fallback]
+PythonDispatcher: registered at /pytorch/aten/src/ATen/core/PythonFallbackKernel.cpp:198 [backend fallback]
+
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 1123, in run
+    if self.validate_outputs(outputs):
+  File "/root/capsule/code/helical-challenge/main.py", line 702, in run_with_quantization
+  File "/root/capsule/code/helical-challenge/main.py", line 496, in extract_embeddings
+    self,
+  File "/opt/conda/lib/python3.10/site-packages/helical/models/geneformer/model.py", line 238, in get_embeddings
+    embeddings = get_embs(
+  File "/opt/conda/lib/python3.10/site-packages/helical/models/geneformer/geneformer_utils.py", line 193, in get_embs
+    outputs = model(
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/parallel/data_parallel.py", line 194, in forward
+    outputs = self.parallel_apply(replicas, inputs, module_kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/parallel/data_parallel.py", line 213, in parallel_apply
+    return parallel_apply(
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/parallel/parallel_apply.py", line 127, in parallel_apply
+    output.reraise()
+  File "/opt/conda/lib/python3.10/site-packages/torch/_utils.py", line 750, in reraise
+    raise exception
+NotImplementedError: Caught NotImplementedError in replica 0 on device 0.
+Original Traceback (most recent call last):
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/parallel/parallel_apply.py", line 97, in _worker
+    output = module(*input, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 1463, in forward
+    outputs = self.bert(
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 1144, in forward
+    encoder_outputs = self.encoder(
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 695, in forward
+    layer_outputs = layer_module(
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 585, in forward
+    self_attention_outputs = self.attention(
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 515, in forward
+    self_outputs = self.self(
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 395, in forward
+    query_layer = self.transpose_for_scores(self.query(hidden_states))
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/ao/nn/quantized/dynamic/modules/linear.py", line 57, in forward
+    Y = torch.ops.quantized.linear_dynamic(
+  File "/opt/conda/lib/python3.10/site-packages/torch/_ops.py", line 1158, in __call__
+    return self._op(*args, **(kwargs or {}))
+NotImplementedError: Could not run 'quantized::linear_dynamic' with arguments from the 'CUDA' backend. This could be because the operator doesn't exist for this backend, or was omitted during the selective/custom build process (if using custom build). If you are a Facebook employee using PyTorch on mobile, please visit https://fburl.com/ptmfixes for possible resolutions. 'quantized::linear_dynamic' is only available for these backends: [CPU, Meta, BackendSelect, Python, FuncTorchDynamicLayerBackMode, Functionalize, Named, Conjugate, Negative, ZeroTensor, ADInplaceOrView, AutogradOther, AutogradCPU, AutogradCUDA, AutogradXLA, AutogradMPS, AutogradXPU, AutogradHPU, AutogradLazy, AutogradMTIA, AutogradMeta, Tracer, AutocastCPU, AutocastMTIA, AutocastXPU, AutocastMPS, AutocastCUDA, FuncTorchBatched, BatchedNestedTensor, FuncTorchVmapMode, Batched, VmapMode, FuncTorchGradWrapper, PythonTLSSnapshot, FuncTorchDynamicLayerFrontMode, PreDispatch, PythonDispatcher].
+
+CPU: registered at /pytorch/aten/src/ATen/native/quantized/cpu/qlinear_dynamic.cpp:1027 [kernel]
+Meta: registered at /pytorch/aten/src/ATen/core/MetaFallbackKernel.cpp:23 [backend fallback]
+BackendSelect: fallthrough registered at /pytorch/aten/src/ATen/core/BackendSelectFallbackKernel.cpp:3 [backend fallback]
+Python: registered at /pytorch/aten/src/ATen/core/PythonFallbackKernel.cpp:194 [backend fallback]
+FuncTorchDynamicLayerBackMode: registered at /pytorch/aten/src/ATen/functorch/DynamicLayer.cpp:479 [backend fallback]
+Functionalize: registered at /pytorch/aten/src/ATen/FunctionalizeFallbackKernel.cpp:349 [backend fallback]
+Named: registered at /pytorch/aten/src/ATen/core/NamedRegistrations.cpp:7 [backend fallback]
+Conjugate: registered at /pytorch/aten/src/ATen/ConjugateFallback.cpp:17 [backend fallback]
+Negative: registered at /pytorch/aten/src/ATen/native/NegateFallback.cpp:18 [backend fallback]
+ZeroTensor: registered at /pytorch/aten/src/ATen/ZeroTensorFallback.cpp:86 [backend fallback]
+ADInplaceOrView: fallthrough registered at /pytorch/aten/src/ATen/core/VariableFallbackKernel.cpp:100 [backend fallback]
+AutogradOther: registered at /pytorch/aten/src/ATen/core/VariableFallbackKernel.cpp:63 [backend fallback]
+AutogradCPU: registered at /pytorch/aten/src/ATen/core/VariableFallbackKernel.cpp:67 [backend fallback]
+AutogradCUDA: registered at /pytorch/aten/src/ATen/core/VariableFallbackKernel.cpp:75 [backend fallback]
+AutogradXLA: registered at /pytorch/aten/src/ATen/core/VariableFallbackKernel.cpp:83 [backend fallback]
+AutogradMPS: registered at /pytorch/aten/src/ATen/core/VariableFallbackKernel.cpp:91 [backend fallback]
+AutogradXPU: registered at /pytorch/aten/src/ATen/core/VariableFallbackKernel.cpp:71 [backend fallback]
+AutogradHPU: registered at /pytorch/aten/src/ATen/core/VariableFallbackKernel.cpp:104 [backend fallback]
+AutogradLazy: registered at /pytorch/aten/src/ATen/core/VariableFallbackKernel.cpp:87 [backend fallback]
+AutogradMTIA: registered at /pytorch/aten/src/ATen/core/VariableFallbackKernel.cpp:79 [backend fallback]
+AutogradMeta: registered at /pytorch/aten/src/ATen/core/VariableFallbackKernel.cpp:95 [backend fallback]
+Tracer: registered at /pytorch/torch/csrc/autograd/TraceTypeManual.cpp:294 [backend fallback]
+AutocastCPU: fallthrough registered at /pytorch/aten/src/ATen/autocast_mode.cpp:322 [backend fallback]
+AutocastMTIA: fallthrough registered at /pytorch/aten/src/ATen/autocast_mode.cpp:466 [backend fallback]
+AutocastXPU: fallthrough registered at /pytorch/aten/src/ATen/autocast_mode.cpp:504 [backend fallback]
+AutocastMPS: fallthrough registered at /pytorch/aten/src/ATen/autocast_mode.cpp:209 [backend fallback]
+AutocastCUDA: fallthrough registered at /pytorch/aten/src/ATen/autocast_mode.cpp:165 [backend fallback]
+FuncTorchBatched: registered at /pytorch/aten/src/ATen/functorch/LegacyBatchingRegistrations.cpp:731 [backend fallback]
+BatchedNestedTensor: registered at /pytorch/aten/src/ATen/functorch/LegacyBatchingRegistrations.cpp:758 [backend fallback]
+FuncTorchVmapMode: fallthrough registered at /pytorch/aten/src/ATen/functorch/VmapModeRegistrations.cpp:27 [backend fallback]
+Batched: registered at /pytorch/aten/src/ATen/LegacyBatchingRegistrations.cpp:1075 [backend fallback]
+VmapMode: fallthrough registered at /pytorch/aten/src/ATen/VmapModeRegistrations.cpp:33 [backend fallback]
+FuncTorchGradWrapper: registered at /pytorch/aten/src/ATen/functorch/TensorWrapper.cpp:208 [backend fallback]
+PythonTLSSnapshot: registered at /pytorch/aten/src/ATen/core/PythonFallbackKernel.cpp:202 [backend fallback]
+FuncTorchDynamicLayerFrontMode: registered at /pytorch/aten/src/ATen/functorch/DynamicLayer.cpp:475 [backend fallback]
+PreDispatch: registered at /pytorch/aten/src/ATen/core/PythonFallbackKernel.cpp:206 [backend fallback]
+PythonDispatcher: registered at /pytorch/aten/src/ATen/core/PythonFallbackKernel.cpp:198 [backend fallback]
+
+
+[2025-12-17 22:10:40,215][__main__][INFO] - 
+====================================================================================================
+[2025-12-17 22:10:40,216][__main__][INFO] - COMPARING OUTPUTS TO BASELINE
+[2025-12-17 22:10:40,216][__main__][INFO] - ====================================================================================================
+[2025-12-17 22:10:40,216][__main__][INFO] - Comparing baseline vs distributed
+[2025-12-17 22:10:40,380][__main__][INFO] - Performance metrics saved to: outputs/performance_metrics_20251217_221040.csv
+[2025-12-17 22:10:40,381][__main__][INFO] - Comparison metrics saved to: outputs/comparison_metrics_20251217_221040.csv
+[2025-12-17 22:10:40,384][__main__][INFO] - Per-gene comparison saved to: outputs/gene_comparison_baseline_vs_distributed.csv
+[2025-12-17 22:10:40,384][__main__][INFO] - 
+====================================================================================================
+[2025-12-17 22:10:40,384][__main__][INFO] - PERFORMANCE SUMMARY
+[2025-12-17 22:10:40,384][__main__][INFO] - ====================================================================================================
+[2025-12-17 22:10:40,388][__main__][INFO] - 
+        method  runtime_seconds  cpu_percent    memory_mb  gpu_memory_mb  gpu_utilization  throughput_cells_per_sec  num_cells  num_genes_perturbed                   timestamp extra_optimization  extra_num_gpus extra_backend
+0     baseline         9.905391         72.8  2170.449219     153.536621               45                100.955131       1000                   10  2025-12-17T22:10:19.809803               none             NaN           NaN
+1  distributed        17.612777        126.5  3070.695312     161.661621               54                 56.776964       1000                   10  2025-12-17T22:10:38.688592                NaN             4.0          nccl
+
+[2025-12-17 22:10:40,388][__main__][INFO] - 
+SPEEDUP RELATIVE TO BASELINE:
+[2025-12-17 22:10:40,388][__main__][INFO] - --------------------------------------------------
+[2025-12-17 22:10:40,389][__main__][INFO] - distributed         : 0.56x
+[2025-12-17 22:10:40,389][__main__][INFO] - 
+====================================================================================================
+[2025-12-17 22:10:40,389][__main__][INFO] - OUTPUT COMPARISON SUMMARY
+[2025-12-17 22:10:40,389][__main__][INFO] - ====================================================================================================
+[2025-12-17 22:10:40,392][__main__][INFO] - 
+   method_a     method_b  embedding_pearson  embedding_spearman  embedding_cosine_similarity  embedding_mse  embedding_max_abs_diff  mean_perturbation_correlation  min_perturbation_correlation  max_perturbation_correlation                   timestamp
+0  baseline  distributed           0.999999                 1.0                          1.0   1.819798e-07                0.027906                       0.999999                      0.999999                           1.0  2025-12-17T22:10:40.378292
+
+[2025-12-17 22:10:40,392][__main__][INFO] - 
+OUTPUT QUALITY ASSESSMENT:
+[2025-12-17 22:10:40,392][__main__][INFO] - --------------------------------------------------
+[2025-12-17 22:10:40,392][__main__][INFO] - ====================================================================================================
+[2025-12-17 22:10:40,392][__main__][INFO] - 
+All outputs saved to: outputs
+[2025-12-17 22:10:40,393][__main__][INFO] - 
+====================================================================================================
+[2025-12-17 22:10:40,393][__main__][INFO] - PIPELINE COMPLETE!
+[2025-12-17 22:10:40,393][__main__][INFO] - ====================================================================================================
