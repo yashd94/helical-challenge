@@ -1,0 +1,22 @@
+{
+  "method": "distributed",
+  "embedding_shape": [
+    1000,
+    512
+  ],
+  "num_perturbations": 10,
+  "genes_perturbed": [
+    "UBE2J2",
+    "SDF4",
+    "RER1",
+    "NOC2L",
+    "GNB1",
+    "FAAP20",
+    "SSU72",
+    "MRPL20",
+    "AURKAIP1",
+    "RPL22"
+  ],
+  "precision": "float32",
+  "compression": null
+}
