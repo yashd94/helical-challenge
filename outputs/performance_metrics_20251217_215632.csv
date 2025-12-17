@@ -1,3 +1,0 @@
-method,runtime_seconds,cpu_percent,memory_mb,gpu_memory_mb,gpu_utilization,throughput_cells_per_sec,num_cells,num_genes_perturbed,timestamp,extra_optimization,extra_num_gpus,extra_backend
-baseline,12.716699838638306,74.9,2195.42578125,153.53662109375,41,78.6367542435506,1000,10,2025-12-17T21:55:57.996672,none,,
-distributed,34.36678504943848,153.1,3123.32421875,162.16162109375,50,29.097862909243503,1000,10,2025-12-17T21:56:32.401403,,4.0,nccl
