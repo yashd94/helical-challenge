@@ -1,8 +1,8 @@
-2025-12-17 23:42:51,110 - __main__ - INFO - ====================================================================================================
-2025-12-17 23:42:51,110 - __main__ - INFO - GENEFORMER PERTURBATION PIPELINE
-2025-12-17 23:42:51,110 - __main__ - INFO - ====================================================================================================
-2025-12-17 23:42:51,110 - __main__ - INFO - Experiment: geneformer_perturbation_100_genes
-2025-12-17 23:42:51,115 - __main__ - INFO - 
+2025-12-17 23:48:40,644 - __main__ - INFO - ====================================================================================================
+2025-12-17 23:48:40,644 - __main__ - INFO - GENEFORMER PERTURBATION PIPELINE
+2025-12-17 23:48:40,644 - __main__ - INFO - ====================================================================================================
+2025-12-17 23:48:40,644 - __main__ - INFO - Experiment: geneformer_perturbation_100_genes
+2025-12-17 23:48:40,649 - __main__ - INFO - 
 Configuration:
 seed: 42
 model:
@@ -82,21 +82,21 @@ validation:
   check_nan: true
   check_inf: true
 
-2025-12-17 23:42:51,115 - __main__ - INFO - Loading Geneformer model...
-2025-12-17 23:42:55,475 - __main__ - INFO - Model loaded: gf-12L-38M-i4096
-2025-12-17 23:42:55,476 - __main__ - INFO - Loading data: norman_2019
-2025-12-17 23:43:20,818 - __main__ - INFO - Loaded 11835 cells, 19018 genes
-2025-12-17 23:43:20,818 - __main__ - INFO - Preprocessing data...
-2025-12-17 23:43:23,248 - __main__ - INFO - After filtering: 11835 cells, 18215 genes
-2025-12-17 23:43:23,426 - __main__ - INFO - Data normalized
-2025-12-17 23:43:23,427 - __main__ - INFO - Tokenizing data...
-2025-12-17 23:43:30,064 - __main__ - INFO - Tokenization complete
-2025-12-17 23:43:30,273 - __main__ - INFO - Selected 100 genes using method: top_expressed
-2025-12-17 23:43:30,273 - __main__ - INFO - 
+2025-12-17 23:48:40,649 - __main__ - INFO - Loading Geneformer model...
+2025-12-17 23:48:44,054 - __main__ - INFO - Model loaded: gf-12L-38M-i4096
+2025-12-17 23:48:44,054 - __main__ - INFO - Loading data: norman_2019
+2025-12-17 23:49:08,997 - __main__ - INFO - Loaded 11835 cells, 19018 genes
+2025-12-17 23:49:08,997 - __main__ - INFO - Preprocessing data...
+2025-12-17 23:49:11,353 - __main__ - INFO - After filtering: 11835 cells, 18215 genes
+2025-12-17 23:49:11,513 - __main__ - INFO - Data normalized
+2025-12-17 23:49:11,514 - __main__ - INFO - Tokenizing data...
+2025-12-17 23:49:17,994 - __main__ - INFO - Tokenization complete
+2025-12-17 23:49:18,181 - __main__ - INFO - Selected 100 genes using method: top_expressed
+2025-12-17 23:49:18,181 - __main__ - INFO - 
 ====================================================================================================
-2025-12-17 23:43:30,273 - __main__ - INFO - Running BASELINE (no optimization)...
-2025-12-17 23:43:30,276 - __main__ - INFO - Extracting embeddings...
-2025-12-17 23:43:30,908 - __main__ - ERROR - Baseline failed: CUDA out of memory. Tried to allocate 8.00 GiB. GPU 0 has a total capacity of 14.58 GiB of which 4.59 GiB is free. Process 30537 has 9.98 GiB memory in use. Of the allocated memory 9.15 GiB is allocated by PyTorch, and 16.59 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+2025-12-17 23:49:18,181 - __main__ - INFO - Running BASELINE (no optimization)...
+2025-12-17 23:49:18,184 - __main__ - INFO - Extracting embeddings...
+2025-12-17 23:49:18,553 - __main__ - ERROR - Baseline failed: CUDA out of memory. Tried to allocate 8.00 GiB. GPU 0 has a total capacity of 14.58 GiB of which 4.59 GiB is free. Process 36494 has 9.98 GiB memory in use. Of the allocated memory 9.15 GiB is allocated by PyTorch, and 16.59 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
 Traceback (most recent call last):
   File "/root/capsule/code/helical-challenge/main.py", line 1074, in run
     perf_metrics, outputs = self.run_baseline(model, data, adata, genes)
@@ -128,13 +128,13 @@ Traceback (most recent call last):
     return f(self, *args, **kwargs)
   File "/opt/conda/lib/python3.10/site-packages/torch/_tensor.py", line 1075, in __rsub__
     return _C._VariableFunctions.rsub(self, other)
-torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 8.00 GiB. GPU 0 has a total capacity of 14.58 GiB of which 4.59 GiB is free. Process 30537 has 9.98 GiB memory in use. Of the allocated memory 9.15 GiB is allocated by PyTorch, and 16.59 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
-2025-12-17 23:43:30,921 - __main__ - INFO - 
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 8.00 GiB. GPU 0 has a total capacity of 14.58 GiB of which 4.59 GiB is free. Process 36494 has 9.98 GiB memory in use. Of the allocated memory 9.15 GiB is allocated by PyTorch, and 16.59 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+2025-12-17 23:49:18,565 - __main__ - INFO - 
 ====================================================================================================
-2025-12-17 23:43:30,921 - __main__ - INFO - Running with BATCHING optimization...
-2025-12-17 23:43:30,921 - __main__ - INFO - Using batch size: 256 (original: 128)
-2025-12-17 23:43:30,922 - __main__ - INFO - Extracting embeddings...
-2025-12-17 23:43:31,412 - __main__ - ERROR - batching failed: CUDA out of memory. Tried to allocate 16.00 GiB. GPU 0 has a total capacity of 14.58 GiB of which 11.59 GiB is free. Process 30537 has 2.98 GiB memory in use. Of the allocated memory 2.16 GiB is allocated by PyTorch, and 8.59 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+2025-12-17 23:49:18,565 - __main__ - INFO - Running with BATCHING optimization...
+2025-12-17 23:49:18,565 - __main__ - INFO - Using batch size: 256 (original: 128)
+2025-12-17 23:49:18,567 - __main__ - INFO - Extracting embeddings...
+2025-12-17 23:49:19,066 - __main__ - ERROR - batching failed: CUDA out of memory. Tried to allocate 16.00 GiB. GPU 0 has a total capacity of 14.58 GiB of which 11.59 GiB is free. Process 36494 has 2.98 GiB memory in use. Of the allocated memory 2.16 GiB is allocated by PyTorch, and 8.59 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
 Traceback (most recent call last):
   File "/root/capsule/code/helical-challenge/main.py", line 1124, in run
     perf_metrics, outputs = runner(model, data, adata, genes)
@@ -162,13 +162,13 @@ Traceback (most recent call last):
     return AttentionMaskConverter._expand_mask(mask=mask, dtype=dtype, tgt_len=tgt_len)
   File "/opt/conda/lib/python3.10/site-packages/transformers/modeling_attn_mask_utils.py", line 188, in _expand_mask
     expanded_mask = mask[:, None, None, :].expand(bsz, 1, tgt_len, src_len).to(dtype)
-torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 16.00 GiB. GPU 0 has a total capacity of 14.58 GiB of which 11.59 GiB is free. Process 30537 has 2.98 GiB memory in use. Of the allocated memory 2.16 GiB is allocated by PyTorch, and 8.59 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
-2025-12-17 23:43:31,413 - __main__ - INFO - 
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 16.00 GiB. GPU 0 has a total capacity of 14.58 GiB of which 11.59 GiB is free. Process 36494 has 2.98 GiB memory in use. Of the allocated memory 2.16 GiB is allocated by PyTorch, and 8.59 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+2025-12-17 23:49:19,067 - __main__ - INFO - 
 ====================================================================================================
-2025-12-17 23:43:31,413 - __main__ - INFO - Running with QUANTIZATION optimization...
-2025-12-17 23:43:31,413 - __main__ - INFO - Applying float16 precision...
-2025-12-17 23:43:31,456 - __main__ - INFO - Extracting embeddings...
-2025-12-17 23:43:32,114 - __main__ - ERROR - quantization failed: CUDA out of memory. Tried to allocate 16.00 GiB. GPU 0 has a total capacity of 14.58 GiB of which 11.67 GiB is free. Process 30537 has 2.90 GiB memory in use. Of the allocated memory 2.09 GiB is allocated by PyTorch, and 1.26 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+2025-12-17 23:49:19,067 - __main__ - INFO - Running with QUANTIZATION optimization...
+2025-12-17 23:49:19,067 - __main__ - INFO - Applying float16 precision...
+2025-12-17 23:49:19,073 - __main__ - INFO - Extracting embeddings...
+2025-12-17 23:49:19,510 - __main__ - ERROR - quantization failed: CUDA out of memory. Tried to allocate 16.00 GiB. GPU 0 has a total capacity of 14.58 GiB of which 11.67 GiB is free. Process 36494 has 2.90 GiB memory in use. Of the allocated memory 2.09 GiB is allocated by PyTorch, and 1.26 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
 Traceback (most recent call last):
   File "/root/capsule/code/helical-challenge/main.py", line 1124, in run
     perf_metrics, outputs = runner(model, data, adata, genes)
@@ -196,13 +196,13 @@ Traceback (most recent call last):
     return AttentionMaskConverter._expand_mask(mask=mask, dtype=dtype, tgt_len=tgt_len)
   File "/opt/conda/lib/python3.10/site-packages/transformers/modeling_attn_mask_utils.py", line 188, in _expand_mask
     expanded_mask = mask[:, None, None, :].expand(bsz, 1, tgt_len, src_len).to(dtype)
-torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 16.00 GiB. GPU 0 has a total capacity of 14.58 GiB of which 11.67 GiB is free. Process 30537 has 2.90 GiB memory in use. Of the allocated memory 2.09 GiB is allocated by PyTorch, and 1.26 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
-2025-12-17 23:43:32,114 - __main__ - INFO - 
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 16.00 GiB. GPU 0 has a total capacity of 14.58 GiB of which 11.67 GiB is free. Process 36494 has 2.90 GiB memory in use. Of the allocated memory 2.09 GiB is allocated by PyTorch, and 1.26 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+2025-12-17 23:49:19,510 - __main__ - INFO - 
 ====================================================================================================
-2025-12-17 23:43:32,114 - __main__ - INFO - Running with DISTRIBUTED optimization...
-2025-12-17 23:43:32,114 - __main__ - INFO - Using 4 GPUs with DataParallel
-2025-12-17 23:43:32,116 - __main__ - INFO - Extracting embeddings...
-2025-12-17 23:43:32,116 - __main__ - ERROR - distributed failed: 'DataParallel' object has no attribute 'bert'
+2025-12-17 23:49:19,510 - __main__ - INFO - Running with DISTRIBUTED optimization...
+2025-12-17 23:49:19,510 - __main__ - INFO - Using 4 GPUs with DataParallel
+2025-12-17 23:49:19,512 - __main__ - INFO - Extracting embeddings...
+2025-12-17 23:49:19,512 - __main__ - ERROR - distributed failed: 'DataParallel' object has no attribute 'bert'
 Traceback (most recent call last):
   File "/root/capsule/code/helical-challenge/main.py", line 1124, in run
     perf_metrics, outputs = runner(model, data, adata, genes)
@@ -219,8 +219,8 @@ Traceback (most recent call last):
   File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1964, in __getattr__
     raise AttributeError(
 AttributeError: 'DataParallel' object has no attribute 'bert'
-2025-12-17 23:43:32,117 - __main__ - INFO - 
+2025-12-17 23:49:19,512 - __main__ - INFO - 
 ====================================================================================================
-2025-12-17 23:43:32,117 - __main__ - INFO - COMPARING OUTPUTS TO BASELINE
-2025-12-17 23:43:32,117 - __main__ - INFO - ====================================================================================================
-2025-12-17 23:43:32,117 - __main__ - ERROR - No methods completed successfully
+2025-12-17 23:49:19,513 - __main__ - INFO - COMPARING OUTPUTS TO BASELINE
+2025-12-17 23:49:19,513 - __main__ - INFO - ====================================================================================================
+2025-12-17 23:49:19,513 - __main__ - ERROR - No methods completed successfully
