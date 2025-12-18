@@ -30,8 +30,7 @@ seed: 42
 model:
   name: "gf-12L-38M-i4096"  # Model identifier
 #   'gf-12L-38M-i4096', 'gf-12L-38M-i4096-CLcancer', 'gf-20L-151M-i4096', 'gf-12L-40M-i2048', 'gf-6L-10M-i2048', 'gf-12L-104M-i4096', 'gf-12L-104M-i4096-CLcancer', 'gf-18L-316M-i4096', 'gf-12L-40M-i2048-CZI-CellxGene'
-  batch_size: 128              # Base batch size for inference
-  max_length: 2048            # Maximum sequence length
+  batch_size: 4              # Base batch size for inference
   device: 'cuda:0'
   # Alternative models (uncomment to use):
   # name: "geneformer-6L-30M"
@@ -50,12 +49,12 @@ data:
   preprocess: true
   normalize: true
   filter_genes: true
-  min_genes: 200      # Minimum genes per cell
+  min_genes: 10      # Minimum genes per cell
   min_cells: 3        # Minimum cells per gene
   
   # Subset data for testing
-  max_cells: 1000   # Limit number of cells for faster testing
-  max_genes: 100   # Limit number of genes
+  max_cells: 100   # Limit number of cells for faster testing
+  max_genes: 50   # Limit number of genes
 
 # ============================================================================
 # PERTURBATION CONFIGS
@@ -83,7 +82,7 @@ perturbation:
 optimization:
   # Methods to run: batching, quantization, onnx, distributed, all
   methods:
-    - all
+    - distributed
   
   # Batching optimization
   batching:
@@ -93,10 +92,7 @@ optimization:
   # Quantization optimization
   quantization:
     enabled: true
-    dtype: "qint8"           # Options: qint8, float16
-    quantize_layers:
-      - "torch.nn.Linear"
-    dynamic: true            # Use dynamic quantization
+    dtype: "float16"           # Options: qint8, float16
   
   # ONNX optimization
   onnx:
@@ -154,7 +150,7 @@ hardware:
 # EXPERIMENT TRACKING
 # ============================================================================
 experiment:
-  name: "geneformer_perturbation"
+  name: "geneformer_perturbation_100_genes"
   tags: []
   notes: ""
 
@@ -187,6 +183,7 @@ validation:
   # Sanity checks
   check_nan: true                   # Check for NaN values in outputs
   check_inf: true                   # Check for Inf values in outputs
+
 
 ```
 
