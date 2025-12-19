@@ -10,6 +10,7 @@ from typing import List, Optional, Dict, Any, Tuple
 from dataclasses import dataclass, field
 from datetime import datetime
 import warnings
+from tqdm.auto import trange
 
 import hydra
 from omegaconf import DictConfig, OmegaConf
@@ -30,6 +31,7 @@ try:
     from helical.models.geneformer.model import Geneformer
     from helical.models.geneformer.geneformer_tokenizer import TranscriptomeTokenizer
     from helical.models.geneformer.geneformer_config import GeneformerConfig
+    from helical.models.geneformer.geneformer_utils import pad_tensor_list, gen_attention_mask, get_model_input_size
     from helical.models.scgpt.dataset import Dataset
     HELICAL_AVAILABLE = True
 except ImportError:
@@ -54,7 +56,6 @@ except ImportError:
 import modelopt.torch.quantization as mtq
 
 # Ignore warnings
-import warnings
 warnings.filterwarnings("ignore")
 
 # Configure logging
@@ -367,20 +368,17 @@ class GeneformerPerturbationPipeline:
         config = GeneformerConfig(
             model_name=self.cfg.model.name,
             batch_size=self.cfg.model.batch_size,
-            device=self.cfg.model.device
+            device=self.cfg.model.device,
         )
         
         model = Geneformer(configurer=config)
-         
-        # Apply mixed precision if enabled
-        if self.cfg.hardware.mixed_precision:
-            logger.info("Enabling automatic mixed precision")
         
         # Compile model if enabled (PyTorch 2.0+)
         if self.cfg.advanced.compile_model:
             try:
                 logger.info(f"Compiling model with backend: {self.cfg.advanced.compile_backend}")
-                model = torch.compile(model, backend=self.cfg.advanced.compile_backend)
+                compiled_model = torch.compile(model.model, backend=self.cfg.advanced.compile_backend)
+                model.model = compiled_model
             except Exception as e:
                 logger.warning(f"Model compilation failed: {e}")
         
@@ -500,7 +498,7 @@ class GeneformerPerturbationPipeline:
         
         results = {}
         perturbation_type = self.cfg.perturbation.perturbation_type
-        
+        perturbed_data_dict = {}
         for gene in genes:
             logger.info(f"Perturbing gene: {gene} (type: {perturbation_type})")
 
@@ -541,12 +539,13 @@ class GeneformerPerturbationPipeline:
         perturbation_type = self.cfg.perturbation.perturbation_type
         
         for gene in genes:
-            logger.info(f"Extraxcting embeddings for perturbed: {gene} (type: {perturbation_type})")
+            if gene in perturbed_data_dict.keys():
+                logger.info(f"Extraxcting embeddings for perturbed: {gene} (type: {perturbation_type})")
 
-            perturbed_emb = self.extract_embeddings(model, perturbed_data_dict[gene])
-            results[gene] = perturbed_emb
+                perturbed_emb = self.extract_embeddings(model, perturbed_data_dict[gene])
+                results[gene] = perturbed_emb
             else:
-                logger.warning(f"Gene {gene} not found in data, skipping")
+                logger.warning(f"Gene {gene} not found in perturbed data, skipping")
         
         logger.info("Finished getting perturbation results.")
         return results
@@ -698,15 +697,46 @@ class GeneformerPerturbationPipeline:
         # Get quantization settings
         dtype_str = self.cfg.optimization.quantization.dtype
         
-        if dtype_str == "auto":
-
-            logger.info("Applying auto-quantization using nvidia-modelopt...")
-            pre_quantized_model = model.model.copy()
+        if dtype_str == "qint8" or dtype_str == "fp8":
+            
+            qconf = {"qint8": mtq.INT8_SMOOTHQUANT_CFG,
+                     "fp8": mtq.FP8_DEFAULT_CFG}
+            
+            logger.info("Applying QINT8 quantization using nvidia-modelopt...")
+            
+            MODEL_INPUT_SIZE = get_model_input_size(model.model)
+            PAD_TOKEN_ID = model.tk.gene_token_dict["<pad>"]
+            
             # Calibration for [quantize()]
-            def forward_loop():
-                pre_quantized_model(data)
-                
-            quantized_model = mtq.quantize(pre_quantized_model, mtq.NVFP4_DEFAULT_CFG, forward_loop)
+            def calib_loop(model):
+                silent = False
+                device = self.cfg.model.device
+                subset = data.select(range(self.cfg.optimization.quantization.calibration_data_size))
+                total_batch_length = len(subset)
+                forward_batch_size = self.cfg.model.batch_size
+                with torch.no_grad(), torch.amp.autocast("cuda", enabled=True):
+                    for i in trange(0, total_batch_length, forward_batch_size, leave=(not silent)):
+                        max_range = min(i + forward_batch_size, total_batch_length)
+
+                        minibatch = subset.select([i for i in range(i, max_range)])
+
+                        minibatch.set_format(type="torch", device=device)
+                        lengths = minibatch["length"]
+                        max_len = int(max(lengths))
+
+                        input_data_minibatch = minibatch["input_ids"]
+
+                        input_data_minibatch = pad_tensor_list(
+                            input_data_minibatch, max_len, PAD_TOKEN_ID, MODEL_INPUT_SIZE
+                        ).to(device)
+
+                        model(
+                            input_ids=input_data_minibatch,
+                            attention_mask=gen_attention_mask(minibatch),
+                            output_attentions=False,
+                        )
+       
+            quantized_model = mtq.quantize(model.model, qconf[dtype_str], calib_loop)
             model.model = quantized_model
         elif dtype_str == "float16":
             # Apply half precision
@@ -853,8 +883,7 @@ class GeneformerPerturbationPipeline:
         if (num_gpus > 1) & bool(self.cfg.optimization.distributed.use_data_parallel):
             
             logger.info(f"Using {num_gpus} GPUs with DataParallel")
-            model_to_parallelize = model.model.copy()
-            model_to_parallelize = model_to_parallelize.cpu()
+            model_to_parallelize = model.model.cpu()
             parallelized_model = torch.nn.DataParallel(model_to_parallelize)
             parallelized_model = parallelized_model.cuda()
             model.model = parallelized_model
