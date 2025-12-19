@@ -1,0 +1,576 @@
+2025-12-19 15:10:17,558 - __main__ - INFO - ====================================================================================================
+2025-12-19 15:10:17,558 - __main__ - INFO - GENEFORMER PERTURBATION PIPELINE
+2025-12-19 15:10:17,558 - __main__ - INFO - ====================================================================================================
+2025-12-19 15:10:17,558 - __main__ - INFO - Experiment: geneformer_perturbation_100_genes
+2025-12-19 15:10:17,563 - __main__ - INFO - 
+Configuration:
+seed: 42
+model:
+  name: gf-12L-38M-i4096
+  batch_size: 128
+  device: cuda:0
+data:
+  pertpy_data_identifier: norman_2019
+  condition_filter: control
+  gene_names_column: index
+  use_raw_counts: false
+  preprocess: true
+  normalize: true
+  filter_genes: true
+  min_genes: 100
+  min_cells: 3
+perturbation:
+  gene_list: null
+  num_genes: 200
+  perturbation_type: knockout
+  selection_method: top_expressed
+  perturbation_strength: 2.0
+optimization:
+  methods:
+  - quantization
+  batching:
+    enabled: true
+    batch_size_multiplier: 2
+  quantization:
+    enabled: true
+    dtype: auto
+  onnx:
+    enabled: true
+    opset_version: 14
+    optimize: true
+    use_gpu: true
+    precision: FP16
+  distributed:
+    enabled: true
+    backend: nccl
+    world_size: null
+    use_data_parallel: true
+output:
+  dir: outputs
+  save_outputs: true
+  compression: true
+  precision: float32
+  save_embeddings: true
+  save_perturbations: true
+  save_metadata: true
+  save_cell_ids: true
+  save_gene_names: true
+  save_detailed_comparisons: true
+  log_level: INFO
+  log_to_file: true
+  log_file: pipeline.log
+hardware:
+  device: auto
+  mixed_precision: false
+  cudnn_benchmark: true
+  empty_cache_between_methods: true
+experiment:
+  name: geneformer_perturbation_100_genes
+  tags: []
+  notes: ''
+reproducibility:
+  deterministic: true
+advanced:
+  compile_model: false
+  compile_backend: inductor
+  continue_on_error: true
+validation:
+  min_correlation: 0.95
+  max_mse: 0.01
+  warn_on_threshold: true
+  check_nan: true
+  check_inf: true
+
+2025-12-19 15:10:17,563 - __main__ - INFO - Loading Geneformer model...
+2025-12-19 15:10:21,066 - __main__ - INFO - Model loaded: gf-12L-38M-i4096
+2025-12-19 15:10:21,066 - __main__ - INFO - Loading data: norman_2019
+2025-12-19 15:10:46,497 - __main__ - INFO - Loaded 11835 cells, 19018 genes
+2025-12-19 15:10:46,497 - __main__ - INFO - Preprocessing data...
+2025-12-19 15:10:48,904 - __main__ - INFO - After filtering: 11835 cells, 18215 genes
+2025-12-19 15:10:49,068 - __main__ - INFO - Data normalized
+2025-12-19 15:10:49,069 - __main__ - INFO - Tokenizing data...
+2025-12-19 15:10:55,531 - __main__ - INFO - Tokenization complete
+2025-12-19 15:10:55,740 - __main__ - INFO - Selected 200 genes using method: top_expressed
+2025-12-19 15:10:55,740 - __main__ - INFO - 
+====================================================================================================
+2025-12-19 15:10:55,740 - __main__ - INFO - Running BASELINE (no optimization)...
+2025-12-19 15:10:55,743 - __main__ - INFO - Extracting embeddings...
+2025-12-19 15:10:56,129 - __main__ - ERROR - Baseline failed: CUDA out of memory. Tried to allocate 8.00 GiB. GPU 0 has a total capacity of 14.58 GiB of which 4.59 GiB is free. Process 21750 has 9.98 GiB memory in use. Of the allocated memory 9.15 GiB is allocated by PyTorch, and 16.59 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 1074, in run
+    perf_metrics, outputs = self.run_baseline(model, data, adata, genes)
+  File "/root/capsule/code/helical-challenge/main.py", line 554, in run_baseline
+    embeddings = self.extract_embeddings(model, data)
+  File "/root/capsule/code/helical-challenge/main.py", line 493, in extract_embeddings
+    embeddings = model.get_embeddings(data)
+  File "/opt/conda/lib/python3.10/site-packages/helical/models/geneformer/model.py", line 238, in get_embeddings
+    embeddings = get_embs(
+  File "/opt/conda/lib/python3.10/site-packages/helical/models/geneformer/geneformer_utils.py", line 193, in get_embs
+    outputs = model(
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 1463, in forward
+    outputs = self.bert(
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 1110, in forward
+    extended_attention_mask = _prepare_4d_attention_mask_for_sdpa(
+  File "/opt/conda/lib/python3.10/site-packages/transformers/modeling_attn_mask_utils.py", line 451, in _prepare_4d_attention_mask_for_sdpa
+    return AttentionMaskConverter._expand_mask(mask=mask, dtype=dtype, tgt_len=tgt_len)
+  File "/opt/conda/lib/python3.10/site-packages/transformers/modeling_attn_mask_utils.py", line 190, in _expand_mask
+    inverted_mask = 1.0 - expanded_mask
+  File "/opt/conda/lib/python3.10/site-packages/torch/_tensor.py", line 45, in wrapped
+    return f(self, *args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/_tensor.py", line 1075, in __rsub__
+    return _C._VariableFunctions.rsub(self, other)
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 8.00 GiB. GPU 0 has a total capacity of 14.58 GiB of which 4.59 GiB is free. Process 21750 has 9.98 GiB memory in use. Of the allocated memory 9.15 GiB is allocated by PyTorch, and 16.59 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+2025-12-19 15:10:56,141 - __main__ - INFO - 
+====================================================================================================
+2025-12-19 15:10:56,141 - __main__ - INFO - Running with QUANTIZATION optimization...
+2025-12-19 15:10:56,142 - __main__ - INFO - Applying dynamic int8 quantization...
+2025-12-19 15:10:56,142 - __main__ - ERROR - quantization failed: Expected type or tuple or callable but got <helical.models.geneformer.model.Geneformer object at 0x7f5c11f808b0>
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 1124, in run
+    perf_metrics, outputs = runner(model, data, adata, genes)
+  File "/root/capsule/code/helical-challenge/main.py", line 688, in run_with_quantization
+    quantized_model = mtq.quantize(model, mtq.NVFP4_DEFAULT_CFG, forward_loop)
+  File "/opt/conda/lib/python3.10/site-packages/modelopt/torch/quantization/model_quant.py", line 230, in quantize
+    model = apply_mode(model, mode=[("quantize", config)], registry=QuantizeModeRegistry)
+  File "/opt/conda/lib/python3.10/site-packages/modelopt/torch/opt/conversion.py", line 403, in apply_mode
+    model = _check_init_modellike(model, get_mode(mode_and_config[0][0]))
+  File "/opt/conda/lib/python3.10/site-packages/modelopt/torch/opt/conversion.py", line 338, in _check_init_modellike
+    model = model.init_modellike()
+  File "/opt/conda/lib/python3.10/site-packages/modelopt/torch/opt/conversion.py", line 328, in init_modellike
+    model = init_model_from_model_like(self.modellike)
+  File "/opt/conda/lib/python3.10/site-packages/modelopt/torch/utils/network.py", line 499, in init_model_from_model_like
+    model_cls, args, kwargs = standardize_model_like_tuple(model)
+  File "/opt/conda/lib/python3.10/site-packages/modelopt/torch/utils/network.py", line 467, in standardize_model_like_tuple
+    raise ValueError(f"Expected type or tuple or callable but got {model}")
+ValueError: Expected type or tuple or callable but got <helical.models.geneformer.model.Geneformer object at 0x7f5c11f808b0>
+2025-12-19 15:10:56,142 - __main__ - INFO - 
+====================================================================================================
+2025-12-19 15:10:56,142 - __main__ - INFO - COMPARING OUTPUTS TO BASELINE
+2025-12-19 15:10:56,142 - __main__ - INFO - ====================================================================================================
+2025-12-19 15:10:56,143 - __main__ - ERROR - No methods completed successfully
+2025-12-19 15:13:33,370 - __main__ - INFO - ====================================================================================================
+2025-12-19 15:13:33,371 - __main__ - INFO - GENEFORMER PERTURBATION PIPELINE
+2025-12-19 15:13:33,371 - __main__ - INFO - ====================================================================================================
+2025-12-19 15:13:33,371 - __main__ - INFO - Experiment: geneformer_perturbation_100_genes
+2025-12-19 15:13:33,375 - __main__ - INFO - 
+Configuration:
+seed: 42
+model:
+  name: gf-12L-38M-i4096
+  batch_size: 128
+  device: cuda:0
+data:
+  pertpy_data_identifier: norman_2019
+  condition_filter: control
+  gene_names_column: index
+  use_raw_counts: false
+  preprocess: true
+  normalize: true
+  filter_genes: true
+  min_genes: 100
+  min_cells: 3
+perturbation:
+  gene_list: null
+  num_genes: 200
+  perturbation_type: knockout
+  selection_method: top_expressed
+  perturbation_strength: 2.0
+optimization:
+  methods:
+  - quantization
+  batching:
+    enabled: true
+    batch_size_multiplier: 2
+  quantization:
+    enabled: true
+    dtype: auto
+  onnx:
+    enabled: true
+    opset_version: 14
+    optimize: true
+    use_gpu: true
+    precision: FP16
+  distributed:
+    enabled: true
+    backend: nccl
+    world_size: null
+    use_data_parallel: true
+output:
+  dir: outputs
+  save_outputs: true
+  compression: true
+  precision: float32
+  save_embeddings: true
+  save_perturbations: true
+  save_metadata: true
+  save_cell_ids: true
+  save_gene_names: true
+  save_detailed_comparisons: true
+  log_level: INFO
+  log_to_file: true
+  log_file: pipeline.log
+hardware:
+  device: auto
+  mixed_precision: false
+  cudnn_benchmark: true
+  empty_cache_between_methods: true
+experiment:
+  name: geneformer_perturbation_100_genes
+  tags: []
+  notes: ''
+reproducibility:
+  deterministic: true
+advanced:
+  compile_model: false
+  compile_backend: inductor
+  continue_on_error: true
+validation:
+  min_correlation: 0.95
+  max_mse: 0.01
+  warn_on_threshold: true
+  check_nan: true
+  check_inf: true
+
+2025-12-19 15:13:33,375 - __main__ - INFO - Loading Geneformer model...
+2025-12-19 15:13:36,838 - __main__ - INFO - Model loaded: gf-12L-38M-i4096
+2025-12-19 15:13:36,839 - __main__ - INFO - Loading data: norman_2019
+2025-12-19 15:14:01,858 - __main__ - INFO - Loaded 11835 cells, 19018 genes
+2025-12-19 15:14:01,858 - __main__ - INFO - Preprocessing data...
+2025-12-19 15:14:04,240 - __main__ - INFO - After filtering: 11835 cells, 18215 genes
+2025-12-19 15:14:04,402 - __main__ - INFO - Data normalized
+2025-12-19 15:14:04,403 - __main__ - INFO - Tokenizing data...
+2025-12-19 15:14:11,001 - __main__ - INFO - Tokenization complete
+2025-12-19 15:14:11,211 - __main__ - INFO - Selected 200 genes using method: top_expressed
+2025-12-19 15:14:11,211 - __main__ - INFO - 
+====================================================================================================
+2025-12-19 15:14:11,211 - __main__ - INFO - Running BASELINE (no optimization)...
+2025-12-19 15:14:11,214 - __main__ - INFO - Extracting embeddings...
+2025-12-19 15:14:11,605 - __main__ - ERROR - Baseline failed: CUDA out of memory. Tried to allocate 8.00 GiB. GPU 0 has a total capacity of 14.58 GiB of which 4.59 GiB is free. Process 24486 has 9.98 GiB memory in use. Of the allocated memory 9.15 GiB is allocated by PyTorch, and 16.59 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 1066, in run
+    perf_metrics, outputs = self.run_baseline(model, data, adata, genes)
+  File "/root/capsule/code/helical-challenge/main.py", line 554, in run_baseline
+    embeddings = self.extract_embeddings(model, data)
+  File "/root/capsule/code/helical-challenge/main.py", line 493, in extract_embeddings
+    embeddings = model.get_embeddings(data)
+  File "/opt/conda/lib/python3.10/site-packages/helical/models/geneformer/model.py", line 238, in get_embeddings
+    embeddings = get_embs(
+  File "/opt/conda/lib/python3.10/site-packages/helical/models/geneformer/geneformer_utils.py", line 193, in get_embs
+    outputs = model(
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 1463, in forward
+    outputs = self.bert(
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 1110, in forward
+    extended_attention_mask = _prepare_4d_attention_mask_for_sdpa(
+  File "/opt/conda/lib/python3.10/site-packages/transformers/modeling_attn_mask_utils.py", line 451, in _prepare_4d_attention_mask_for_sdpa
+    return AttentionMaskConverter._expand_mask(mask=mask, dtype=dtype, tgt_len=tgt_len)
+  File "/opt/conda/lib/python3.10/site-packages/transformers/modeling_attn_mask_utils.py", line 190, in _expand_mask
+    inverted_mask = 1.0 - expanded_mask
+  File "/opt/conda/lib/python3.10/site-packages/torch/_tensor.py", line 45, in wrapped
+    return f(self, *args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/_tensor.py", line 1075, in __rsub__
+    return _C._VariableFunctions.rsub(self, other)
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 8.00 GiB. GPU 0 has a total capacity of 14.58 GiB of which 4.59 GiB is free. Process 24486 has 9.98 GiB memory in use. Of the allocated memory 9.15 GiB is allocated by PyTorch, and 16.59 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+2025-12-19 15:14:11,617 - __main__ - INFO - 
+====================================================================================================
+2025-12-19 15:14:11,617 - __main__ - INFO - Running with QUANTIZATION optimization...
+2025-12-19 15:14:11,617 - __main__ - INFO - Applying auto-quantization using nvidia-modelopt...
+2025-12-19 15:14:11,782 - __main__ - ERROR - quantization failed: 'Geneformer' object is not callable
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 1116, in run
+    perf_metrics, outputs = runner(model, data, adata, genes)
+  File "/root/capsule/code/helical-challenge/main.py", line 681, in run_with_quantization
+    quantized_model = mtq.quantize(model.model, mtq.NVFP4_DEFAULT_CFG, forward_loop)
+  File "/opt/conda/lib/python3.10/site-packages/modelopt/torch/quantization/model_quant.py", line 231, in quantize
+    return calibrate(model, config["algorithm"], forward_loop=forward_loop)
+  File "/opt/conda/lib/python3.10/site-packages/modelopt/torch/quantization/model_quant.py", line 102, in calibrate
+    apply_mode(
+  File "/opt/conda/lib/python3.10/site-packages/modelopt/torch/opt/conversion.py", line 418, in apply_mode
+    model, metadata = get_mode(m).convert(model, config, **kwargs)  # type: ignore  [call-arg]
+  File "/opt/conda/lib/python3.10/site-packages/modelopt/torch/quantization/mode.py", line 294, in wrapped_func
+    return wrapped_calib_func(model, config, forward_loop, func=self.__class__._calib_func)
+  File "/opt/conda/lib/python3.10/site-packages/modelopt/torch/quantization/mode.py", line 220, in wrapped_calib_func
+    func(model, forward_loop=forward_loop, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/modelopt/torch/quantization/model_calib.py", line 81, in max_calibrate
+    forward_loop(model)
+  File "/opt/conda/lib/python3.10/site-packages/modelopt/torch/quantization/model_quant.py", line 95, in forward_loop
+    return original_forward_loop()  # type: ignore[call-arg]
+  File "/root/capsule/code/helical-challenge/main.py", line 680, in forward_loop
+    model(data)
+TypeError: 'Geneformer' object is not callable
+2025-12-19 15:14:11,783 - __main__ - INFO - 
+====================================================================================================
+2025-12-19 15:14:11,783 - __main__ - INFO - COMPARING OUTPUTS TO BASELINE
+2025-12-19 15:14:11,783 - __main__ - INFO - ====================================================================================================
+2025-12-19 15:14:11,783 - __main__ - ERROR - No methods completed successfully
+2025-12-19 15:16:51,881 - __main__ - INFO - ====================================================================================================
+2025-12-19 15:16:51,881 - __main__ - INFO - GENEFORMER PERTURBATION PIPELINE
+2025-12-19 15:16:51,881 - __main__ - INFO - ====================================================================================================
+2025-12-19 15:16:51,881 - __main__ - INFO - Experiment: geneformer_perturbation_100_genes
+2025-12-19 15:16:51,885 - __main__ - INFO - 
+Configuration:
+seed: 42
+model:
+  name: gf-12L-38M-i4096
+  batch_size: 128
+  device: cuda:0
+data:
+  pertpy_data_identifier: norman_2019
+  condition_filter: control
+  gene_names_column: index
+  use_raw_counts: false
+  preprocess: true
+  normalize: true
+  filter_genes: true
+  min_genes: 100
+  min_cells: 3
+perturbation:
+  gene_list: null
+  num_genes: 200
+  perturbation_type: knockout
+  selection_method: top_expressed
+  perturbation_strength: 2.0
+optimization:
+  methods:
+  - quantization
+  batching:
+    enabled: true
+    batch_size_multiplier: 2
+  quantization:
+    enabled: true
+    dtype: auto
+  onnx:
+    enabled: true
+    opset_version: 14
+    optimize: true
+    use_gpu: true
+    precision: FP16
+  distributed:
+    enabled: true
+    backend: nccl
+    world_size: null
+    use_data_parallel: true
+output:
+  dir: outputs
+  save_outputs: true
+  compression: true
+  precision: float32
+  save_embeddings: true
+  save_perturbations: true
+  save_metadata: true
+  save_cell_ids: true
+  save_gene_names: true
+  save_detailed_comparisons: true
+  log_level: INFO
+  log_to_file: true
+  log_file: pipeline.log
+hardware:
+  device: auto
+  mixed_precision: false
+  cudnn_benchmark: true
+  empty_cache_between_methods: true
+experiment:
+  name: geneformer_perturbation_100_genes
+  tags: []
+  notes: ''
+reproducibility:
+  deterministic: true
+advanced:
+  compile_model: false
+  compile_backend: inductor
+  continue_on_error: true
+validation:
+  min_correlation: 0.95
+  max_mse: 0.01
+  warn_on_threshold: true
+  check_nan: true
+  check_inf: true
+
+2025-12-19 15:16:51,886 - __main__ - INFO - Loading Geneformer model...
+2025-12-19 15:16:55,308 - __main__ - INFO - Model loaded: gf-12L-38M-i4096
+2025-12-19 15:16:55,308 - __main__ - INFO - Loading data: norman_2019
+2025-12-19 15:17:20,287 - __main__ - INFO - Loaded 11835 cells, 19018 genes
+2025-12-19 15:17:20,288 - __main__ - INFO - Preprocessing data...
+2025-12-19 15:17:22,633 - __main__ - INFO - After filtering: 11835 cells, 18215 genes
+2025-12-19 15:17:22,797 - __main__ - INFO - Data normalized
+2025-12-19 15:17:22,798 - __main__ - INFO - Tokenizing data...
+2025-12-19 15:17:29,224 - __main__ - INFO - Tokenization complete
+2025-12-19 15:17:29,432 - __main__ - INFO - Selected 200 genes using method: top_expressed
+2025-12-19 15:17:29,432 - __main__ - INFO - 
+====================================================================================================
+2025-12-19 15:17:29,432 - __main__ - INFO - Running BASELINE (no optimization)...
+2025-12-19 15:17:29,435 - __main__ - INFO - Extracting embeddings...
+2025-12-19 15:17:29,812 - __main__ - ERROR - Baseline failed: CUDA out of memory. Tried to allocate 8.00 GiB. GPU 0 has a total capacity of 14.58 GiB of which 4.59 GiB is free. Process 27277 has 9.98 GiB memory in use. Of the allocated memory 9.15 GiB is allocated by PyTorch, and 16.59 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 1068, in run
+    perf_metrics, outputs = self.run_baseline(model, data, adata, genes)
+  File "/root/capsule/code/helical-challenge/main.py", line 554, in run_baseline
+    embeddings = self.extract_embeddings(model, data)
+  File "/root/capsule/code/helical-challenge/main.py", line 493, in extract_embeddings
+    embeddings = model.get_embeddings(data)
+  File "/opt/conda/lib/python3.10/site-packages/helical/models/geneformer/model.py", line 238, in get_embeddings
+    embeddings = get_embs(
+  File "/opt/conda/lib/python3.10/site-packages/helical/models/geneformer/geneformer_utils.py", line 193, in get_embs
+    outputs = model(
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 1463, in forward
+    outputs = self.bert(
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 1110, in forward
+    extended_attention_mask = _prepare_4d_attention_mask_for_sdpa(
+  File "/opt/conda/lib/python3.10/site-packages/transformers/modeling_attn_mask_utils.py", line 451, in _prepare_4d_attention_mask_for_sdpa
+    return AttentionMaskConverter._expand_mask(mask=mask, dtype=dtype, tgt_len=tgt_len)
+  File "/opt/conda/lib/python3.10/site-packages/transformers/modeling_attn_mask_utils.py", line 190, in _expand_mask
+    inverted_mask = 1.0 - expanded_mask
+  File "/opt/conda/lib/python3.10/site-packages/torch/_tensor.py", line 45, in wrapped
+    return f(self, *args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/_tensor.py", line 1075, in __rsub__
+    return _C._VariableFunctions.rsub(self, other)
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 8.00 GiB. GPU 0 has a total capacity of 14.58 GiB of which 4.59 GiB is free. Process 27277 has 9.98 GiB memory in use. Of the allocated memory 9.15 GiB is allocated by PyTorch, and 16.59 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+2025-12-19 15:17:29,824 - __main__ - INFO - 
+====================================================================================================
+2025-12-19 15:17:29,825 - __main__ - INFO - Running with QUANTIZATION optimization...
+2025-12-19 15:17:29,825 - __main__ - INFO - Applying auto-quantization using nvidia-modelopt...
+2025-12-19 15:17:29,825 - __main__ - ERROR - quantization failed: 'BertForMaskedLM' object has no attribute 'copy'
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 1118, in run
+    perf_metrics, outputs = runner(model, data, adata, genes)
+  File "/root/capsule/code/helical-challenge/main.py", line 678, in run_with_quantization
+    pre_quantized_model = model.model.copy()
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1964, in __getattr__
+    raise AttributeError(
+AttributeError: 'BertForMaskedLM' object has no attribute 'copy'
+2025-12-19 15:17:29,826 - __main__ - INFO - 
+====================================================================================================
+2025-12-19 15:17:29,826 - __main__ - INFO - COMPARING OUTPUTS TO BASELINE
+2025-12-19 15:17:29,826 - __main__ - INFO - ====================================================================================================
+2025-12-19 15:17:29,826 - __main__ - ERROR - No methods completed successfully
+2025-12-19 15:18:39,408 - __main__ - INFO - ====================================================================================================
+2025-12-19 15:18:39,408 - __main__ - INFO - GENEFORMER PERTURBATION PIPELINE
+2025-12-19 15:18:39,408 - __main__ - INFO - ====================================================================================================
+2025-12-19 15:18:39,408 - __main__ - INFO - Experiment: geneformer_perturbation_100_genes
+2025-12-19 15:18:39,413 - __main__ - INFO - 
+Configuration:
+seed: 42
+model:
+  name: gf-12L-38M-i4096
+  batch_size: 32
+  device: cuda:0
+data:
+  pertpy_data_identifier: norman_2019
+  condition_filter: control
+  gene_names_column: index
+  use_raw_counts: false
+  preprocess: true
+  normalize: true
+  filter_genes: true
+  min_genes: 100
+  min_cells: 3
+perturbation:
+  gene_list: null
+  num_genes: 200
+  perturbation_type: knockout
+  selection_method: top_expressed
+  perturbation_strength: 2.0
+optimization:
+  methods:
+  - quantization
+  batching:
+    enabled: true
+    batch_size_multiplier: 2
+  quantization:
+    enabled: true
+    dtype: auto
+  onnx:
+    enabled: true
+    opset_version: 14
+    optimize: true
+    use_gpu: true
+    precision: FP16
+  distributed:
+    enabled: true
+    backend: nccl
+    world_size: null
+    use_data_parallel: true
+output:
+  dir: outputs
+  save_outputs: true
+  compression: true
+  precision: float32
+  save_embeddings: true
+  save_perturbations: true
+  save_metadata: true
+  save_cell_ids: true
+  save_gene_names: true
+  save_detailed_comparisons: true
+  log_level: INFO
+  log_to_file: true
+  log_file: pipeline.log
+hardware:
+  device: auto
+  mixed_precision: false
+  cudnn_benchmark: true
+  empty_cache_between_methods: true
+experiment:
+  name: geneformer_perturbation_100_genes
+  tags: []
+  notes: ''
+reproducibility:
+  deterministic: true
+advanced:
+  compile_model: false
+  compile_backend: inductor
+  continue_on_error: true
+validation:
+  min_correlation: 0.95
+  max_mse: 0.01
+  warn_on_threshold: true
+  check_nan: true
+  check_inf: true
+
+2025-12-19 15:18:39,413 - __main__ - INFO - Loading Geneformer model...
+2025-12-19 15:18:42,821 - __main__ - INFO - Model loaded: gf-12L-38M-i4096
+2025-12-19 15:18:42,821 - __main__ - INFO - Loading data: norman_2019
+2025-12-19 15:19:07,733 - __main__ - INFO - Loaded 11835 cells, 19018 genes
+2025-12-19 15:19:07,733 - __main__ - INFO - Preprocessing data...
+2025-12-19 15:19:10,077 - __main__ - INFO - After filtering: 11835 cells, 18215 genes
+2025-12-19 15:19:10,236 - __main__ - INFO - Data normalized
+2025-12-19 15:19:10,237 - __main__ - INFO - Tokenizing data...
+2025-12-19 15:19:16,693 - __main__ - INFO - Tokenization complete
+2025-12-19 15:19:16,882 - __main__ - INFO - Selected 200 genes using method: top_expressed
+2025-12-19 15:19:16,882 - __main__ - INFO - 
+====================================================================================================
+2025-12-19 15:19:16,882 - __main__ - INFO - Running BASELINE (no optimization)...
+2025-12-19 15:19:16,885 - __main__ - INFO - Extracting embeddings...
+2025-12-19 15:34:42,976 - __main__ - INFO - Extracted embeddings shape: (11835, 512)
+2025-12-19 15:34:42,976 - __main__ - INFO - Performing perturbation on 200 genes...
+2025-12-19 15:34:42,976 - __main__ - INFO - Perturbing gene: SOD1 (type: knockout)
+2025-12-19 15:34:42,976 - __main__ - WARNING - Using manual perturbation for SOD1
+2025-12-19 15:34:50,302 - __main__ - INFO - Extracting embeddings...
+2025-12-19 15:50:17,347 - __main__ - INFO - Extracted embeddings shape: (11835, 512)
+2025-12-19 15:50:17,347 - __main__ - INFO - Perturbing gene: TBCA (type: knockout)
+2025-12-19 15:50:17,347 - __main__ - WARNING - Using manual perturbation for TBCA
+2025-12-19 15:50:24,366 - __main__ - INFO - Extracting embeddings...

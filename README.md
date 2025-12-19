@@ -1,12 +1,8 @@
 # Helical challenge
 
 > [!WARNING]  
-> TBD:
->
-> Fix quantization using mtq
->  
-> ONNX inference is set up using torch-ort but is not currently tested. 
-
+> * Quantization uses nvidia-modelopt to auto-quantize, so each layer is optimized to a different precision 
+> * ONNX inference is set up using torch-ort but is not currently tested
 
 ## Usage
 

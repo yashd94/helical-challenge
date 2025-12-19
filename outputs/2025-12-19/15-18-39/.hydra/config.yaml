@@ -1,0 +1,76 @@
+seed: 42
+model:
+  name: gf-12L-38M-i4096
+  batch_size: 32
+  device: cuda:0
+data:
+  pertpy_data_identifier: norman_2019
+  condition_filter: control
+  gene_names_column: index
+  use_raw_counts: false
+  preprocess: true
+  normalize: true
+  filter_genes: true
+  min_genes: 100
+  min_cells: 3
+perturbation:
+  gene_list: null
+  num_genes: 200
+  perturbation_type: knockout
+  selection_method: top_expressed
+  perturbation_strength: 2.0
+optimization:
+  methods:
+  - quantization
+  batching:
+    enabled: true
+    batch_size_multiplier: 2
+  quantization:
+    enabled: true
+    dtype: auto
+  onnx:
+    enabled: true
+    opset_version: 14
+    optimize: true
+    use_gpu: true
+    precision: FP16
+  distributed:
+    enabled: true
+    backend: nccl
+    world_size: null
+    use_data_parallel: true
+output:
+  dir: outputs
+  save_outputs: true
+  compression: true
+  precision: float32
+  save_embeddings: true
+  save_perturbations: true
+  save_metadata: true
+  save_cell_ids: true
+  save_gene_names: true
+  save_detailed_comparisons: true
+  log_level: INFO
+  log_to_file: true
+  log_file: pipeline.log
+hardware:
+  device: auto
+  mixed_precision: false
+  cudnn_benchmark: true
+  empty_cache_between_methods: true
+experiment:
+  name: geneformer_perturbation_100_genes
+  tags: []
+  notes: ''
+reproducibility:
+  deterministic: true
+advanced:
+  compile_model: false
+  compile_backend: inductor
+  continue_on_error: true
+validation:
+  min_correlation: 0.95
+  max_mse: 0.01
+  warn_on_threshold: true
+  check_nan: true
+  check_inf: true

@@ -53,17 +53,16 @@ except ImportError:
 # Quantization using nvidia-modelopt
 import modelopt.torch.quantization as mtq
 
+# Ignore warnings
+import warnings
+warnings.filterwarnings("ignore")
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
-
-
-# ============================================================================
-# DATA CLASSES
-# ============================================================================
 
 @dataclass
 class ModelOutputs:
@@ -168,10 +167,6 @@ class PerformanceMetrics:
     timestamp: str
     additional_metrics: Dict[str, Any] = field(default_factory=dict)
 
-
-# ============================================================================
-# UTILITY CLASSES
-# ============================================================================
 
 class PerformanceMonitor:
     """Monitor system performance during execution."""
@@ -362,7 +357,7 @@ class GeneformerPerturbationPipeline:
             logger.setLevel(getattr(logging, cfg.output.log_level))
     
     # ------------------------------------------------------------------------
-    # Data Loading and Preprocessing
+    # Data loading, pre-processing
     # ------------------------------------------------------------------------
     
     def load_model(self) -> Geneformer:
@@ -477,7 +472,7 @@ class GeneformerPerturbationPipeline:
         return genes
     
     # ------------------------------------------------------------------------
-    # Core Inference Methods
+    # Inference functions
     # ------------------------------------------------------------------------
     
     def extract_embeddings(self, model: Geneformer, data: Dataset) -> np.ndarray:
@@ -494,12 +489,12 @@ class GeneformerPerturbationPipeline:
         logger.info(f"Extracted embeddings shape: {embeddings.shape}")
         return embeddings
     
-    def perform_perturbation(
+    def perform_perturbations(
         self, 
         model: Geneformer, 
         adata: ad.AnnData, 
         genes: List[str]
-    ) -> Dict[str, np.ndarray]:
+    ) -> Dict:
         """Perform in silico gene perturbation."""
         logger.info(f"Performing perturbation on {len(genes)} genes...")
         
@@ -508,9 +503,7 @@ class GeneformerPerturbationPipeline:
         
         for gene in genes:
             logger.info(f"Perturbing gene: {gene} (type: {perturbation_type})")
-            
-            # Fallback: manual perturbation
-            logger.warning(f"Using manual perturbation for {gene}")
+
             perturbed_data = adata.copy()
 
             if gene in perturbed_data.var_names:
@@ -524,13 +517,38 @@ class GeneformerPerturbationPipeline:
                     strength = getattr(self.cfg.perturbation, 'perturbation_strength', 2.0)
                     perturbed_data.X[:, gene_idx] *= strength
                    
-                tokenized_perturbed_data = model.process_data(perturbed_data, use_raw_counts = bool(self.cfg.data.use_raw_counts))
-                perturbed_emb = self.extract_embeddings(model, tokenized_perturbed_data)
-                results[gene] = perturbed_emb
+                perturbed_data_dict[gene] = model.process_data(
+                                                               perturbed_data, 
+                                                               use_raw_counts = bool(self.cfg.data.use_raw_counts)
+                                                              )
+
             else:
                 logger.warning(f"Gene {gene} not found in data, skipping")
         
-        logger.info("Perturbation complete")
+        logger.info("Perturbations complete.")
+        return perturbed_data_dict
+    
+    def get_perturbation_results(
+        self, 
+        model: Geneformer, 
+        perturbed_data_dict: Dict, 
+        genes: List[str]
+    ) -> Dict[str, np.ndarray]:
+        """Extract post-perturbation embeddings"""
+        logger.info(f"Extracting embeddings for perturbations on {len(genes)} genes...")
+        
+        results = {}
+        perturbation_type = self.cfg.perturbation.perturbation_type
+        
+        for gene in genes:
+            logger.info(f"Extraxcting embeddings for perturbed: {gene} (type: {perturbation_type})")
+
+            perturbed_emb = self.extract_embeddings(model, perturbed_data_dict[gene])
+            results[gene] = perturbed_emb
+            else:
+                logger.warning(f"Gene {gene} not found in data, skipping")
+        
+        logger.info("Finished getting perturbation results.")
         return results
     
     # ------------------------------------------------------------------------
@@ -542,7 +560,8 @@ class GeneformerPerturbationPipeline:
         model: Geneformer, 
         data: Dataset,
         adata: ad.AnnData, 
-        genes: List[str]
+        genes: List[str],
+        perturbed_data_dict: Dict
     ) -> Tuple[PerformanceMetrics, ModelOutputs]:
         """Run baseline inference without optimization."""
         logger.info("Running BASELINE (no optimization)...")
@@ -554,7 +573,9 @@ class GeneformerPerturbationPipeline:
         embeddings = self.extract_embeddings(model, data)
         
         # Perform perturbations
-        perturbation_results = self.perform_perturbation(model, adata, genes)
+        # DEPRECATED
+        # perturbation_results = self.perform_perturbation(model, adata, genes)
+        perturbation_results = self.get_perturbation_results(model, perturbed_data_dict, genes)
         
         end_time = time.time()
         end_metrics = self.monitor.get_metrics()
@@ -590,7 +611,8 @@ class GeneformerPerturbationPipeline:
         model: Geneformer, 
         data: Dataset,
         adata: ad.AnnData, 
-        genes: List[str]
+        genes: List[str],
+        perturbed_data_dict: Dict
     ) -> Tuple[PerformanceMetrics, ModelOutputs]:
         """Run inference with optimized batching."""
         logger.info("Running with BATCHING optimization...")
@@ -617,8 +639,11 @@ class GeneformerPerturbationPipeline:
         embeddings = self.extract_embeddings(model, data)
         
         # Perform perturbations
-        perturbation_results = self.perform_perturbation(model, adata, genes)
-        
+        # DEPRECATED
+        # perturbation_results = self.perform_perturbation(model, adata, genes)
+        # Get perturbation results
+        perturbation_results = self.get_perturbation_results(model, perturbed_data_dict, genes)
+                                                             
         # Restore batch size
         model.forward_batch_size = old_batch_size
         
@@ -660,7 +685,8 @@ class GeneformerPerturbationPipeline:
         model: Geneformer, 
         data: Dataset,
         adata: ad.AnnData, 
-        genes: List[str]
+        genes: List[str],
+        perturbed_data_dict: Dict
     ) -> Tuple[PerformanceMetrics, ModelOutputs]:
         """Run inference with model quantization."""
         logger.info("Running with QUANTIZATION optimization...")
@@ -672,20 +698,15 @@ class GeneformerPerturbationPipeline:
         # Get quantization settings
         dtype_str = self.cfg.optimization.quantization.dtype
         
-        if dtype_str == "qint8":
-            # Apply dynamic quantization
-            logger.info("Applying dynamic int8 quantization...")
+        if dtype_str == "auto":
 
-            # quantize_dynamic not implemented for cuda
-            # quantized_model = torch.quantization.quantize_dynamic(
-            #    model.model, 
-            #    {torch.nn.Linear}, 
-            #    dtype=torch.qint8
-            #)
+            logger.info("Applying auto-quantization using nvidia-modelopt...")
+            pre_quantized_model = model.model.copy()
+            # Calibration for [quantize()]
             def forward_loop():
-                model(data)
+                pre_quantized_model(data)
                 
-            quantized_model = mtq.quantize(model, mtq.NVFP4_DEFAULT_CFG, forward_loop)
+            quantized_model = mtq.quantize(pre_quantized_model, mtq.NVFP4_DEFAULT_CFG, forward_loop)
             model.model = quantized_model
         elif dtype_str == "float16":
             # Apply half precision
@@ -694,8 +715,7 @@ class GeneformerPerturbationPipeline:
             model.model = quantized_model
         else:
             logger.warning(f"Unknown dtype: {dtype_str}, using original model")
-            # quantized_model = model
-        
+
         start_time = time.time()
         start_metrics = self.monitor.get_metrics()
         
@@ -703,7 +723,9 @@ class GeneformerPerturbationPipeline:
         embeddings = self.extract_embeddings(model, data)
         
         # Perform perturbations
-        perturbation_results = self.perform_perturbation(model, adata, genes)
+        # DEPRECATED
+        # perturbation_results = self.perform_perturbation(model, adata, genes)
+        perturbation_results = self.get_perturbation_results(model, perturbed_data_dict, genes)
         
         end_time = time.time()
         end_metrics = self.monitor.get_metrics()
@@ -739,7 +761,8 @@ class GeneformerPerturbationPipeline:
         model: Geneformer, 
         data: Dataset,
         adata: ad.AnnData,  
-        genes: List[str]
+        genes: List[str],
+        perturbed_data_dict: Dict
     ) -> Tuple[PerformanceMetrics, ModelOutputs]:
         """Run inference with ONNX export."""
         if not ONNX_AVAILABLE:
@@ -759,24 +782,7 @@ class GeneformerPerturbationPipeline:
             onnx_model.model = ORTInferenceModule(onnx_model.model, 
                                                   provider_options = provider_options)
             model = onnx_model
-#         onnx_path = self.output_dir / "model.onnx"
-        
-#         try:
-#             logger.info("Exporting model to ONNX format...")
-#             dummy_input = torch.randn(1, self.cfg.model.max_length).long().to(self.device)
-            
-#             torch.onnx.export(
-#                 model.model,
-#                 dummy_input,
-#                 onnx_path,
-#                 export_params=True,
-#                 opset_version=self.cfg.optimization.onnx.opset_version,
-#                 do_constant_folding=True,
-#                 input_names=['input'],
-#                 output_names=['output'],
-#                 dynamic_axes={'input': {0: 'batch_size'}, 'output': {0: 'batch_size'}}
-#             )
-#             logger.info(f"Model exported to {onnx_path}")
+
         except Exception as e:
             logger.warning(f"ONNX export failed: {e}. Using original model.")
         
@@ -784,7 +790,12 @@ class GeneformerPerturbationPipeline:
         start_metrics = self.monitor.get_metrics()
         
         embeddings = self.extract_embeddings(model, data)
-        perturbation_results = self.perform_perturbation(model, adata, genes)
+        
+        # Perform perturbation 
+        # DEPRECATED
+        # perturbation_results = self.perform_perturbation(model, adata, genes)
+        
+        perturbation_results = self.get_perturbation_results(model, perturbed_data_dict, genes)
         
         end_time = time.time()
         end_metrics = self.monitor.get_metrics()
@@ -823,7 +834,8 @@ class GeneformerPerturbationPipeline:
         model: Geneformer, 
         data: Dataset,
         adata: ad.AnnData, 
-        genes: List[str]
+        genes: List[str],
+        perturbed_data_dict: Dict
     ) -> Tuple[PerformanceMetrics, ModelOutputs]:
         """Run inference with distributed processing."""
         if not DISTRIBUTED_AVAILABLE:
@@ -839,8 +851,14 @@ class GeneformerPerturbationPipeline:
         num_gpus = torch.cuda.device_count()
         
         if (num_gpus > 1) & bool(self.cfg.optimization.distributed.use_data_parallel):
+            
             logger.info(f"Using {num_gpus} GPUs with DataParallel")
-            model.model = torch.nn.DataParallel(model.model)
+            model_to_parallelize = model.model.copy()
+            model_to_parallelize = model_to_parallelize.cpu()
+            parallelized_model = torch.nn.DataParallel(model_to_parallelize)
+            parallelized_model = parallelized_model.cuda()
+            model.model = parallelized_model
+            
         else:
             logger.warning("Only 1 GPU available, distributed mode may not provide benefits")
         
@@ -851,7 +869,10 @@ class GeneformerPerturbationPipeline:
         embeddings = self.extract_embeddings(model, data)
         
         # Perform perturbations
-        perturbation_results = self.perform_perturbation(model, adata, genes)
+        # DEPRECATED
+        # perturbation_results = self.perform_perturbation(model, adata, genes)
+        
+        perturbation_results = self.get_perturbation_results(model, perturbed_data_dict, genes)
         
         end_time = time.time()
         end_metrics = self.monitor.get_metrics()
@@ -1064,6 +1085,9 @@ class GeneformerPerturbationPipeline:
         # Get genes to perturb
         genes = self.get_genes_to_perturb(adata)
         
+        # Get perturbed and tokenized data (once!)
+        perturbed_data_dict = self.perform_perturbations(model, adata, genes)
+        
         # Storage for results
         perf_metrics_list = []
         outputs_dict = {}
@@ -1071,7 +1095,9 @@ class GeneformerPerturbationPipeline:
         # Always run baseline first
         logger.info("\n" + "="*100)
         try:
-            perf_metrics, outputs = self.run_baseline(model, data, adata, genes)
+            perf_metrics, outputs = self.run_baseline(model, data, 
+                                                      adata, genes,
+                                                      perturbed_data_dict)
             
             # Validate outputs
             if self.validate_outputs(outputs):
@@ -1121,7 +1147,9 @@ class GeneformerPerturbationPipeline:
             
             try:
                 runner = method_runners[method]
-                perf_metrics, outputs = runner(model, data, adata, genes)
+                perf_metrics, outputs = runner(model, data, 
+                                               adata, genes,
+                                               perturbed_data_dict)
                 
                 if perf_metrics is None or outputs is None:
                     logger.warning(f"{method} returned no results (may be disabled)")

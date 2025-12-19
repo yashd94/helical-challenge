@@ -9,7 +9,7 @@ seed: 42
 model:
   name: "gf-12L-38M-i4096"  # Model identifier
 #   'gf-12L-38M-i4096', 'gf-12L-38M-i4096-CLcancer', 'gf-20L-151M-i4096', 'gf-12L-40M-i2048', 'gf-6L-10M-i2048', 'gf-12L-104M-i4096', 'gf-12L-104M-i4096-CLcancer', 'gf-18L-316M-i4096', 'gf-12L-40M-i2048-CZI-CellxGene'
-  batch_size: 4              # Base batch size for inference
+  batch_size: 32              # Base batch size for inference
   device: 'cuda:0'
   # Alternative models (uncomment to use):
   # name: "geneformer-6L-30M"
@@ -28,12 +28,12 @@ data:
   preprocess: true
   normalize: true
   filter_genes: true
-  min_genes: 10      # Minimum genes per cell
+  min_genes: 100      # Minimum genes per cell
   min_cells: 3        # Minimum cells per gene
   
   # Subset data for testing
-  max_cells: 100   # Limit number of cells for faster testing
-  max_genes: 50   # Limit number of genes
+  # max_cells: 100   # Limit number of cells for faster testing
+  # max_genes: 50   # Limit number of genes
 
 # ============================================================================
 # PERTURBATION CONFIGS
@@ -44,7 +44,7 @@ perturbation:
   # gene_list: ["BRCA1", "TP53", "MYC", "EGFR", "KRAS"]
   
   # Option 2: Number of top variable genes (set gene_list to null if using this)
-  num_genes: 10
+  num_genes: 200
   
   # Perturbation settings
   perturbation_type: "knockout"  # Options: knockout, overexpression
@@ -61,7 +61,7 @@ perturbation:
 optimization:
   # Methods to run: batching, quantization, onnx, distributed, all
   methods:
-    - distributed
+    - quantization
   
   # Batching optimization
   batching:
@@ -71,7 +71,7 @@ optimization:
   # Quantization optimization
   quantization:
     enabled: true
-    dtype: "float16"           # Options: qint8, float16
+    dtype: "auto"           # Options: auto, float16
   
   # ONNX optimization
   onnx:

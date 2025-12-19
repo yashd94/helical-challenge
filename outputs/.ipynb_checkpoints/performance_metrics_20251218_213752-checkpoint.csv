@@ -1,3 +1,0 @@
-method,runtime_seconds,cpu_percent,memory_mb,gpu_memory_mb,gpu_utilization,throughput_cells_per_sec,num_cells,num_genes_perturbed,timestamp,extra_optimization,extra_quantization_dtype
-baseline,10.951417684555054,72.6,6456.6328125,154.53662109375,44,91.31237879916814,1000,10,2025-12-18T21:37:40.181859,none,
-quantization,9.601500749588013,72.4,6485.21875,81.8623046875,44,104.1503850367255,1000,10,2025-12-18T21:37:50.858876,,float16
