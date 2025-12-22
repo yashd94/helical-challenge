@@ -1,3 +1,0 @@
-method,runtime_seconds,cpu_percent,memory_mb,gpu_memory_mb,gpu_utilization,throughput_cells_per_sec,num_cells,num_genes_perturbed,timestamp,extra_optimization,extra_batch_size,extra_original_batch_size,extra_multiplier
-baseline,48.03808283805847,99.3,6001.71875,154.53662109375,42,2.081681742735461,100,10,2025-12-19T16:28:09.349033,none,,,
-batching,0.47730541229248047,98.5,6001.78515625,154.53662109375,43,209.50946170860215,100,10,2025-12-19T16:28:09.937320,,64.0,32.0,2.0

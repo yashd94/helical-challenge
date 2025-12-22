@@ -1,0 +1,160 @@
+[2025-12-22 19:24:28,592][__main__][INFO] - Using device: cuda
+[2025-12-22 19:24:28,594][__main__][INFO] - ====================================================================================================
+[2025-12-22 19:24:28,594][__main__][INFO] - GENEFORMER PERTURBATION PIPELINE
+[2025-12-22 19:24:28,594][__main__][INFO] - ====================================================================================================
+[2025-12-22 19:24:28,594][__main__][INFO] - Experiment: geneformer_perturbation_distributed_test
+[2025-12-22 19:24:28,599][__main__][INFO] - 
+Configuration:
+seed: 42
+model:
+  name: gf-6L-10M-i2048
+  batch_size: 2
+  device: cuda:0
+data:
+  pertpy_data_identifier: norman_2019
+  condition_filter: control
+  save_tokenized_data: true
+  gene_names_column: index
+  use_raw_counts: false
+  preprocess: true
+  normalize: false
+  filter_genes: true
+  min_genes: 100
+  min_cells: 3
+  max_cells: 100
+  max_genes: 100
+perturbation:
+  gene_list: null
+  num_genes: 5
+  perturbation_type: knockout
+  selection_method: top_expressed
+  perturbation_strength: 2.0
+  save_perturbed_data: true
+optimization:
+  methods:
+  - distributed
+  batching:
+    enabled: true
+    batch_size_multiplier: 2
+  quantization:
+    enabled: true
+    dtype: qint8
+    calibration_data_size: 32
+  onnx:
+    enabled: true
+    use_gpu: true
+    precision: FP16
+  distributed:
+    enabled: true
+    backend: nccl
+output:
+  dir: outputs
+  cache_dir: /scratch
+  save_outputs: true
+  compression: true
+  precision: float32
+  save_detailed_comparisons: true
+  log_level: INFO
+  log_to_file: true
+  log_file: pipeline.log
+hardware:
+  device: auto
+  mixed_precision: false
+  cudnn_benchmark: true
+  empty_cache_between_methods: true
+experiment:
+  name: geneformer_perturbation_distributed_test
+  tags: []
+  notes: ''
+reproducibility:
+  deterministic: true
+advanced:
+  compile_model: false
+  compile_backend: inductor
+  continue_on_error: true
+validation:
+  min_correlation: 0.95
+  max_mse: 0.01
+  warn_on_threshold: true
+  check_nan: true
+  check_inf: true
+
+[2025-12-22 19:24:28,599][__main__][INFO] - Loading Geneformer model...
+[2025-12-22 19:24:32,473][helical.models.geneformer.model][INFO] - Model finished initializing.
+[2025-12-22 19:24:32,473][helical.models.geneformer.model][INFO] - 'gf-6L-10M-i2048' model is in 'eval' mode, on device 'cuda:0' with embedding mode 'cell'.
+[2025-12-22 19:24:32,474][__main__][INFO] - Model loaded: gf-6L-10M-i2048
+[2025-12-22 19:24:32,474][__main__][INFO] - Loading data: norman_2019
+[2025-12-22 19:24:32,476][__main__][INFO] - Found processed data saved to disk.
+[2025-12-22 19:24:32,590][__main__][INFO] - Selected 5 genes using method: top_expressed
+[2025-12-22 19:24:32,590][__main__][INFO] - Performing perturbation on 5 genes...
+[2025-12-22 19:24:32,591][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-22 19:24:32,604][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-22 19:24:32,611][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-22 19:24:32,618][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-22 19:24:32,625][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-22 19:24:32,632][__main__][INFO] - Perturbations complete.
+[2025-12-22 19:24:32,632][__main__][INFO] - 
+====================================================================================================
+[2025-12-22 19:24:32,632][__main__][INFO] - Running BASELINE (no optimization)...
+[2025-12-22 19:24:32,670][__main__][INFO] - Extracting embeddings...
+[2025-12-22 19:24:32,670][__main__][ERROR] - Baseline failed: type object 'GeneformerPerturbationPipeline' has no attribute 'cfg'
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 1319, in run
+    perf_metrics, outputs = self.run_baseline(model, data,
+  File "/root/capsule/code/helical-challenge/main.py", line 722, in run_baseline
+    embeddings = extract_embeddings(model, data)
+  File "/root/capsule/code/helical-challenge/main.py", line 327, in extract_embeddings
+    if GeneformerPerturbationPipeline.cfg.hardware.mixed_precision:
+AttributeError: type object 'GeneformerPerturbationPipeline' has no attribute 'cfg'
+[2025-12-22 19:24:32,670][__main__][INFO] - 
+====================================================================================================
+[2025-12-22 19:24:32,670][__main__][INFO] - Running with DDP DISTRIBUTED optimization...
+[2025-12-22 19:24:32,670][__main__][INFO] - Using 4 GPUs with DDP
+[2025-12-22 19:24:32,715][__main__][INFO] - Using temporary directory: /scratch/ddp_results_s798mg2f
+[2025-12-22 19:25:40,461][__main__][ERROR] - Error from rank 0:
+name 'dist' is not defined
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 403, in run_inference_worker
+    setup_ddp(rank, world_size, backend)
+  File "/root/capsule/code/helical-challenge/main.py", line 346, in setup_ddp
+    dist.init_process_group(backend, rank=rank, world_size=world_size)
+NameError: name 'dist' is not defined. Did you mean: 'List'?
+
+[2025-12-22 19:25:40,464][__main__][ERROR] - Error from rank 1:
+name 'dist' is not defined
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 403, in run_inference_worker
+    setup_ddp(rank, world_size, backend)
+  File "/root/capsule/code/helical-challenge/main.py", line 346, in setup_ddp
+    dist.init_process_group(backend, rank=rank, world_size=world_size)
+NameError: name 'dist' is not defined. Did you mean: 'List'?
+
+[2025-12-22 19:25:40,467][__main__][ERROR] - Error from rank 2:
+name 'dist' is not defined
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 403, in run_inference_worker
+    try:
+  File "/root/capsule/code/helical-challenge/main.py", line 346, in setup_ddp
+NameError: name 'dist' is not defined. Did you mean: 'List'?
+
+[2025-12-22 19:25:40,470][__main__][ERROR] - Error from rank 3:
+name 'dist' is not defined
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 404, in run_inference_worker
+    setup_ddp(rank, world_size, backend)
+  File "/root/capsule/code/helical-challenge/main.py", line 347, in setup_ddp
+    dist.init_process_group(backend, rank=rank, world_size=world_size)
+NameError: name 'dist' is not defined. Did you mean: 'List'?
+
+[2025-12-22 19:25:40,501][__main__][ERROR] - distributed failed: ufunc 'isnan' not supported for the input types, and the inputs could not be safely coerced to any supported types according to the casting rule ''safe''
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 1380, in run
+    # Validate outputs
+  File "/root/capsule/code/helical-challenge/main.py", line 1143, in validate_outputs
+    if self.cfg.validation.check_nan:
+TypeError: ufunc 'isnan' not supported for the input types, and the inputs could not be safely coerced to any supported types according to the casting rule ''safe''
+[2025-12-22 19:25:40,502][__main__][INFO] - 
+====================================================================================================
+[2025-12-22 19:25:40,502][__main__][INFO] - COMPARING OUTPUTS TO BASELINE
+[2025-12-22 19:25:40,502][__main__][INFO] - ====================================================================================================
+[2025-12-22 19:25:40,502][__main__][ERROR] - No methods completed successfully

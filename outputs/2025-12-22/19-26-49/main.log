@@ -1,0 +1,177 @@
+[2025-12-22 19:26:49,084][__main__][INFO] - Using device: cuda
+[2025-12-22 19:26:49,086][__main__][INFO] - ====================================================================================================
+[2025-12-22 19:26:49,086][__main__][INFO] - GENEFORMER PERTURBATION PIPELINE
+[2025-12-22 19:26:49,086][__main__][INFO] - ====================================================================================================
+[2025-12-22 19:26:49,086][__main__][INFO] - Experiment: geneformer_perturbation_distributed_test
+[2025-12-22 19:26:49,091][__main__][INFO] - 
+Configuration:
+seed: 42
+model:
+  name: gf-6L-10M-i2048
+  batch_size: 2
+  device: cuda:0
+data:
+  pertpy_data_identifier: norman_2019
+  condition_filter: control
+  save_tokenized_data: true
+  gene_names_column: index
+  use_raw_counts: false
+  preprocess: true
+  normalize: false
+  filter_genes: true
+  min_genes: 100
+  min_cells: 3
+  max_cells: 100
+  max_genes: 100
+perturbation:
+  gene_list: null
+  num_genes: 5
+  perturbation_type: knockout
+  selection_method: top_expressed
+  perturbation_strength: 2.0
+  save_perturbed_data: true
+optimization:
+  methods:
+  - distributed
+  batching:
+    enabled: true
+    batch_size_multiplier: 2
+  quantization:
+    enabled: true
+    dtype: qint8
+    calibration_data_size: 32
+  onnx:
+    enabled: true
+    use_gpu: true
+    precision: FP16
+  distributed:
+    enabled: true
+    backend: nccl
+output:
+  dir: outputs
+  cache_dir: /scratch
+  save_outputs: true
+  compression: true
+  precision: float32
+  save_detailed_comparisons: true
+  log_level: INFO
+  log_to_file: true
+  log_file: pipeline.log
+hardware:
+  device: auto
+  mixed_precision: false
+  cudnn_benchmark: true
+  empty_cache_between_methods: true
+experiment:
+  name: geneformer_perturbation_distributed_test
+  tags: []
+  notes: ''
+reproducibility:
+  deterministic: true
+advanced:
+  compile_model: false
+  compile_backend: inductor
+  continue_on_error: true
+validation:
+  min_correlation: 0.95
+  max_mse: 0.01
+  warn_on_threshold: true
+  check_nan: true
+  check_inf: true
+
+[2025-12-22 19:26:49,091][__main__][INFO] - Loading Geneformer model...
+[2025-12-22 19:26:52,993][helical.models.geneformer.model][INFO] - Model finished initializing.
+[2025-12-22 19:26:52,993][helical.models.geneformer.model][INFO] - 'gf-6L-10M-i2048' model is in 'eval' mode, on device 'cuda:0' with embedding mode 'cell'.
+[2025-12-22 19:26:52,994][__main__][INFO] - Model loaded: gf-6L-10M-i2048
+[2025-12-22 19:26:52,995][__main__][INFO] - Loading data: norman_2019
+[2025-12-22 19:26:52,996][__main__][INFO] - Found processed data saved to disk.
+[2025-12-22 19:26:53,109][__main__][INFO] - Selected 5 genes using method: top_expressed
+[2025-12-22 19:26:53,109][__main__][INFO] - Performing perturbation on 5 genes...
+[2025-12-22 19:26:53,110][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-22 19:26:53,117][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-22 19:26:53,124][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-22 19:26:53,131][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-22 19:26:53,138][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-22 19:26:53,144][__main__][INFO] - Perturbations complete.
+[2025-12-22 19:26:53,144][__main__][INFO] - 
+====================================================================================================
+[2025-12-22 19:26:53,144][__main__][INFO] - Running BASELINE (no optimization)...
+[2025-12-22 19:26:53,260][__main__][INFO] - Extracting embeddings...
+[2025-12-22 19:26:53,260][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-22 19:26:54,858][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-22 19:26:54,858][__main__][INFO] - Extracted embeddings shape: (100, 256)
+[2025-12-22 19:26:54,858][__main__][INFO] - Extracting embeddings for perturbations on 5 genes...
+[2025-12-22 19:26:54,858][__main__][INFO] - Extraxcting embeddings for perturbed: FAAP20 (type: knockout)
+[2025-12-22 19:26:54,858][__main__][INFO] - Extracting embeddings...
+[2025-12-22 19:26:54,859][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-22 19:26:55,230][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-22 19:26:55,230][__main__][INFO] - Extracted embeddings shape: (100, 256)
+[2025-12-22 19:26:55,230][__main__][INFO] - Extraxcting embeddings for perturbed: SSU72 (type: knockout)
+[2025-12-22 19:26:55,230][__main__][INFO] - Extracting embeddings...
+[2025-12-22 19:26:55,231][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-22 19:26:55,600][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-22 19:26:55,600][__main__][INFO] - Extracted embeddings shape: (100, 256)
+[2025-12-22 19:26:55,600][__main__][INFO] - Extraxcting embeddings for perturbed: MRPL20 (type: knockout)
+[2025-12-22 19:26:55,600][__main__][INFO] - Extracting embeddings...
+[2025-12-22 19:26:55,600][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-22 19:26:55,971][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-22 19:26:55,972][__main__][INFO] - Extracted embeddings shape: (100, 256)
+[2025-12-22 19:26:55,972][__main__][INFO] - Extraxcting embeddings for perturbed: AURKAIP1 (type: knockout)
+[2025-12-22 19:26:55,972][__main__][INFO] - Extracting embeddings...
+[2025-12-22 19:26:55,972][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-22 19:26:56,339][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-22 19:26:56,339][__main__][INFO] - Extracted embeddings shape: (100, 256)
+[2025-12-22 19:26:56,340][__main__][INFO] - Extraxcting embeddings for perturbed: RPL22 (type: knockout)
+[2025-12-22 19:26:56,340][__main__][INFO] - Extracting embeddings...
+[2025-12-22 19:26:56,340][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-22 19:26:56,712][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-22 19:26:56,712][__main__][INFO] - Extracted embeddings shape: (100, 256)
+[2025-12-22 19:26:56,713][__main__][INFO] - Finished getting perturbation results.
+[2025-12-22 19:26:56,745][__main__][INFO] - Saved outputs for baseline to outputs/outputs/baseline
+[2025-12-22 19:26:56,746][__main__][INFO] - 
+====================================================================================================
+[2025-12-22 19:26:56,747][__main__][INFO] - Running with DDP DISTRIBUTED optimization...
+[2025-12-22 19:26:56,747][__main__][INFO] - Using 4 GPUs with DDP
+[2025-12-22 19:26:56,788][__main__][INFO] - Using temporary directory: /scratch/ddp_results_y7c7sc_v
+[2025-12-22 19:28:12,501][__main__][ERROR] - distributed failed: Weights only load failed. This file can still be loaded, to do so you have two options, [1mdo those steps only if you trust the source of the checkpoint[0m. 
+	(1) In PyTorch 2.6, we changed the default value of the `weights_only` argument in `torch.load` from `False` to `True`. Re-running `torch.load` with `weights_only` set to `False` will likely succeed, but it can result in arbitrary code execution. Do it only if you got the file from a trusted source.
+	(2) Alternatively, to load with `weights_only=True` please check the recommended steps in the following error message.
+	WeightsUnpickler error: Unsupported global: GLOBAL numpy._core.multiarray._reconstruct was not an allowed global by default. Please use `torch.serialization.add_safe_globals([numpy._core.multiarray._reconstruct])` or the `torch.serialization.safe_globals([numpy._core.multiarray._reconstruct])` context manager to allowlist this global if you trust this class/function.
+
+Check the documentation of torch.load to learn more about types accepted by default with weights_only https://pytorch.org/docs/stable/generated/torch.load.html.
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 1372, in run
+    perf_metrics, outputs = runner(model, data,
+  File "/root/capsule/code/helical-challenge/main.py", line 1082, in run_with_distributed_ddp
+    results = torch.load(result_path)
+  File "/opt/conda/lib/python3.10/site-packages/torch/serialization.py", line 1529, in load
+    raise pickle.UnpicklingError(_get_wo_message(str(e))) from None
+_pickle.UnpicklingError: Weights only load failed. This file can still be loaded, to do so you have two options, [1mdo those steps only if you trust the source of the checkpoint[0m. 
+	(1) In PyTorch 2.6, we changed the default value of the `weights_only` argument in `torch.load` from `False` to `True`. Re-running `torch.load` with `weights_only` set to `False` will likely succeed, but it can result in arbitrary code execution. Do it only if you got the file from a trusted source.
+	(2) Alternatively, to load with `weights_only=True` please check the recommended steps in the following error message.
+	WeightsUnpickler error: Unsupported global: GLOBAL numpy._core.multiarray._reconstruct was not an allowed global by default. Please use `torch.serialization.add_safe_globals([numpy._core.multiarray._reconstruct])` or the `torch.serialization.safe_globals([numpy._core.multiarray._reconstruct])` context manager to allowlist this global if you trust this class/function.
+
+Check the documentation of torch.load to learn more about types accepted by default with weights_only https://pytorch.org/docs/stable/generated/torch.load.html.
+[2025-12-22 19:28:12,503][__main__][INFO] - 
+====================================================================================================
+[2025-12-22 19:28:12,503][__main__][INFO] - COMPARING OUTPUTS TO BASELINE
+[2025-12-22 19:28:12,503][__main__][INFO] - ====================================================================================================
+[2025-12-22 19:28:12,505][__main__][INFO] - Performance metrics saved to: outputs/performance_metrics_20251222_192812.csv
+[2025-12-22 19:28:12,508][__main__][INFO] - 
+====================================================================================================
+[2025-12-22 19:28:12,508][__main__][INFO] - PERFORMANCE SUMMARY
+[2025-12-22 19:28:12,508][__main__][INFO] - ====================================================================================================
+[2025-12-22 19:28:12,511][__main__][INFO] - 
+     method  runtime_seconds  cpu_percent    memory_mb  gpu_memory_mb  gpu_utilization  throughput_cells_per_sec  num_cells  num_genes_perturbed                   timestamp extra_optimization
+0  baseline         3.568326         91.1  5730.472656      48.404785               19                 28.024347        100                    5  2025-12-22T19:26:56.715099               none
+
+[2025-12-22 19:28:12,512][__main__][INFO] - 
+SPEEDUP RELATIVE TO BASELINE:
+[2025-12-22 19:28:12,512][__main__][INFO] - --------------------------------------------------
+[2025-12-22 19:28:12,512][__main__][INFO] - ====================================================================================================
+[2025-12-22 19:28:12,512][__main__][INFO] - 
+All outputs saved to: outputs
+[2025-12-22 19:28:12,513][__main__][INFO] - 
+====================================================================================================
+[2025-12-22 19:28:12,513][__main__][INFO] - PIPELINE COMPLETE!
+[2025-12-22 19:28:12,513][__main__][INFO] - ====================================================================================================

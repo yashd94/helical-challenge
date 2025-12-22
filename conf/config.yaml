@@ -7,8 +7,8 @@ seed: 42
 # MODEL CONFIGS
 # ============================================================================
 model:
-  name: "gf-12L-38M-i4096"  # Model identifier
-         # "gf-6L-10M-i2048",
+  name: "gf-6L-10M-i2048" # Model identifier
+         # "gf-12L-38M-i4096"  
          # "gf-12L-38M-i4096",
          # "gf-12L-38M-i4096-CLcancer",
          # "gf-12L-40M-i2048",
@@ -17,7 +17,7 @@ model:
          # "gf-12L-104M-i4096-CLcancer",
          # "gf-20L-151M-i4096",
          # "gf-18L-316M-i4096",
-  batch_size: 32           # Base batch size for inference
+  batch_size: 2          # Base batch size for inference
   device: 'cuda:0'
 
 
@@ -39,7 +39,7 @@ data:
   min_cells: 3        # Minimum cells per gene
   
   # Subset data for testing
-  max_cells: 1000   # Limit number of cells for faster testing
+  max_cells: 100   # Limit number of cells for faster testing
   max_genes: 100   # Limit number of genes
 
 # ============================================================================
@@ -51,7 +51,7 @@ perturbation:
   # gene_list: ["BRCA1", "TP53", "MYC", "EGFR", "KRAS"]
   
   # Option 2: Number of top variable genes (set gene_list to null if using this)
-  num_genes: 20
+  num_genes: 5
   
   # Perturbation settings
   perturbation_type: "knockout"  # Options: knockout, overexpression
@@ -70,7 +70,7 @@ perturbation:
 optimization:
   # Methods to run: batching, quantization, onnx, distributed, all
   methods:
-    - quantization
+    - distributed
   
   # Batching optimization
   batching:
@@ -93,8 +93,6 @@ optimization:
   distributed:
     enabled: true
     backend: "nccl"         # Options: nccl, gloo
-    world_size: null        # Auto-detect number of GPUs
-    use_data_parallel: true
 
 # ============================================================================
 # OUTPUT CONFIGS
@@ -131,7 +129,7 @@ hardware:
 # EXPERIMENT TRACKING
 # ============================================================================
 experiment:
-  name: "geneformer_perturbation_test"
+  name: "geneformer_perturbation_distributed_test"
   tags: []
   notes: ""
 

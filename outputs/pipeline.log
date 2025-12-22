@@ -1,0 +1,755 @@
+2025-12-22 19:10:05,167 - __main__ - INFO - ====================================================================================================
+2025-12-22 19:10:05,167 - __main__ - INFO - GENEFORMER PERTURBATION PIPELINE
+2025-12-22 19:10:05,167 - __main__ - INFO - ====================================================================================================
+2025-12-22 19:10:05,167 - __main__ - INFO - Experiment: geneformer_perturbation_distributed_test
+2025-12-22 19:10:05,171 - __main__ - INFO - 
+Configuration:
+seed: 42
+model:
+  name: gf-6L-10M-i2048
+  batch_size: 2
+  device: cuda:0
+data:
+  pertpy_data_identifier: norman_2019
+  condition_filter: control
+  save_tokenized_data: true
+  gene_names_column: index
+  use_raw_counts: false
+  preprocess: true
+  normalize: false
+  filter_genes: true
+  min_genes: 100
+  min_cells: 3
+  max_cells: 100
+  max_genes: 100
+perturbation:
+  gene_list: null
+  num_genes: 5
+  perturbation_type: knockout
+  selection_method: top_expressed
+  perturbation_strength: 2.0
+  save_perturbed_data: true
+optimization:
+  methods:
+  - distributed
+  batching:
+    enabled: true
+    batch_size_multiplier: 2
+  quantization:
+    enabled: true
+    dtype: qint8
+    calibration_data_size: 32
+  onnx:
+    enabled: true
+    use_gpu: true
+    precision: FP16
+  distributed:
+    enabled: true
+    backend: nccl
+output:
+  dir: outputs
+  cache_dir: /scratch
+  save_outputs: true
+  compression: true
+  precision: float32
+  save_detailed_comparisons: true
+  log_level: INFO
+  log_to_file: true
+  log_file: pipeline.log
+hardware:
+  device: auto
+  mixed_precision: false
+  cudnn_benchmark: true
+  empty_cache_between_methods: true
+experiment:
+  name: geneformer_perturbation_distributed_test
+  tags: []
+  notes: ''
+reproducibility:
+  deterministic: true
+advanced:
+  compile_model: false
+  compile_backend: inductor
+  continue_on_error: true
+validation:
+  min_correlation: 0.95
+  max_mse: 0.01
+  warn_on_threshold: true
+  check_nan: true
+  check_inf: true
+
+2025-12-22 19:10:05,172 - __main__ - INFO - Loading Geneformer model...
+2025-12-22 19:10:09,253 - __main__ - INFO - Model loaded: gf-6L-10M-i2048
+2025-12-22 19:10:09,253 - __main__ - INFO - Loading data: norman_2019
+2025-12-22 19:10:09,256 - __main__ - INFO - Found processed data saved to disk.
+2025-12-22 19:10:09,370 - __main__ - INFO - Selected 5 genes using method: top_expressed
+2025-12-22 19:10:09,370 - __main__ - INFO - Performing perturbation on 5 genes...
+2025-12-22 19:10:09,373 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-22 19:10:09,385 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-22 19:10:09,397 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-22 19:10:09,407 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-22 19:10:09,419 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-22 19:10:09,429 - __main__ - INFO - Perturbations complete.
+2025-12-22 19:10:09,429 - __main__ - INFO - 
+====================================================================================================
+2025-12-22 19:10:09,429 - __main__ - INFO - Running BASELINE (no optimization)...
+2025-12-22 19:10:09,431 - __main__ - INFO - Extracting embeddings...
+2025-12-22 19:10:11,303 - __main__ - INFO - Extracted embeddings shape: (100, 256)
+2025-12-22 19:10:11,303 - __main__ - INFO - Extracting embeddings for perturbations on 5 genes...
+2025-12-22 19:10:11,303 - __main__ - INFO - Extraxcting embeddings for perturbed: FAAP20 (type: knockout)
+2025-12-22 19:10:11,303 - __main__ - INFO - Extracting embeddings...
+2025-12-22 19:10:11,681 - __main__ - INFO - Extracted embeddings shape: (100, 256)
+2025-12-22 19:10:11,681 - __main__ - INFO - Extraxcting embeddings for perturbed: SSU72 (type: knockout)
+2025-12-22 19:10:11,681 - __main__ - INFO - Extracting embeddings...
+2025-12-22 19:10:12,051 - __main__ - INFO - Extracted embeddings shape: (100, 256)
+2025-12-22 19:10:12,051 - __main__ - INFO - Extraxcting embeddings for perturbed: MRPL20 (type: knockout)
+2025-12-22 19:10:12,051 - __main__ - INFO - Extracting embeddings...
+2025-12-22 19:10:12,425 - __main__ - INFO - Extracted embeddings shape: (100, 256)
+2025-12-22 19:10:12,425 - __main__ - INFO - Extraxcting embeddings for perturbed: AURKAIP1 (type: knockout)
+2025-12-22 19:10:12,425 - __main__ - INFO - Extracting embeddings...
+2025-12-22 19:10:12,799 - __main__ - INFO - Extracted embeddings shape: (100, 256)
+2025-12-22 19:10:12,799 - __main__ - INFO - Extraxcting embeddings for perturbed: RPL22 (type: knockout)
+2025-12-22 19:10:12,799 - __main__ - INFO - Extracting embeddings...
+2025-12-22 19:10:13,171 - __main__ - INFO - Extracted embeddings shape: (100, 256)
+2025-12-22 19:10:13,171 - __main__ - INFO - Finished getting perturbation results.
+2025-12-22 19:10:13,322 - __main__ - INFO - Saved outputs for baseline to outputs/outputs/baseline
+2025-12-22 19:10:13,449 - __main__ - INFO - 
+====================================================================================================
+2025-12-22 19:10:13,449 - __main__ - INFO - Running with DDP DISTRIBUTED optimization...
+2025-12-22 19:10:13,449 - __main__ - INFO - Using 4 GPUs with DDP
+2025-12-22 19:10:13,484 - __main__ - ERROR - distributed failed: name 'tempfile' is not defined
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 1372, in run
+    perf_metrics, outputs = runner(model, data,
+  File "/root/capsule/code/helical-challenge/main.py", line 1053, in run_with_distributed_ddp
+    temp_dir = tempfile.mkdtemp(prefix=f'{self.cfg.output.cache_dir}/ddp_results_')
+NameError: name 'tempfile' is not defined. Did you mean: 'compile'?
+2025-12-22 19:10:13,486 - __main__ - INFO - 
+====================================================================================================
+2025-12-22 19:10:13,486 - __main__ - INFO - COMPARING OUTPUTS TO BASELINE
+2025-12-22 19:10:13,486 - __main__ - INFO - ====================================================================================================
+2025-12-22 19:10:13,488 - __main__ - INFO - Performance metrics saved to: outputs/performance_metrics_20251222_191013.csv
+2025-12-22 19:10:13,489 - __main__ - INFO - 
+====================================================================================================
+2025-12-22 19:10:13,489 - __main__ - INFO - PERFORMANCE SUMMARY
+2025-12-22 19:10:13,489 - __main__ - INFO - ====================================================================================================
+2025-12-22 19:10:13,492 - __main__ - INFO - 
+     method  runtime_seconds  cpu_percent    memory_mb  gpu_memory_mb  gpu_utilization  throughput_cells_per_sec  num_cells  num_genes_perturbed                   timestamp extra_optimization
+0  baseline          3.74239         87.1  5729.882812      48.404785               12                 26.720889        100                    5  2025-12-22T19:10:13.292659               none
+
+2025-12-22 19:10:13,493 - __main__ - INFO - 
+SPEEDUP RELATIVE TO BASELINE:
+2025-12-22 19:10:13,493 - __main__ - INFO - --------------------------------------------------
+2025-12-22 19:10:13,493 - __main__ - INFO - ====================================================================================================
+2025-12-22 19:10:13,493 - __main__ - INFO - 
+All outputs saved to: outputs
+2025-12-22 19:10:13,493 - __main__ - INFO - 
+====================================================================================================
+2025-12-22 19:10:13,493 - __main__ - INFO - PIPELINE COMPLETE!
+2025-12-22 19:10:13,493 - __main__ - INFO - ====================================================================================================
+2025-12-22 19:11:06,192 - __main__ - INFO - ====================================================================================================
+2025-12-22 19:11:06,192 - __main__ - INFO - GENEFORMER PERTURBATION PIPELINE
+2025-12-22 19:11:06,192 - __main__ - INFO - ====================================================================================================
+2025-12-22 19:11:06,192 - __main__ - INFO - Experiment: geneformer_perturbation_distributed_test
+2025-12-22 19:11:06,196 - __main__ - INFO - 
+Configuration:
+seed: 42
+model:
+  name: gf-6L-10M-i2048
+  batch_size: 2
+  device: cuda:0
+data:
+  pertpy_data_identifier: norman_2019
+  condition_filter: control
+  save_tokenized_data: true
+  gene_names_column: index
+  use_raw_counts: false
+  preprocess: true
+  normalize: false
+  filter_genes: true
+  min_genes: 100
+  min_cells: 3
+  max_cells: 100
+  max_genes: 100
+perturbation:
+  gene_list: null
+  num_genes: 5
+  perturbation_type: knockout
+  selection_method: top_expressed
+  perturbation_strength: 2.0
+  save_perturbed_data: true
+optimization:
+  methods:
+  - distributed
+  batching:
+    enabled: true
+    batch_size_multiplier: 2
+  quantization:
+    enabled: true
+    dtype: qint8
+    calibration_data_size: 32
+  onnx:
+    enabled: true
+    use_gpu: true
+    precision: FP16
+  distributed:
+    enabled: true
+    backend: nccl
+output:
+  dir: outputs
+  cache_dir: /scratch
+  save_outputs: true
+  compression: true
+  precision: float32
+  save_detailed_comparisons: true
+  log_level: INFO
+  log_to_file: true
+  log_file: pipeline.log
+hardware:
+  device: auto
+  mixed_precision: false
+  cudnn_benchmark: true
+  empty_cache_between_methods: true
+experiment:
+  name: geneformer_perturbation_distributed_test
+  tags: []
+  notes: ''
+reproducibility:
+  deterministic: true
+advanced:
+  compile_model: false
+  compile_backend: inductor
+  continue_on_error: true
+validation:
+  min_correlation: 0.95
+  max_mse: 0.01
+  warn_on_threshold: true
+  check_nan: true
+  check_inf: true
+
+2025-12-22 19:11:06,196 - __main__ - INFO - Loading Geneformer model...
+2025-12-22 19:11:10,292 - __main__ - INFO - Model loaded: gf-6L-10M-i2048
+2025-12-22 19:11:10,292 - __main__ - INFO - Loading data: norman_2019
+2025-12-22 19:11:10,294 - __main__ - INFO - Found processed data saved to disk.
+2025-12-22 19:11:10,406 - __main__ - INFO - Selected 5 genes using method: top_expressed
+2025-12-22 19:11:10,406 - __main__ - INFO - Performing perturbation on 5 genes...
+2025-12-22 19:11:10,408 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-22 19:11:10,416 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-22 19:11:10,424 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-22 19:11:10,432 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-22 19:11:10,439 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-22 19:11:10,446 - __main__ - INFO - Perturbations complete.
+2025-12-22 19:11:10,446 - __main__ - INFO - 
+====================================================================================================
+2025-12-22 19:11:10,446 - __main__ - INFO - Running BASELINE (no optimization)...
+2025-12-22 19:11:10,449 - __main__ - INFO - Extracting embeddings...
+2025-12-22 19:11:12,300 - __main__ - INFO - Extracted embeddings shape: (100, 256)
+2025-12-22 19:11:12,301 - __main__ - INFO - Extracting embeddings for perturbations on 5 genes...
+2025-12-22 19:11:12,301 - __main__ - INFO - Extraxcting embeddings for perturbed: FAAP20 (type: knockout)
+2025-12-22 19:11:12,301 - __main__ - INFO - Extracting embeddings...
+2025-12-22 19:11:12,677 - __main__ - INFO - Extracted embeddings shape: (100, 256)
+2025-12-22 19:11:12,677 - __main__ - INFO - Extraxcting embeddings for perturbed: SSU72 (type: knockout)
+2025-12-22 19:11:12,677 - __main__ - INFO - Extracting embeddings...
+2025-12-22 19:11:13,050 - __main__ - INFO - Extracted embeddings shape: (100, 256)
+2025-12-22 19:11:13,050 - __main__ - INFO - Extraxcting embeddings for perturbed: MRPL20 (type: knockout)
+2025-12-22 19:11:13,050 - __main__ - INFO - Extracting embeddings...
+2025-12-22 19:11:13,424 - __main__ - INFO - Extracted embeddings shape: (100, 256)
+2025-12-22 19:11:13,424 - __main__ - INFO - Extraxcting embeddings for perturbed: AURKAIP1 (type: knockout)
+2025-12-22 19:11:13,424 - __main__ - INFO - Extracting embeddings...
+2025-12-22 19:11:13,797 - __main__ - INFO - Extracted embeddings shape: (100, 256)
+2025-12-22 19:11:13,797 - __main__ - INFO - Extraxcting embeddings for perturbed: RPL22 (type: knockout)
+2025-12-22 19:11:13,797 - __main__ - INFO - Extracting embeddings...
+2025-12-22 19:11:14,169 - __main__ - INFO - Extracted embeddings shape: (100, 256)
+2025-12-22 19:11:14,169 - __main__ - INFO - Finished getting perturbation results.
+2025-12-22 19:11:14,201 - __main__ - INFO - Saved outputs for baseline to outputs/outputs/baseline
+2025-12-22 19:11:14,466 - __main__ - INFO - 
+====================================================================================================
+2025-12-22 19:11:14,467 - __main__ - INFO - Running with DDP DISTRIBUTED optimization...
+2025-12-22 19:11:14,467 - __main__ - INFO - Using 4 GPUs with DDP
+2025-12-22 19:11:14,511 - __main__ - INFO - Using temporary directory: /scratch/ddp_results_208llz26
+2025-12-22 19:11:14,520 - __main__ - ERROR - distributed failed: cannot pickle '_thread.RLock' object
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 1373, in run
+    perf_metrics, outputs = runner(model, data,
+  File "/root/capsule/code/helical-challenge/main.py", line 1059, in run_with_distributed_ddp
+    mp.spawn(
+  File "/opt/conda/lib/python3.10/site-packages/torch/multiprocessing/spawn.py", line 364, in spawn
+    return start_processes(fn, args, nprocs, join, daemon, start_method="spawn")
+  File "/opt/conda/lib/python3.10/site-packages/torch/multiprocessing/spawn.py", line 304, in start_processes
+    idx, process, tf_name = start_process(i)
+  File "/opt/conda/lib/python3.10/site-packages/torch/multiprocessing/spawn.py", line 299, in start_process
+    process.start()
+  File "/opt/conda/lib/python3.10/multiprocessing/process.py", line 121, in start
+    self._popen = self._Popen(self)
+  File "/opt/conda/lib/python3.10/multiprocessing/context.py", line 288, in _Popen
+    return Popen(process_obj)
+  File "/opt/conda/lib/python3.10/multiprocessing/popen_spawn_posix.py", line 32, in __init__
+    super().__init__(process_obj)
+  File "/opt/conda/lib/python3.10/multiprocessing/popen_fork.py", line 19, in __init__
+    self._launch(process_obj)
+  File "/opt/conda/lib/python3.10/multiprocessing/popen_spawn_posix.py", line 47, in _launch
+    reduction.dump(process_obj, fp)
+  File "/opt/conda/lib/python3.10/multiprocessing/reduction.py", line 60, in dump
+    ForkingPickler(file, protocol).dump(obj)
+TypeError: cannot pickle '_thread.RLock' object
+2025-12-22 19:11:14,521 - __main__ - INFO - 
+====================================================================================================
+2025-12-22 19:11:14,521 - __main__ - INFO - COMPARING OUTPUTS TO BASELINE
+2025-12-22 19:11:14,521 - __main__ - INFO - ====================================================================================================
+2025-12-22 19:11:14,522 - __main__ - INFO - Performance metrics saved to: outputs/performance_metrics_20251222_191114.csv
+2025-12-22 19:11:14,524 - __main__ - INFO - 
+====================================================================================================
+2025-12-22 19:11:14,524 - __main__ - INFO - PERFORMANCE SUMMARY
+2025-12-22 19:11:14,524 - __main__ - INFO - ====================================================================================================
+2025-12-22 19:11:14,527 - __main__ - INFO - 
+     method  runtime_seconds  cpu_percent    memory_mb  gpu_memory_mb  gpu_utilization  throughput_cells_per_sec  num_cells  num_genes_perturbed                   timestamp extra_optimization
+0  baseline         3.722517         88.1  5730.632812      48.404785               19                 26.863546        100                    5  2025-12-22T19:11:14.171397               none
+
+2025-12-22 19:11:14,527 - __main__ - INFO - 
+SPEEDUP RELATIVE TO BASELINE:
+2025-12-22 19:11:14,527 - __main__ - INFO - --------------------------------------------------
+2025-12-22 19:11:14,527 - __main__ - INFO - ====================================================================================================
+2025-12-22 19:11:14,527 - __main__ - INFO - 
+All outputs saved to: outputs
+2025-12-22 19:11:14,528 - __main__ - INFO - 
+====================================================================================================
+2025-12-22 19:11:14,528 - __main__ - INFO - PIPELINE COMPLETE!
+2025-12-22 19:11:14,528 - __main__ - INFO - ====================================================================================================
+2025-12-22 19:20:14,791 - __main__ - INFO - ====================================================================================================
+2025-12-22 19:20:14,792 - __main__ - INFO - GENEFORMER PERTURBATION PIPELINE
+2025-12-22 19:20:14,792 - __main__ - INFO - ====================================================================================================
+2025-12-22 19:20:14,792 - __main__ - INFO - Experiment: geneformer_perturbation_distributed_test
+2025-12-22 19:20:14,796 - __main__ - INFO - 
+Configuration:
+seed: 42
+model:
+  name: gf-6L-10M-i2048
+  batch_size: 2
+  device: cuda:0
+data:
+  pertpy_data_identifier: norman_2019
+  condition_filter: control
+  save_tokenized_data: true
+  gene_names_column: index
+  use_raw_counts: false
+  preprocess: true
+  normalize: false
+  filter_genes: true
+  min_genes: 100
+  min_cells: 3
+  max_cells: 100
+  max_genes: 100
+perturbation:
+  gene_list: null
+  num_genes: 5
+  perturbation_type: knockout
+  selection_method: top_expressed
+  perturbation_strength: 2.0
+  save_perturbed_data: true
+optimization:
+  methods:
+  - distributed
+  batching:
+    enabled: true
+    batch_size_multiplier: 2
+  quantization:
+    enabled: true
+    dtype: qint8
+    calibration_data_size: 32
+  onnx:
+    enabled: true
+    use_gpu: true
+    precision: FP16
+  distributed:
+    enabled: true
+    backend: nccl
+output:
+  dir: outputs
+  cache_dir: /scratch
+  save_outputs: true
+  compression: true
+  precision: float32
+  save_detailed_comparisons: true
+  log_level: INFO
+  log_to_file: true
+  log_file: pipeline.log
+hardware:
+  device: auto
+  mixed_precision: false
+  cudnn_benchmark: true
+  empty_cache_between_methods: true
+experiment:
+  name: geneformer_perturbation_distributed_test
+  tags: []
+  notes: ''
+reproducibility:
+  deterministic: true
+advanced:
+  compile_model: false
+  compile_backend: inductor
+  continue_on_error: true
+validation:
+  min_correlation: 0.95
+  max_mse: 0.01
+  warn_on_threshold: true
+  check_nan: true
+  check_inf: true
+
+2025-12-22 19:20:14,796 - __main__ - INFO - Loading Geneformer model...
+2025-12-22 19:20:18,698 - __main__ - INFO - Model loaded: gf-6L-10M-i2048
+2025-12-22 19:20:18,699 - __main__ - INFO - Loading data: norman_2019
+2025-12-22 19:20:18,700 - __main__ - INFO - Found processed data saved to disk.
+2025-12-22 19:20:18,833 - __main__ - INFO - Selected 5 genes using method: top_expressed
+2025-12-22 19:20:18,833 - __main__ - INFO - Performing perturbation on 5 genes...
+2025-12-22 19:20:18,835 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-22 19:20:18,842 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-22 19:20:18,850 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-22 19:20:18,857 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-22 19:20:18,865 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-22 19:20:18,871 - __main__ - INFO - Perturbations complete.
+2025-12-22 19:20:18,871 - __main__ - INFO - 
+====================================================================================================
+2025-12-22 19:20:18,871 - __main__ - INFO - Running BASELINE (no optimization)...
+2025-12-22 19:20:18,950 - __main__ - ERROR - Baseline failed: name 'extract_embeddings' is not defined
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 1322, in run
+    perf_metrics, outputs = self.run_baseline(model, data,
+  File "/root/capsule/code/helical-challenge/main.py", line 725, in run_baseline
+    embeddings = extract_embeddings(model, data)
+NameError: name 'extract_embeddings' is not defined
+2025-12-22 19:20:18,957 - __main__ - INFO - 
+====================================================================================================
+2025-12-22 19:20:18,957 - __main__ - INFO - Running with DDP DISTRIBUTED optimization...
+2025-12-22 19:20:18,957 - __main__ - INFO - Using 4 GPUs with DDP
+2025-12-22 19:20:18,994 - __main__ - INFO - Using temporary directory: /scratch/ddp_results_rtgvx0dm
+2025-12-22 19:20:19,002 - __main__ - ERROR - distributed failed: name 'run_inference_worker' is not defined
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 1374, in run
+    perf_metrics, outputs = runner(model, data,
+  File "/root/capsule/code/helical-challenge/main.py", line 1061, in run_with_distributed_ddp
+    run_inference_worker,
+NameError: name 'run_inference_worker' is not defined
+2025-12-22 19:20:19,008 - __main__ - INFO - 
+====================================================================================================
+2025-12-22 19:20:19,008 - __main__ - INFO - COMPARING OUTPUTS TO BASELINE
+2025-12-22 19:20:19,008 - __main__ - INFO - ====================================================================================================
+2025-12-22 19:20:19,008 - __main__ - ERROR - No methods completed successfully
+2025-12-22 19:24:28,594 - __main__ - INFO - ====================================================================================================
+2025-12-22 19:24:28,594 - __main__ - INFO - GENEFORMER PERTURBATION PIPELINE
+2025-12-22 19:24:28,594 - __main__ - INFO - ====================================================================================================
+2025-12-22 19:24:28,594 - __main__ - INFO - Experiment: geneformer_perturbation_distributed_test
+2025-12-22 19:24:28,599 - __main__ - INFO - 
+Configuration:
+seed: 42
+model:
+  name: gf-6L-10M-i2048
+  batch_size: 2
+  device: cuda:0
+data:
+  pertpy_data_identifier: norman_2019
+  condition_filter: control
+  save_tokenized_data: true
+  gene_names_column: index
+  use_raw_counts: false
+  preprocess: true
+  normalize: false
+  filter_genes: true
+  min_genes: 100
+  min_cells: 3
+  max_cells: 100
+  max_genes: 100
+perturbation:
+  gene_list: null
+  num_genes: 5
+  perturbation_type: knockout
+  selection_method: top_expressed
+  perturbation_strength: 2.0
+  save_perturbed_data: true
+optimization:
+  methods:
+  - distributed
+  batching:
+    enabled: true
+    batch_size_multiplier: 2
+  quantization:
+    enabled: true
+    dtype: qint8
+    calibration_data_size: 32
+  onnx:
+    enabled: true
+    use_gpu: true
+    precision: FP16
+  distributed:
+    enabled: true
+    backend: nccl
+output:
+  dir: outputs
+  cache_dir: /scratch
+  save_outputs: true
+  compression: true
+  precision: float32
+  save_detailed_comparisons: true
+  log_level: INFO
+  log_to_file: true
+  log_file: pipeline.log
+hardware:
+  device: auto
+  mixed_precision: false
+  cudnn_benchmark: true
+  empty_cache_between_methods: true
+experiment:
+  name: geneformer_perturbation_distributed_test
+  tags: []
+  notes: ''
+reproducibility:
+  deterministic: true
+advanced:
+  compile_model: false
+  compile_backend: inductor
+  continue_on_error: true
+validation:
+  min_correlation: 0.95
+  max_mse: 0.01
+  warn_on_threshold: true
+  check_nan: true
+  check_inf: true
+
+2025-12-22 19:24:28,599 - __main__ - INFO - Loading Geneformer model...
+2025-12-22 19:24:32,474 - __main__ - INFO - Model loaded: gf-6L-10M-i2048
+2025-12-22 19:24:32,474 - __main__ - INFO - Loading data: norman_2019
+2025-12-22 19:24:32,476 - __main__ - INFO - Found processed data saved to disk.
+2025-12-22 19:24:32,590 - __main__ - INFO - Selected 5 genes using method: top_expressed
+2025-12-22 19:24:32,590 - __main__ - INFO - Performing perturbation on 5 genes...
+2025-12-22 19:24:32,591 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-22 19:24:32,604 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-22 19:24:32,611 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-22 19:24:32,618 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-22 19:24:32,625 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-22 19:24:32,632 - __main__ - INFO - Perturbations complete.
+2025-12-22 19:24:32,632 - __main__ - INFO - 
+====================================================================================================
+2025-12-22 19:24:32,632 - __main__ - INFO - Running BASELINE (no optimization)...
+2025-12-22 19:24:32,670 - __main__ - INFO - Extracting embeddings...
+2025-12-22 19:24:32,670 - __main__ - ERROR - Baseline failed: type object 'GeneformerPerturbationPipeline' has no attribute 'cfg'
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 1319, in run
+    perf_metrics, outputs = self.run_baseline(model, data,
+  File "/root/capsule/code/helical-challenge/main.py", line 722, in run_baseline
+    embeddings = extract_embeddings(model, data)
+  File "/root/capsule/code/helical-challenge/main.py", line 327, in extract_embeddings
+    if GeneformerPerturbationPipeline.cfg.hardware.mixed_precision:
+AttributeError: type object 'GeneformerPerturbationPipeline' has no attribute 'cfg'
+2025-12-22 19:24:32,670 - __main__ - INFO - 
+====================================================================================================
+2025-12-22 19:24:32,670 - __main__ - INFO - Running with DDP DISTRIBUTED optimization...
+2025-12-22 19:24:32,670 - __main__ - INFO - Using 4 GPUs with DDP
+2025-12-22 19:24:32,715 - __main__ - INFO - Using temporary directory: /scratch/ddp_results_s798mg2f
+2025-12-22 19:25:40,461 - __main__ - ERROR - Error from rank 0:
+name 'dist' is not defined
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 403, in run_inference_worker
+    setup_ddp(rank, world_size, backend)
+  File "/root/capsule/code/helical-challenge/main.py", line 346, in setup_ddp
+    dist.init_process_group(backend, rank=rank, world_size=world_size)
+NameError: name 'dist' is not defined. Did you mean: 'List'?
+
+2025-12-22 19:25:40,464 - __main__ - ERROR - Error from rank 1:
+name 'dist' is not defined
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 403, in run_inference_worker
+    setup_ddp(rank, world_size, backend)
+  File "/root/capsule/code/helical-challenge/main.py", line 346, in setup_ddp
+    dist.init_process_group(backend, rank=rank, world_size=world_size)
+NameError: name 'dist' is not defined. Did you mean: 'List'?
+
+2025-12-22 19:25:40,467 - __main__ - ERROR - Error from rank 2:
+name 'dist' is not defined
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 403, in run_inference_worker
+    try:
+  File "/root/capsule/code/helical-challenge/main.py", line 346, in setup_ddp
+NameError: name 'dist' is not defined. Did you mean: 'List'?
+
+2025-12-22 19:25:40,470 - __main__ - ERROR - Error from rank 3:
+name 'dist' is not defined
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 404, in run_inference_worker
+    setup_ddp(rank, world_size, backend)
+  File "/root/capsule/code/helical-challenge/main.py", line 347, in setup_ddp
+    dist.init_process_group(backend, rank=rank, world_size=world_size)
+NameError: name 'dist' is not defined. Did you mean: 'List'?
+
+2025-12-22 19:25:40,501 - __main__ - ERROR - distributed failed: ufunc 'isnan' not supported for the input types, and the inputs could not be safely coerced to any supported types according to the casting rule ''safe''
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 1380, in run
+    # Validate outputs
+  File "/root/capsule/code/helical-challenge/main.py", line 1143, in validate_outputs
+    if self.cfg.validation.check_nan:
+TypeError: ufunc 'isnan' not supported for the input types, and the inputs could not be safely coerced to any supported types according to the casting rule ''safe''
+2025-12-22 19:25:40,502 - __main__ - INFO - 
+====================================================================================================
+2025-12-22 19:25:40,502 - __main__ - INFO - COMPARING OUTPUTS TO BASELINE
+2025-12-22 19:25:40,502 - __main__ - INFO - ====================================================================================================
+2025-12-22 19:25:40,502 - __main__ - ERROR - No methods completed successfully
+2025-12-22 19:26:49,086 - __main__ - INFO - ====================================================================================================
+2025-12-22 19:26:49,086 - __main__ - INFO - GENEFORMER PERTURBATION PIPELINE
+2025-12-22 19:26:49,086 - __main__ - INFO - ====================================================================================================
+2025-12-22 19:26:49,086 - __main__ - INFO - Experiment: geneformer_perturbation_distributed_test
+2025-12-22 19:26:49,091 - __main__ - INFO - 
+Configuration:
+seed: 42
+model:
+  name: gf-6L-10M-i2048
+  batch_size: 2
+  device: cuda:0
+data:
+  pertpy_data_identifier: norman_2019
+  condition_filter: control
+  save_tokenized_data: true
+  gene_names_column: index
+  use_raw_counts: false
+  preprocess: true
+  normalize: false
+  filter_genes: true
+  min_genes: 100
+  min_cells: 3
+  max_cells: 100
+  max_genes: 100
+perturbation:
+  gene_list: null
+  num_genes: 5
+  perturbation_type: knockout
+  selection_method: top_expressed
+  perturbation_strength: 2.0
+  save_perturbed_data: true
+optimization:
+  methods:
+  - distributed
+  batching:
+    enabled: true
+    batch_size_multiplier: 2
+  quantization:
+    enabled: true
+    dtype: qint8
+    calibration_data_size: 32
+  onnx:
+    enabled: true
+    use_gpu: true
+    precision: FP16
+  distributed:
+    enabled: true
+    backend: nccl
+output:
+  dir: outputs
+  cache_dir: /scratch
+  save_outputs: true
+  compression: true
+  precision: float32
+  save_detailed_comparisons: true
+  log_level: INFO
+  log_to_file: true
+  log_file: pipeline.log
+hardware:
+  device: auto
+  mixed_precision: false
+  cudnn_benchmark: true
+  empty_cache_between_methods: true
+experiment:
+  name: geneformer_perturbation_distributed_test
+  tags: []
+  notes: ''
+reproducibility:
+  deterministic: true
+advanced:
+  compile_model: false
+  compile_backend: inductor
+  continue_on_error: true
+validation:
+  min_correlation: 0.95
+  max_mse: 0.01
+  warn_on_threshold: true
+  check_nan: true
+  check_inf: true
+
+2025-12-22 19:26:49,091 - __main__ - INFO - Loading Geneformer model...
+2025-12-22 19:26:52,994 - __main__ - INFO - Model loaded: gf-6L-10M-i2048
+2025-12-22 19:26:52,995 - __main__ - INFO - Loading data: norman_2019
+2025-12-22 19:26:52,996 - __main__ - INFO - Found processed data saved to disk.
+2025-12-22 19:26:53,109 - __main__ - INFO - Selected 5 genes using method: top_expressed
+2025-12-22 19:26:53,109 - __main__ - INFO - Performing perturbation on 5 genes...
+2025-12-22 19:26:53,110 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-22 19:26:53,117 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-22 19:26:53,124 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-22 19:26:53,131 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-22 19:26:53,138 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-22 19:26:53,144 - __main__ - INFO - Perturbations complete.
+2025-12-22 19:26:53,144 - __main__ - INFO - 
+====================================================================================================
+2025-12-22 19:26:53,144 - __main__ - INFO - Running BASELINE (no optimization)...
+2025-12-22 19:26:53,260 - __main__ - INFO - Extracting embeddings...
+2025-12-22 19:26:54,858 - __main__ - INFO - Extracted embeddings shape: (100, 256)
+2025-12-22 19:26:54,858 - __main__ - INFO - Extracting embeddings for perturbations on 5 genes...
+2025-12-22 19:26:54,858 - __main__ - INFO - Extraxcting embeddings for perturbed: FAAP20 (type: knockout)
+2025-12-22 19:26:54,858 - __main__ - INFO - Extracting embeddings...
+2025-12-22 19:26:55,230 - __main__ - INFO - Extracted embeddings shape: (100, 256)
+2025-12-22 19:26:55,230 - __main__ - INFO - Extraxcting embeddings for perturbed: SSU72 (type: knockout)
+2025-12-22 19:26:55,230 - __main__ - INFO - Extracting embeddings...
+2025-12-22 19:26:55,600 - __main__ - INFO - Extracted embeddings shape: (100, 256)
+2025-12-22 19:26:55,600 - __main__ - INFO - Extraxcting embeddings for perturbed: MRPL20 (type: knockout)
+2025-12-22 19:26:55,600 - __main__ - INFO - Extracting embeddings...
+2025-12-22 19:26:55,972 - __main__ - INFO - Extracted embeddings shape: (100, 256)
+2025-12-22 19:26:55,972 - __main__ - INFO - Extraxcting embeddings for perturbed: AURKAIP1 (type: knockout)
+2025-12-22 19:26:55,972 - __main__ - INFO - Extracting embeddings...
+2025-12-22 19:26:56,339 - __main__ - INFO - Extracted embeddings shape: (100, 256)
+2025-12-22 19:26:56,340 - __main__ - INFO - Extraxcting embeddings for perturbed: RPL22 (type: knockout)
+2025-12-22 19:26:56,340 - __main__ - INFO - Extracting embeddings...
+2025-12-22 19:26:56,712 - __main__ - INFO - Extracted embeddings shape: (100, 256)
+2025-12-22 19:26:56,713 - __main__ - INFO - Finished getting perturbation results.
+2025-12-22 19:26:56,745 - __main__ - INFO - Saved outputs for baseline to outputs/outputs/baseline
+2025-12-22 19:26:56,746 - __main__ - INFO - 
+====================================================================================================
+2025-12-22 19:26:56,747 - __main__ - INFO - Running with DDP DISTRIBUTED optimization...
+2025-12-22 19:26:56,747 - __main__ - INFO - Using 4 GPUs with DDP
+2025-12-22 19:26:56,788 - __main__ - INFO - Using temporary directory: /scratch/ddp_results_y7c7sc_v
+2025-12-22 19:28:12,501 - __main__ - ERROR - distributed failed: Weights only load failed. This file can still be loaded, to do so you have two options, [1mdo those steps only if you trust the source of the checkpoint[0m. 
+	(1) In PyTorch 2.6, we changed the default value of the `weights_only` argument in `torch.load` from `False` to `True`. Re-running `torch.load` with `weights_only` set to `False` will likely succeed, but it can result in arbitrary code execution. Do it only if you got the file from a trusted source.
+	(2) Alternatively, to load with `weights_only=True` please check the recommended steps in the following error message.
+	WeightsUnpickler error: Unsupported global: GLOBAL numpy._core.multiarray._reconstruct was not an allowed global by default. Please use `torch.serialization.add_safe_globals([numpy._core.multiarray._reconstruct])` or the `torch.serialization.safe_globals([numpy._core.multiarray._reconstruct])` context manager to allowlist this global if you trust this class/function.
+
+Check the documentation of torch.load to learn more about types accepted by default with weights_only https://pytorch.org/docs/stable/generated/torch.load.html.
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 1372, in run
+    perf_metrics, outputs = runner(model, data,
+  File "/root/capsule/code/helical-challenge/main.py", line 1082, in run_with_distributed_ddp
+    results = torch.load(result_path)
+  File "/opt/conda/lib/python3.10/site-packages/torch/serialization.py", line 1529, in load
+    raise pickle.UnpicklingError(_get_wo_message(str(e))) from None
+_pickle.UnpicklingError: Weights only load failed. This file can still be loaded, to do so you have two options, [1mdo those steps only if you trust the source of the checkpoint[0m. 
+	(1) In PyTorch 2.6, we changed the default value of the `weights_only` argument in `torch.load` from `False` to `True`. Re-running `torch.load` with `weights_only` set to `False` will likely succeed, but it can result in arbitrary code execution. Do it only if you got the file from a trusted source.
+	(2) Alternatively, to load with `weights_only=True` please check the recommended steps in the following error message.
+	WeightsUnpickler error: Unsupported global: GLOBAL numpy._core.multiarray._reconstruct was not an allowed global by default. Please use `torch.serialization.add_safe_globals([numpy._core.multiarray._reconstruct])` or the `torch.serialization.safe_globals([numpy._core.multiarray._reconstruct])` context manager to allowlist this global if you trust this class/function.
+
+Check the documentation of torch.load to learn more about types accepted by default with weights_only https://pytorch.org/docs/stable/generated/torch.load.html.
+2025-12-22 19:28:12,503 - __main__ - INFO - 
+====================================================================================================
+2025-12-22 19:28:12,503 - __main__ - INFO - COMPARING OUTPUTS TO BASELINE
+2025-12-22 19:28:12,503 - __main__ - INFO - ====================================================================================================
+2025-12-22 19:28:12,505 - __main__ - INFO - Performance metrics saved to: outputs/performance_metrics_20251222_192812.csv
+2025-12-22 19:28:12,508 - __main__ - INFO - 
+====================================================================================================
+2025-12-22 19:28:12,508 - __main__ - INFO - PERFORMANCE SUMMARY
+2025-12-22 19:28:12,508 - __main__ - INFO - ====================================================================================================
+2025-12-22 19:28:12,511 - __main__ - INFO - 
+     method  runtime_seconds  cpu_percent    memory_mb  gpu_memory_mb  gpu_utilization  throughput_cells_per_sec  num_cells  num_genes_perturbed                   timestamp extra_optimization
+0  baseline         3.568326         91.1  5730.472656      48.404785               19                 28.024347        100                    5  2025-12-22T19:26:56.715099               none
+
+2025-12-22 19:28:12,512 - __main__ - INFO - 
+SPEEDUP RELATIVE TO BASELINE:
+2025-12-22 19:28:12,512 - __main__ - INFO - --------------------------------------------------
+2025-12-22 19:28:12,512 - __main__ - INFO - ====================================================================================================
+2025-12-22 19:28:12,512 - __main__ - INFO - 
+All outputs saved to: outputs
+2025-12-22 19:28:12,513 - __main__ - INFO - 
+====================================================================================================
+2025-12-22 19:28:12,513 - __main__ - INFO - PIPELINE COMPLETE!
+2025-12-22 19:28:12,513 - __main__ - INFO - ====================================================================================================

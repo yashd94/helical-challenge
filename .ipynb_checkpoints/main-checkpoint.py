@@ -2,6 +2,7 @@
 Hydra-parameterized script for in-silico perturbation using the Helical API and a Geneformer model.
 """
 import os
+import sys
 import time
 import psutil
 import logging
@@ -45,13 +46,14 @@ try:
 except ImportError:
     pass
 
-# Distributed inference using torch.distributed
+# Distributed inference using torch.distributed (moved to distributed_utils.py)
 try:
-    from torch.distributed import init_process_group, destroy_process_group
+    import torch.distributed as dist
     import torch.multiprocessing as mp
     DISTRIBUTED_AVAILABLE = True
 except ImportError:
     DISTRIBUTED_AVAILABLE = False
+import tempfile
 
 # Quantization using nvidia-modelopt
 import modelopt.torch.quantization as mtq
@@ -307,6 +309,136 @@ class OutputComparator:
         )
 
 
+# ------------------------------------------------------------------------
+# Embedding extraction wrapper
+# ------------------------------------------------------------------------
+def extract_embeddings(model: Geneformer, 
+                       data: Dataset,
+                       mixed_precision: bool = False,
+                       rank: int = None) -> np.ndarray:
+    """Extract embeddings from the model."""
+    logger.info("Extracting embeddings...")
+
+    if rank is not None:
+        # Move model to GPU [rank] for DDP if provided
+        model.model = model.model.to(rank)
+
+    with torch.no_grad():
+        # Use mixed precision if enabled
+        if mixed_precision:
+            with torch.cuda.amp.autocast():
+                embeddings = model.get_embeddings(data, device_override = rank)
+        else:
+            embeddings = model.get_embeddings(data, device_override = rank)
+    logger.info(f"Extracted embeddings shape: {embeddings.shape}")
+    return embeddings
+
+# ------------------------------------------------------------------------
+# Distributed inference wrappers
+# ------------------------------------------------------------------------
+def setup_ddp(rank: int, world_size: int, backend: str = 'nccl'):
+    """Initialize the distributed environment."""
+    os.environ['MASTER_ADDR'] = 'localhost'
+    os.environ['MASTER_PORT'] = '12355'
+
+    # Reduce memory usage
+    os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'max_split_size_mb:512'
+
+    dist.init_process_group(backend, rank=rank, world_size=world_size)
+    torch.cuda.set_device(rank)
+
+    # Clear cache
+    torch.cuda.empty_cache()
+
+def cleanup_ddp():
+    """Clean up the distributed environment."""
+    if dist.is_initialized():
+        dist.destroy_process_group()
+    torch.cuda.empty_cache()
+
+def get_perturbation_results_ddp(
+    rank: int,
+    model: Geneformer, 
+    perturbed_data_dict: Dict, 
+    genes: List[str]
+) -> Dict[str, np.ndarray]:
+    """Extract post-perturbation embeddings (DDP)"""
+    logger.info(f"Extracting embeddings for perturbations on {len(genes)} genes...")
+
+    # Move model to GPU [rank]
+    model.model = model.model.to(rank)
+    world_size = dist.get_world_size()
+
+    # Distribute genes across GPUs
+    genes_per_gpu = len(genes) // world_size
+    start_idx = rank * genes_per_gpu
+    end_idx = start_idx + genes_per_gpu if rank < world_size - 1 else len(genes)
+    local_genes = genes[start_idx:end_idx]
+
+    local_results = {}
+
+    for gene in local_genes:
+        if gene in perturbed_data_dict.keys():
+            logger.info(f"Extraxcting embeddings for perturbed: {gene}")
+
+            perturbed_emb = extract_embeddings(model, perturbed_data_dict[gene], rank)
+            local_results[gene] = perturbed_emb
+        else:
+            logger.warning(f"Gene {gene} not found in perturbed data, skipping")
+
+    logger.info("Finished getting perturbation results.")
+    return local_results
+
+def run_inference_worker(
+    rank: int,
+    world_size: int,
+    model: Geneformer,
+    data: Dataset,
+    perturbed_data_dict: Dict,
+    genes: List[str],
+    backend: str,
+    temp_dir: str
+):
+    """Worker function for each GPU process."""
+    try:
+        setup_ddp(rank, world_size, backend)
+
+        logger.info(f"Rank {rank}: Starting inference")
+
+        # Move model to GPU [rank]
+        model.model = model.model.to(rank)
+
+        # Extract embeddings
+        local_embeddings = extract_embeddings(model, data, rank)
+
+        # Perform perturbations
+        local_perturbation_results = get_perturbation_results_ddp(
+            rank, model, perturbed_data_dict, genes
+        )
+
+        # Save results to disk instead of shared memory
+        result_path = os.path.join(temp_dir, f'rank_{rank}_results.pt')
+        torch.save({
+            'embeddings': local_embeddings,
+            'perturbation_results': local_perturbation_results
+        }, result_path)
+
+        logger.info(f"Rank {rank}: Saved results to {result_path}")
+
+        cleanup_ddp()
+
+    except Exception as e:
+        logger.error(f"Error in rank {rank}: {str(e)}")
+        import traceback
+        traceback.print_exc()
+
+        # Save error to file
+        error_path = os.path.join(temp_dir, f'rank_{rank}_error.txt')
+        with open(error_path, 'w') as f:
+            f.write(str(e))
+            f.write('\n')
+            f.write(traceback.format_exc())
+    
 # ============================================================================
 # MAIN PIPELINE
 # ============================================================================
@@ -390,10 +522,10 @@ class GeneformerPerturbationPipeline:
         """Load and tokenize AnnData."""
         logger.info(f"Loading data: {self.cfg.data.pertpy_data_identifier}")
         
-        if os.path.exists(os.path.join(self.cfg.output.cache_dir, self.cfg.experiment.name, self.cfg.data.pertpy_data_identifier)):
+        if os.path.exists(os.path.join(self.cfg.output.cache_dir, self.cfg.experiment.name, self.cfg.data.pertpy_data_identifier+"_processed.h5ad")):
             logger.info("Found processed data saved to disk.")
             adata = ad.read_h5ad(os.path.join(self.cfg.output.cache_dir, self.cfg.experiment.name, self.cfg.data.pertpy_data_identifier+"_processed.h5ad"))
-            tokenized_data = datasets.load_from_disk(os.path.join(self.cfg.output.cache_dir, self.cfg.experiment.name, self.cfg.data.pertpy_data_identifier, "_tokenized.dataset"))
+            tokenized_data = datasets.load_from_disk(os.path.join(self.cfg.output.cache_dir, self.cfg.experiment.name, self.cfg.data.pertpy_data_identifier+"_tokenized.dataset"))
         else:
             logger.info("No processed data found.")
             adata = pertpy.data.norman_2019()
@@ -485,22 +617,8 @@ class GeneformerPerturbationPipeline:
         return genes
     
     # ------------------------------------------------------------------------
-    # Inference functions
+    # Perturbation functions
     # ------------------------------------------------------------------------
-    
-    def extract_embeddings(self, model: Geneformer, data: Dataset) -> np.ndarray:
-        """Extract embeddings from the model."""
-        logger.info("Extracting embeddings...")
-  
-        with torch.no_grad():
-            # Use mixed precision if enabled
-            if self.cfg.hardware.mixed_precision:
-                with torch.cuda.amp.autocast():
-                    embeddings = model.get_embeddings(data)
-            else:
-                embeddings = model.get_embeddings(data)
-        logger.info(f"Extracted embeddings shape: {embeddings.shape}")
-        return embeddings
     
     def perform_perturbations(
         self, 
@@ -518,7 +636,7 @@ class GeneformerPerturbationPipeline:
         for gene in genes:
             
             # Check if perturbed data is present in the experiment cache
-            cached_pert_path = os.path.join(self.cfg.output.cache_dir, self.cfg.experiment.name, f"/perturbations/{gene}.dataset")
+            cached_pert_path = os.path.join(self.cfg.output.cache_dir, self.cfg.experiment.name, f"perturbations/{gene}.dataset")
             pert_data_cached = os.path.exists(cached_pert_path)
             if pert_data_cached:
                 logger.info(f"Perturbed data found in cache. Loading from disk.")
@@ -540,12 +658,12 @@ class GeneformerPerturbationPipeline:
                         strength = getattr(self.cfg.perturbation, 'perturbation_strength', 2.0)
                         perturbed_data.X[:, gene_idx] *= strength
                     
-                    if not os.path.exists(os.path.join(self.cfg.output.cache_dir, self.cfg.experiment.name, f"/perturbations/")):
-                        os.makedirs(os.path.join(self.cfg.output.cache_dir, self.cfg.experiment.name, f"/perturbations/"))
+                    if not os.path.exists(os.path.join(self.cfg.output.cache_dir, self.cfg.experiment.name, f"perturbations/")):
+                        os.makedirs(os.path.join(self.cfg.output.cache_dir, self.cfg.experiment.name, f"perturbations/"))
                         
-                    output_path = None if not bool(self.cfg.perturbation.save_perturbed_data) else os.path.join(self.cfg.output.cache_dir, self.cfg.experiment.name, f"/perturbations/{gene}")
+                    output_path = None if not bool(self.cfg.perturbation.save_perturbed_data) else os.path.join(self.cfg.output.cache_dir, self.cfg.experiment.name, f"perturbations/{gene}")
                     logger.info(f"Saving perturbed data to: {output_path}.dataset")
-                    sys.exit()
+                    
                     perturbed_data_dict[gene] = model.process_data(
                                                                    perturbed_data, 
                                                                    gene_names = self.cfg.data.gene_names_column,
@@ -575,7 +693,7 @@ class GeneformerPerturbationPipeline:
             if gene in perturbed_data_dict.keys():
                 logger.info(f"Extraxcting embeddings for perturbed: {gene} (type: {perturbation_type})")
 
-                perturbed_emb = self.extract_embeddings(model, perturbed_data_dict[gene])
+                perturbed_emb = extract_embeddings(model, perturbed_data_dict[gene])
                 results[gene] = perturbed_emb
             else:
                 logger.warning(f"Gene {gene} not found in perturbed data, skipping")
@@ -584,7 +702,7 @@ class GeneformerPerturbationPipeline:
         return results
     
     # ------------------------------------------------------------------------
-    # Optimization Methods
+    # Optimization functions
     # ------------------------------------------------------------------------
     
     def run_baseline(
@@ -602,7 +720,7 @@ class GeneformerPerturbationPipeline:
         start_metrics = self.monitor.get_metrics()
         
         # Extract embeddings
-        embeddings = self.extract_embeddings(model, data)
+        embeddings = extract_embeddings(model, data)
         
         # Perform perturbations
         # DEPRECATED
@@ -668,7 +786,7 @@ class GeneformerPerturbationPipeline:
         model.forward_batch_size = optimized_batch_size
         
         # Extract embeddings
-        embeddings = self.extract_embeddings(model, data)
+        embeddings = extract_embeddings(model, data)
         
         # Perform perturbations
         # DEPRECATED
@@ -783,7 +901,7 @@ class GeneformerPerturbationPipeline:
         start_metrics = self.monitor.get_metrics()
         
         # Extract embeddings
-        embeddings = self.extract_embeddings(model, data)
+        embeddings = extract_embeddings(model, data)
         
         # Perform perturbations
         # DEPRECATED
@@ -852,7 +970,7 @@ class GeneformerPerturbationPipeline:
         start_time = time.time()
         start_metrics = self.monitor.get_metrics()
         
-        embeddings = self.extract_embeddings(model, data)
+        embeddings = extract_embeddings(model, data)
         
         # Perform perturbation 
         # DEPRECATED
@@ -891,57 +1009,98 @@ class GeneformerPerturbationPipeline:
         
         return perf_metrics, outputs
     
-    def run_with_distributed(
-        self, 
-        model: Geneformer, 
+    
+    def run_with_distributed_ddp(
+        self,
+        model: Geneformer,
         data: Dataset,
-        adata: ad.AnnData, 
+        adata: ad.AnnData,
         genes: List[str],
         perturbed_data_dict: Dict
     ) -> Tuple[PerformanceMetrics, ModelOutputs]:
-        """Run inference with distributed processing."""
+        """Run inference with DDP distributed processing."""
         if not DISTRIBUTED_AVAILABLE:
             logger.error("Distributed processing not available")
             return None, None
-        
+
         if not self.cfg.optimization.distributed.enabled:
             logger.warning("Distributed is disabled in config")
             return None, None
-        
-        logger.info("Running with DISTRIBUTED optimization...")
-        
+
+        logger.info("Running with DDP DISTRIBUTED optimization...")
+
         num_gpus = torch.cuda.device_count()
-        
-        if (num_gpus > 1) & bool(self.cfg.optimization.distributed.use_data_parallel):
-            
-            logger.info(f"Using {num_gpus} GPUs with DataParallel")
-            model_to_parallelize = model.model.cpu()
-            parallelized_model = torch.nn.DataParallel(model_to_parallelize)
-            parallelized_model = parallelized_model.cuda()
-            model.model = parallelized_model
-            
-        else:
-            logger.warning("Only 1 GPU available, distributed mode may not provide benefits")
-        
+
+        logger.info(f"Using {num_gpus} GPUs with DDP")
+
+        # Set multiprocessing method
+        try:
+            mp.set_start_method('spawn', force=True)
+        except RuntimeError:
+            pass  # Already set
+
+        # Use file system for sharing instead of shared memory
+        mp.set_sharing_strategy('file_system')
+
         start_time = time.time()
         start_metrics = self.monitor.get_metrics()
-        
-        # Extract embeddings
-        embeddings = self.extract_embeddings(model, data)
-        
-        # Perform perturbations
-        # DEPRECATED
-        # perturbation_results = self.perform_perturbation(model, adata, genes)
-        
-        perturbation_results = self.get_perturbation_results(model, perturbed_data_dict, genes)
-        
+
+        # Prepare model for distribution
+        model.model = model.model.cpu()
+        backend = self.cfg.optimization.distributed.backend
+
+        # Create temporary directory for results
+        temp_dir = tempfile.mkdtemp(prefix=f'{self.cfg.output.cache_dir}/ddp_results_')
+        logger.info(f"Using temporary directory: {temp_dir}")
+
+        try:
+            # Spawn processes for each GPU
+            mp.spawn(
+                run_inference_worker,
+                args=(num_gpus, model, data, perturbed_data_dict, genes, backend, temp_dir),
+                nprocs=num_gpus,
+                join=True
+            )
+
+            # Load results from disk
+            all_embeddings = []
+            all_perturbation_results = {}
+
+            for rank in range(num_gpus):
+                result_path = os.path.join(temp_dir, f'rank_{rank}_results.pt')
+                error_path = os.path.join(temp_dir, f'rank_{rank}_error.txt')
+
+                if os.path.exists(error_path):
+                    with open(error_path, 'r') as f:
+                        logger.error(f"Error from rank {rank}:\n{f.read()}")
+                    continue
+
+                if not os.path.exists(result_path):
+                    logger.error(f"No results from rank {rank}")
+                    continue
+
+                results = torch.load(result_path)
+                all_embeddings.append(results['embeddings'])
+
+                # Merge perturbation results
+                for gene, gene_results in results['perturbation_results'].items():
+                    all_perturbation_results[gene] = gene_results
+
+            # Concatenate embeddings from all GPUs
+            embeddings = torch.cat(all_embeddings, dim=0) if all_embeddings else None
+
+        finally:
+            # Clean up temporary directory
+            import shutil
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
         end_time = time.time()
         end_metrics = self.monitor.get_metrics()
-        
+
         runtime = end_time - start_time
-        
+
         perf_metrics = PerformanceMetrics(
-            method='distributed',
+            method='distributed_ddp',
             runtime_seconds=runtime,
             cpu_percent=end_metrics['cpu_percent'],
             memory_mb=end_metrics['memory_mb'],
@@ -953,22 +1112,24 @@ class GeneformerPerturbationPipeline:
             timestamp=datetime.now().isoformat(),
             additional_metrics={
                 'num_gpus': num_gpus,
-                'backend': self.cfg.optimization.distributed.backend
+                'backend': backend,
+                'distribution_method': 'DDP'
             }
         )
-        
+
         outputs = ModelOutputs(
-            method='distributed',
+            method='distributed_ddp',
             embeddings=embeddings,
-            perturbation_results=perturbation_results,
-            cell_ids=adata.obs_names.tolist() if hasattr(data, 'obs_names') else None,
+            perturbation_results=all_perturbation_results,
+            cell_ids=adata.obs_names.tolist() if hasattr(adata, 'obs_names') else None,
             gene_names=genes
         )
-        
+
         return perf_metrics, outputs
     
+    
     # ------------------------------------------------------------------------
-    # Validation and Output
+    # Validation and outputs
     # ------------------------------------------------------------------------
     
     def validate_outputs(self, outputs: ModelOutputs) -> bool:
@@ -1192,7 +1353,7 @@ class GeneformerPerturbationPipeline:
             'batching': self.run_with_batching,
             'quantization': self.run_with_quantization,
             # 'onnx': self.run_with_onnx, # Commented out for now to avoid extra compute
-            'distributed': self.run_with_distributed,
+            'distributed': self.run_with_distributed_ddp,
         }
         
         # Expand 'all' to all available methods
