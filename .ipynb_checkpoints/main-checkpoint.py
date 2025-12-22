@@ -21,6 +21,7 @@ import anndata as ad
 from scipy.stats import pearsonr, spearmanr
 from scipy.spatial.distance import cosine
 import pertpy
+import datasets
 
 # Set datasetdir to avoid re-downloading data
 from scanpy import settings
@@ -389,49 +390,63 @@ class GeneformerPerturbationPipeline:
         """Load and tokenize AnnData."""
         logger.info(f"Loading data: {self.cfg.data.pertpy_data_identifier}")
         
-        # adata = ad.read_h5ad(self.cfg.data.input_path)
-        adata = pertpy.data.norman_2019()
-        if self.cfg.data.condition_filter is not None:
-            adata=adata[adata.obs.perturbation_name == self.cfg.data.condition_filter]
+        if os.path.exists(os.path.join(self.cfg.output.cache_dir, self.cfg.experiment.name, self.cfg.data.pertpy_data_identifier)):
+            logger.info("Found processed data saved to disk.")
+            adata = ad.read_h5ad(os.path.join(self.cfg.output.cache_dir, self.cfg.experiment.name, self.cfg.data.pertpy_data_identifier+"_processed.h5ad"))
+            tokenized_data = datasets.load_from_disk(os.path.join(self.cfg.output.cache_dir, self.cfg.experiment.name, self.cfg.data.pertpy_data_identifier, "_tokenized.dataset"))
+        else:
+            logger.info("No processed data found.")
+            adata = pertpy.data.norman_2019()
+            if self.cfg.data.condition_filter is not None:
+                adata=adata[adata.obs.perturbation_name == self.cfg.data.condition_filter]
+
+            logger.info(f"Loaded {adata.n_obs} cells, {adata.n_vars} genes")
+
+            # Apply data preprocessing if configured
+            if self.cfg.data.preprocess:
+                logger.info("Preprocessing data...")
+
+                if self.cfg.data.filter_genes:
+                    import scanpy as sc
+                    sc.pp.filter_cells(adata, min_genes=self.cfg.data.min_genes)
+                    sc.pp.filter_genes(adata, min_cells=self.cfg.data.min_cells)
+                    logger.info(f"After filtering: {adata.n_obs} cells, {adata.n_vars} genes")
+
+                if self.cfg.data.normalize:
+                    import scanpy as sc
+                    sc.pp.normalize_total(adata, target_sum=1e4)
+                    sc.pp.log1p(adata)
+                    logger.info("Data normalized")
+
+            # Subset data if configured (for testing)
+            if hasattr(self.cfg.data, 'max_cells') and self.cfg.data.max_cells:
+                n_cells = min(self.cfg.data.max_cells, adata.n_obs)
+                adata = adata[:n_cells, :]
+                logger.info(f"Subsetted to {n_cells} cells for testing")
+
+            if hasattr(self.cfg.data, 'max_genes') and self.cfg.data.max_genes:
+                n_genes = min(self.cfg.data.max_genes, adata.n_vars)
+                adata = adata[:, :n_genes]
+                logger.info(f"Subsetted to {n_genes} genes for testing")
+
+            # Tokenize data
+            logger.info("Tokenizing data...")
+            output_path = None if not bool(self.cfg.data.save_tokenized_data) else os.path.join(self.cfg.output.cache_dir, self.cfg.experiment.name, self.cfg.data.pertpy_data_identifier+"_tokenized")
+            tokenized_data = model.process_data(
+                                                adata, 
+                                                gene_names = self.cfg.data.gene_names_column, 
+                                                use_raw_counts = bool(self.cfg.data.use_raw_counts),
+                                                output_path = output_path
+                                               )
+
+            logger.info("Tokenization complete.")
+            if bool(self.cfg.data.save_tokenized_data):
+                logger.info("Saving processed data...")
+                if not os.path.exists(os.path.join(self.cfg.output.cache_dir, self.cfg.experiment.name)):
+                    os.makedirs(os.path.join(self.cfg.output.cache_dir, self.cfg.experiment.name))
+                adata.write_h5ad(os.path.join(self.cfg.output.cache_dir, self.cfg.experiment.name, self.cfg.data.pertpy_data_identifier+"_processed.h5ad"))
+                logger.info("Saving tokenized data...")
             
-        logger.info(f"Loaded {adata.n_obs} cells, {adata.n_vars} genes")
-        
-        # Apply data preprocessing if configured
-        if self.cfg.data.preprocess:
-            logger.info("Preprocessing data...")
-            
-            if self.cfg.data.filter_genes:
-                import scanpy as sc
-                sc.pp.filter_cells(adata, min_genes=self.cfg.data.min_genes)
-                sc.pp.filter_genes(adata, min_cells=self.cfg.data.min_cells)
-                logger.info(f"After filtering: {adata.n_obs} cells, {adata.n_vars} genes")
-            
-            if self.cfg.data.normalize:
-                import scanpy as sc
-                sc.pp.normalize_total(adata, target_sum=1e4)
-                sc.pp.log1p(adata)
-                logger.info("Data normalized")
-        
-        # Subset data if configured (for testing)
-        if hasattr(self.cfg.data, 'max_cells') and self.cfg.data.max_cells:
-            n_cells = min(self.cfg.data.max_cells, adata.n_obs)
-            adata = adata[:n_cells, :]
-            logger.info(f"Subsetted to {n_cells} cells for testing")
-        
-        if hasattr(self.cfg.data, 'max_genes') and self.cfg.data.max_genes:
-            n_genes = min(self.cfg.data.max_genes, adata.n_vars)
-            adata = adata[:, :n_genes]
-            logger.info(f"Subsetted to {n_genes} genes for testing")
-        
-        # Tokenize data
-        logger.info("Tokenizing data...")
-        tokenized_data = model.process_data(
-                                            adata, 
-                                            gene_names = self.cfg.data.gene_names_column, 
-                                            use_raw_counts = bool(self.cfg.data.use_raw_counts)
-                                           )
-        
-        logger.info("Tokenization complete")
         return adata, tokenized_data
     
     def get_genes_to_perturb(self, adata: ad.AnnData) -> List[str]:
@@ -499,29 +514,47 @@ class GeneformerPerturbationPipeline:
         results = {}
         perturbation_type = self.cfg.perturbation.perturbation_type
         perturbed_data_dict = {}
+        
         for gene in genes:
-            logger.info(f"Perturbing gene: {gene} (type: {perturbation_type})")
-
-            perturbed_data = adata.copy()
-
-            if gene in perturbed_data.var_names:
-                gene_idx = perturbed_data.var_names.get_loc(gene)
-
-                if perturbation_type == "knockout":
-                    # Zero out gene expression
-                    perturbed_data.X[:, gene_idx] = 0
-                elif perturbation_type == "overexpression":
-                    # Increase gene expression (e.g., multiply by factor)
-                    strength = getattr(self.cfg.perturbation, 'perturbation_strength', 2.0)
-                    perturbed_data.X[:, gene_idx] *= strength
-                   
-                perturbed_data_dict[gene] = model.process_data(
-                                                               perturbed_data, 
-                                                               use_raw_counts = bool(self.cfg.data.use_raw_counts)
-                                                              )
-
+            
+            # Check if perturbed data is present in the experiment cache
+            cached_pert_path = os.path.join(self.cfg.output.cache_dir, self.cfg.experiment.name, f"/perturbations/{gene}.dataset")
+            pert_data_cached = os.path.exists(cached_pert_path)
+            if pert_data_cached:
+                logger.info(f"Perturbed data found in cache. Loading from disk.")
+                perturbed_data_dict[gene] = datasets.load_from_disk(cached_pert_path)
+             
             else:
-                logger.warning(f"Gene {gene} not found in data, skipping")
+                logger.info(f"No data found in cache. Perturbing gene: {gene} (type: {perturbation_type})")
+
+                perturbed_data = adata.copy()
+
+                if gene in perturbed_data.var_names:
+                    gene_idx = perturbed_data.var_names.get_loc(gene)
+
+                    if perturbation_type == "knockout":
+                        # Zero out gene expression
+                        perturbed_data.X[:, gene_idx] = 0
+                    elif perturbation_type == "overexpression":
+                        # Increase gene expression (e.g., multiply by factor)
+                        strength = getattr(self.cfg.perturbation, 'perturbation_strength', 2.0)
+                        perturbed_data.X[:, gene_idx] *= strength
+                    
+                    if not os.path.exists(os.path.join(self.cfg.output.cache_dir, self.cfg.experiment.name, f"/perturbations/")):
+                        os.makedirs(os.path.join(self.cfg.output.cache_dir, self.cfg.experiment.name, f"/perturbations/"))
+                        
+                    output_path = None if not bool(self.cfg.perturbation.save_perturbed_data) else os.path.join(self.cfg.output.cache_dir, self.cfg.experiment.name, f"/perturbations/{gene}")
+                    logger.info(f"Saving perturbed data to: {output_path}.dataset")
+                    sys.exit()
+                    perturbed_data_dict[gene] = model.process_data(
+                                                                   perturbed_data, 
+                                                                   gene_names = self.cfg.data.gene_names_column,
+                                                                   use_raw_counts = bool(self.cfg.data.use_raw_counts),
+                                                                   output_path = output_path
+                                                                  )
+
+                else:
+                    logger.warning(f"Gene {gene} not found in data, skipping")
         
         logger.info("Perturbations complete.")
         return perturbed_data_dict
@@ -844,7 +877,6 @@ class GeneformerPerturbationPipeline:
             num_genes_perturbed=len(genes),
             timestamp=datetime.now().isoformat(),
             additional_metrics={
-                'onnx_opset': self.cfg.optimization.onnx.opset_version,
                 'note': 'Using PyTorch model (full ONNX runtime not implemented)'
             }
         )

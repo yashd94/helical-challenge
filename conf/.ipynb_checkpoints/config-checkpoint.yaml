@@ -17,7 +17,7 @@ model:
          # "gf-12L-104M-i4096-CLcancer",
          # "gf-20L-151M-i4096",
          # "gf-18L-316M-i4096",
-  batch_size: 32              # Base batch size for inference
+  batch_size: 32           # Base batch size for inference
   device: 'cuda:0'
 
 
@@ -27,19 +27,20 @@ model:
 data:
   pertpy_data_identifier: "norman_2019"
   condition_filter: "control"
+  save_tokenized_data: true
   
   # Preprocessing options
   gene_names_column: "index"
   use_raw_counts: false
   preprocess: true
-  normalize: true
+  normalize: false
   filter_genes: true
   min_genes: 100      # Minimum genes per cell
   min_cells: 3        # Minimum cells per gene
   
   # Subset data for testing
-  max_cells: 100   # Limit number of cells for faster testing
-  max_genes: 50   # Limit number of genes
+  max_cells: 1000   # Limit number of cells for faster testing
+  max_genes: 100   # Limit number of genes
 
 # ============================================================================
 # PERTURBATION CONFIGS
@@ -50,7 +51,7 @@ perturbation:
   # gene_list: ["BRCA1", "TP53", "MYC", "EGFR", "KRAS"]
   
   # Option 2: Number of top variable genes (set gene_list to null if using this)
-  num_genes: 10
+  num_genes: 20
   
   # Perturbation settings
   perturbation_type: "knockout"  # Options: knockout, overexpression
@@ -60,7 +61,9 @@ perturbation:
   
   # Additional perturbation options
   perturbation_strength: 2.0  # For overexpression experiments
-
+  
+  # Save perturbed data to cache directory
+  save_perturbed_data: true
 # ============================================================================
 # OPTIMIZATION CONFIGS
 # ============================================================================
@@ -83,8 +86,6 @@ optimization:
   # ONNX optimization
   onnx:
     enabled: true
-    opset_version: 14
-    optimize: true
     use_gpu: true           # Use ONNX GPU runtime if available
     precision: "FP16"
   
@@ -100,18 +101,12 @@ optimization:
 # ============================================================================
 output:
   dir: "outputs"                    # Base output directory
+  cache_dir: "/scratch"             # Cache directory
   save_outputs: true                # Save model outputs (embeddings and perturbations)
   
   # Output format options
   compression: true                 # Options: null, "gzip", "lzf"
   precision: "float32"              # Options: float32, float16
-  
-  # What to save
-  save_embeddings: true
-  save_perturbations: true
-  save_metadata: true
-  save_cell_ids: true
-  save_gene_names: true
   
   # Comparison outputs
   save_detailed_comparisons: true   # Save per-gene comparison CSVs
@@ -136,7 +131,7 @@ hardware:
 # EXPERIMENT TRACKING
 # ============================================================================
 experiment:
-  name: "geneformer_perturbation_100_genes"
+  name: "geneformer_perturbation_test"
   tags: []
   notes: ""
 

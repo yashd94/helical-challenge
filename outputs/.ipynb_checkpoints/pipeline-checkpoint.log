@@ -1,0 +1,380 @@
+2025-12-19 20:47:55,349 - __main__ - INFO - ====================================================================================================
+2025-12-19 20:47:55,349 - __main__ - INFO - GENEFORMER PERTURBATION PIPELINE
+2025-12-19 20:47:55,349 - __main__ - INFO - ====================================================================================================
+2025-12-19 20:47:55,350 - __main__ - INFO - Experiment: geneformer_perturbation_100_genes
+2025-12-19 20:47:55,354 - __main__ - INFO - 
+Configuration:
+seed: 42
+model:
+  name: gf-12L-38M-i4096
+  batch_size: 32
+  device: cuda:0
+data:
+  pertpy_data_identifier: norman_2019
+  condition_filter: control
+  gene_names_column: index
+  use_raw_counts: false
+  preprocess: true
+  normalize: true
+  filter_genes: true
+  min_genes: 100
+  min_cells: 3
+perturbation:
+  gene_list: null
+  num_genes: 200
+  perturbation_type: knockout
+  selection_method: top_expressed
+  perturbation_strength: 2.0
+optimization:
+  methods:
+  - quantization
+  batching:
+    enabled: true
+    batch_size_multiplier: 2
+  quantization:
+    enabled: true
+    dtype: qint8
+    calibration_data_size: 32
+  onnx:
+    enabled: true
+    opset_version: 14
+    optimize: true
+    use_gpu: true
+    precision: FP16
+  distributed:
+    enabled: true
+    backend: nccl
+    world_size: null
+    use_data_parallel: true
+output:
+  dir: outputs
+  save_outputs: true
+  compression: true
+  precision: float32
+  save_detailed_comparisons: true
+  log_level: INFO
+  log_to_file: true
+  log_file: pipeline.log
+hardware:
+  device: auto
+  mixed_precision: false
+  cudnn_benchmark: true
+  empty_cache_between_methods: true
+experiment:
+  name: geneformer_perturbation_100_genes
+  tags: []
+  notes: ''
+reproducibility:
+  deterministic: true
+advanced:
+  compile_model: false
+  compile_backend: inductor
+  continue_on_error: true
+validation:
+  min_correlation: 0.95
+  max_mse: 0.01
+  warn_on_threshold: true
+  check_nan: true
+  check_inf: true
+
+2025-12-19 20:47:55,354 - __main__ - INFO - Loading Geneformer model...
+2025-12-19 20:47:58,779 - __main__ - INFO - Model loaded: gf-12L-38M-i4096
+2025-12-19 20:47:58,779 - __main__ - INFO - Loading data: norman_2019
+2025-12-19 20:48:23,729 - __main__ - INFO - Loaded 11835 cells, 19018 genes
+2025-12-19 20:48:23,729 - __main__ - INFO - Preprocessing data...
+2025-12-19 20:48:26,111 - __main__ - INFO - After filtering: 11835 cells, 18215 genes
+2025-12-19 20:48:26,275 - __main__ - INFO - Data normalized
+2025-12-19 20:48:26,276 - __main__ - INFO - Tokenizing data...
+2025-12-19 20:48:32,747 - __main__ - INFO - Tokenization complete
+2025-12-19 20:48:32,953 - __main__ - INFO - Selected 200 genes using method: top_expressed
+2025-12-19 20:48:32,953 - __main__ - INFO - Performing perturbation on 200 genes...
+2025-12-19 20:48:32,953 - __main__ - INFO - Perturbing gene: SOD1 (type: knockout)
+2025-12-19 20:48:39,876 - __main__ - INFO - Perturbing gene: TBCA (type: knockout)
+2025-12-19 20:48:46,808 - __main__ - INFO - Perturbing gene: PARK7 (type: knockout)
+2025-12-19 20:48:53,782 - __main__ - INFO - Perturbing gene: OST4 (type: knockout)
+2025-12-19 20:49:00,693 - __main__ - INFO - Perturbing gene: SNRPD1 (type: knockout)
+2025-12-19 20:49:07,642 - __main__ - INFO - Perturbing gene: MZT2B (type: knockout)
+2025-12-19 20:49:14,554 - __main__ - INFO - Perturbing gene: ZFAS1 (type: knockout)
+2025-12-19 20:49:21,540 - __main__ - INFO - Perturbing gene: SNRPD2 (type: knockout)
+2025-12-19 20:49:28,506 - __main__ - INFO - Perturbing gene: ENO1 (type: knockout)
+2025-12-19 20:49:35,424 - __main__ - INFO - Perturbing gene: HSP90AA1 (type: knockout)
+2025-12-19 20:49:42,400 - __main__ - INFO - Perturbing gene: UBB (type: knockout)
+2025-12-19 20:49:49,306 - __main__ - INFO - Perturbing gene: SUMO2 (type: knockout)
+2025-12-19 20:49:56,513 - __main__ - INFO - Perturbing gene: NDUFS6 (type: knockout)
+2025-12-19 20:50:03,410 - __main__ - INFO - Perturbing gene: MT-ND5 (type: knockout)
+2025-12-19 20:50:10,354 - __main__ - INFO - Perturbing gene: NME1 (type: knockout)
+2025-12-19 20:50:17,273 - __main__ - INFO - Perturbing gene: TPI1 (type: knockout)
+2025-12-19 20:50:24,188 - __main__ - INFO - Perturbing gene: YDJC (type: knockout)
+2025-12-19 20:50:31,066 - __main__ - INFO - Perturbing gene: B2M (type: knockout)
+2025-12-19 20:50:38,000 - __main__ - INFO - Perturbing gene: PPP1R14B (type: knockout)
+2025-12-19 20:50:44,944 - __main__ - INFO - Perturbing gene: CYCS (type: knockout)
+2025-12-19 20:50:51,880 - __main__ - INFO - Perturbing gene: COX7B (type: knockout)
+2025-12-19 20:50:58,820 - __main__ - INFO - Perturbing gene: SLIRP (type: knockout)
+2025-12-19 20:51:05,761 - __main__ - INFO - Perturbing gene: USMG5 (type: knockout)
+2025-12-19 20:51:12,720 - __main__ - INFO - Perturbing gene: NAP1L1 (type: knockout)
+2025-12-19 20:51:19,657 - __main__ - INFO - Perturbing gene: ATP5D (type: knockout)
+2025-12-19 20:51:26,581 - __main__ - INFO - Perturbing gene: SNRPF (type: knockout)
+2025-12-19 20:51:33,495 - __main__ - INFO - Perturbing gene: PABPC1 (type: knockout)
+2025-12-19 20:51:40,467 - __main__ - INFO - Perturbing gene: AURKAIP1 (type: knockout)
+2025-12-19 20:51:47,409 - __main__ - INFO - Perturbing gene: ACTG1 (type: knockout)
+2025-12-19 20:51:54,328 - __main__ - INFO - Perturbing gene: EIF1 (type: knockout)
+2025-12-19 20:52:01,251 - __main__ - INFO - Perturbing gene: HMGN2 (type: knockout)
+2025-12-19 20:52:08,550 - __main__ - INFO - Perturbing gene: HNRNPA2B1 (type: knockout)
+2025-12-19 20:52:15,473 - __main__ - INFO - Perturbing gene: COX5A (type: knockout)
+2025-12-19 20:52:22,395 - __main__ - INFO - Perturbing gene: ATP5G2 (type: knockout)
+2025-12-19 20:52:29,346 - __main__ - INFO - Perturbing gene: SNRPB (type: knockout)
+2025-12-19 20:52:36,305 - __main__ - INFO - Perturbing gene: ANP32B (type: knockout)
+2025-12-19 20:52:43,222 - __main__ - INFO - Perturbing gene: TXN (type: knockout)
+2025-12-19 20:52:50,159 - __main__ - INFO - Perturbing gene: LSM7 (type: knockout)
+2025-12-19 20:52:57,115 - __main__ - INFO - Perturbing gene: SLC25A6 (type: knockout)
+2025-12-19 20:53:04,034 - __main__ - INFO - Perturbing gene: PA2G4 (type: knockout)
+2025-12-19 20:53:10,956 - __main__ - INFO - Perturbing gene: EIF2S2 (type: knockout)
+2025-12-19 20:53:17,870 - __main__ - INFO - Perturbing gene: COX6B1 (type: knockout)
+2025-12-19 20:53:24,847 - __main__ - INFO - Perturbing gene: TCEB2 (type: knockout)
+2025-12-19 20:53:31,787 - __main__ - INFO - Perturbing gene: NCL (type: knockout)
+2025-12-19 20:53:38,769 - __main__ - INFO - Perturbing gene: UQCR11 (type: knockout)
+2025-12-19 20:53:46,086 - __main__ - INFO - Perturbing gene: SUB1 (type: knockout)
+2025-12-19 20:53:52,968 - __main__ - INFO - Perturbing gene: TIMM13 (type: knockout)
+2025-12-19 20:53:59,946 - __main__ - INFO - Perturbing gene: TMSB10 (type: knockout)
+2025-12-19 20:54:06,911 - __main__ - INFO - Perturbing gene: UBL5 (type: knockout)
+2025-12-19 20:54:13,945 - __main__ - INFO - Perturbing gene: GSTP1 (type: knockout)
+2025-12-19 20:54:20,863 - __main__ - INFO - Perturbing gene: CFL1 (type: knockout)
+2025-12-19 20:54:27,810 - __main__ - INFO - Perturbing gene: SDF2L1 (type: knockout)
+2025-12-19 20:54:34,818 - __main__ - INFO - Perturbing gene: COX8A (type: knockout)
+2025-12-19 20:54:41,824 - __main__ - INFO - Perturbing gene: POMP (type: knockout)
+2025-12-19 20:54:48,761 - __main__ - INFO - Perturbing gene: SERBP1 (type: knockout)
+2025-12-19 20:54:55,708 - __main__ - INFO - Perturbing gene: EIF5A (type: knockout)
+2025-12-19 20:55:02,621 - __main__ - INFO - Perturbing gene: ATP5J2 (type: knockout)
+2025-12-19 20:55:09,608 - __main__ - INFO - Perturbing gene: PRDX1 (type: knockout)
+2025-12-19 20:55:16,786 - __main__ - INFO - Perturbing gene: TOMM7 (type: knockout)
+2025-12-19 20:55:23,974 - __main__ - INFO - Perturbing gene: COX4I1 (type: knockout)
+2025-12-19 20:55:31,455 - __main__ - INFO - Perturbing gene: UQCRQ (type: knockout)
+2025-12-19 20:55:38,360 - __main__ - INFO - Perturbing gene: ACTB (type: knockout)
+2025-12-19 20:55:45,282 - __main__ - INFO - Perturbing gene: SNRPE (type: knockout)
+2025-12-19 20:55:52,236 - __main__ - INFO - Perturbing gene: PSMA7 (type: knockout)
+2025-12-19 20:55:59,194 - __main__ - INFO - Perturbing gene: COX5B (type: knockout)
+2025-12-19 20:56:06,154 - __main__ - INFO - Perturbing gene: EEF2 (type: knockout)
+2025-12-19 20:56:13,088 - __main__ - INFO - Perturbing gene: PRELID1 (type: knockout)
+2025-12-19 20:56:20,065 - __main__ - INFO - Perturbing gene: GPX4 (type: knockout)
+2025-12-19 20:56:26,989 - __main__ - INFO - Perturbing gene: COX7A2 (type: knockout)
+2025-12-19 20:56:33,924 - __main__ - INFO - Perturbing gene: ATP5L (type: knockout)
+2025-12-19 20:56:40,838 - __main__ - INFO - Perturbing gene: COX7C (type: knockout)
+2025-12-19 20:56:47,815 - __main__ - INFO - Perturbing gene: SET (type: knockout)
+2025-12-19 20:56:54,882 - __main__ - INFO - Perturbing gene: NPM1 (type: knockout)
+2025-12-19 20:57:02,023 - __main__ - INFO - Perturbing gene: RAN (type: knockout)
+2025-12-19 20:57:09,155 - __main__ - INFO - Perturbing gene: UBE2L3 (type: knockout)
+2025-12-19 20:57:16,327 - __main__ - INFO - Perturbing gene: ATP5G3 (type: knockout)
+2025-12-19 20:57:23,533 - __main__ - INFO - Perturbing gene: ATP5J (type: knockout)
+2025-12-19 20:57:30,699 - __main__ - INFO - Perturbing gene: H3F3B (type: knockout)
+2025-12-19 20:57:38,201 - __main__ - INFO - Perturbing gene: NDUFS5 (type: knockout)
+2025-12-19 20:57:45,120 - __main__ - INFO - Perturbing gene: APOC1 (type: knockout)
+2025-12-19 20:57:52,080 - __main__ - INFO - Perturbing gene: HSP90AB1 (type: knockout)
+2025-12-19 20:57:59,029 - __main__ - INFO - Perturbing gene: SNRPG (type: knockout)
+2025-12-19 20:58:05,996 - __main__ - INFO - Perturbing gene: HMGB1 (type: knockout)
+2025-12-19 20:58:12,954 - __main__ - INFO - Perturbing gene: HIST1H4C (type: knockout)
+2025-12-19 20:58:19,867 - __main__ - INFO - Perturbing gene: HSPE1 (type: knockout)
+2025-12-19 20:58:26,828 - __main__ - INFO - Perturbing gene: PFN1 (type: knockout)
+2025-12-19 20:58:33,789 - __main__ - INFO - Perturbing gene: HNRNPA1 (type: knockout)
+2025-12-19 20:58:40,789 - __main__ - INFO - Perturbing gene: EEF1B2 (type: knockout)
+2025-12-19 20:58:47,869 - __main__ - INFO - Perturbing gene: BTF3 (type: knockout)
+2025-12-19 20:58:54,952 - __main__ - INFO - Perturbing gene: RPL26 (type: knockout)
+2025-12-19 20:59:02,409 - __main__ - INFO - Perturbing gene: SERF2 (type: knockout)
+2025-12-19 20:59:09,361 - __main__ - INFO - Perturbing gene: HMGA1 (type: knockout)
+2025-12-19 20:59:16,308 - __main__ - INFO - Perturbing gene: ATP5I (type: knockout)
+2025-12-19 20:59:23,250 - __main__ - INFO - Perturbing gene: RPS26 (type: knockout)
+2025-12-19 20:59:30,179 - __main__ - INFO - Perturbing gene: H2AFZ (type: knockout)
+2025-12-19 20:59:37,108 - __main__ - INFO - Perturbing gene: HINT1 (type: knockout)
+2025-12-19 20:59:44,037 - __main__ - INFO - Perturbing gene: HMGN1 (type: knockout)
+2025-12-19 20:59:50,974 - __main__ - INFO - Perturbing gene: PPIA (type: knockout)
+2025-12-19 20:59:57,966 - __main__ - INFO - Perturbing gene: FAU (type: knockout)
+2025-12-19 21:00:04,929 - __main__ - INFO - Perturbing gene: TUBA1B (type: knockout)
+2025-12-19 21:00:12,003 - __main__ - INFO - Perturbing gene: NACA (type: knockout)
+2025-12-19 21:00:19,156 - __main__ - INFO - Perturbing gene: H3F3A (type: knockout)
+2025-12-19 21:00:26,348 - __main__ - INFO - Perturbing gene: GAPDH (type: knockout)
+2025-12-19 21:00:33,907 - __main__ - INFO - Perturbing gene: TMA7 (type: knockout)
+2025-12-19 21:00:40,791 - __main__ - INFO - Perturbing gene: CHCHD2 (type: knockout)
+2025-12-19 21:00:47,796 - __main__ - INFO - Perturbing gene: UBA52 (type: knockout)
+2025-12-19 21:00:54,200 - __main__ - INFO - Perturbing gene: TMSB4X (type: knockout)
+2025-12-19 21:01:01,178 - __main__ - INFO - Perturbing gene: OAZ1 (type: knockout)
+2025-12-19 21:01:08,128 - __main__ - INFO - Perturbing gene: RPL22 (type: knockout)
+2025-12-19 21:01:14,496 - __main__ - INFO - Perturbing gene: RPL27 (type: knockout)
+2025-12-19 21:01:20,899 - __main__ - INFO - Perturbing gene: RPL31 (type: knockout)
+2025-12-19 21:01:27,332 - __main__ - INFO - Perturbing gene: RPL23 (type: knockout)
+2025-12-19 21:01:33,839 - __main__ - INFO - Perturbing gene: GNB2L1 (type: knockout)
+2025-12-19 21:01:40,370 - __main__ - INFO - Perturbing gene: ATP5E (type: knockout)
+2025-12-19 21:01:47,474 - __main__ - INFO - Perturbing gene: RPL4 (type: knockout)
+2025-12-19 21:01:54,643 - __main__ - INFO - Perturbing gene: RPS13 (type: knockout)
+2025-12-19 21:02:01,307 - __main__ - INFO - Perturbing gene: RPS24 (type: knockout)
+2025-12-19 21:02:08,810 - __main__ - INFO - Perturbing gene: RPL41 (type: knockout)
+2025-12-19 21:02:15,152 - __main__ - INFO - Perturbing gene: RANBP1 (type: knockout)
+2025-12-19 21:02:22,179 - __main__ - INFO - Perturbing gene: TPT1 (type: knockout)
+2025-12-19 21:02:28,570 - __main__ - INFO - Perturbing gene: MT-ND3 (type: knockout)
+2025-12-19 21:02:35,561 - __main__ - INFO - Perturbing gene: RPL5 (type: knockout)
+2025-12-19 21:02:41,987 - __main__ - INFO - Perturbing gene: RPL24 (type: knockout)
+2025-12-19 21:02:48,953 - __main__ - INFO - Perturbing gene: RPS21 (type: knockout)
+2025-12-19 21:02:55,949 - __main__ - INFO - Perturbing gene: RPL38 (type: knockout)
+2025-12-19 21:03:02,373 - __main__ - INFO - Perturbing gene: UQCRH (type: knockout)
+2025-12-19 21:03:08,756 - __main__ - INFO - Perturbing gene: PTMA (type: knockout)
+2025-12-19 21:03:15,842 - __main__ - INFO - Perturbing gene: RPS9 (type: knockout)
+2025-12-19 21:03:22,987 - __main__ - INFO - Perturbing gene: RPL10A (type: knockout)
+2025-12-19 21:03:29,557 - __main__ - INFO - Perturbing gene: RPL30 (type: knockout)
+2025-12-19 21:03:36,166 - __main__ - INFO - Perturbing gene: RPL9 (type: knockout)
+2025-12-19 21:03:42,780 - __main__ - INFO - Perturbing gene: RPS11 (type: knockout)
+2025-12-19 21:03:49,715 - __main__ - INFO - Perturbing gene: RPL12 (type: knockout)
+2025-12-19 21:03:56,638 - __main__ - INFO - Perturbing gene: MT-CYB (type: knockout)
+2025-12-19 21:04:03,036 - __main__ - INFO - Perturbing gene: RPL23A (type: knockout)
+2025-12-19 21:04:09,444 - __main__ - INFO - Perturbing gene: RPS25 (type: knockout)
+2025-12-19 21:04:15,853 - __main__ - INFO - Perturbing gene: RPL18 (type: knockout)
+2025-12-19 21:04:22,279 - __main__ - INFO - Perturbing gene: RPS5 (type: knockout)
+2025-12-19 21:04:28,721 - __main__ - INFO - Perturbing gene: RPS4X (type: knockout)
+2025-12-19 21:04:35,136 - __main__ - INFO - Perturbing gene: RPS20 (type: knockout)
+2025-12-19 21:04:41,624 - __main__ - INFO - Perturbing gene: RPL7A (type: knockout)
+2025-12-19 21:04:48,619 - __main__ - INFO - Perturbing gene: RPL27A (type: knockout)
+2025-12-19 21:04:55,167 - __main__ - INFO - Perturbing gene: RPS15A (type: knockout)
+2025-12-19 21:05:01,748 - __main__ - INFO - Perturbing gene: RPS7 (type: knockout)
+2025-12-19 21:05:08,943 - __main__ - INFO - Perturbing gene: RPS6 (type: knockout)
+2025-12-19 21:05:15,580 - __main__ - INFO - Perturbing gene: RPL3 (type: knockout)
+2025-12-19 21:05:22,757 - __main__ - INFO - Perturbing gene: RPL35A (type: knockout)
+2025-12-19 21:05:29,936 - __main__ - INFO - Perturbing gene: RPL8 (type: knockout)
+2025-12-19 21:05:36,874 - __main__ - INFO - Perturbing gene: RPL6 (type: knockout)
+2025-12-19 21:05:43,232 - __main__ - INFO - Perturbing gene: RPL36 (type: knockout)
+2025-12-19 21:05:49,656 - __main__ - INFO - Perturbing gene: RPL7 (type: knockout)
+2025-12-19 21:05:56,052 - __main__ - INFO - Perturbing gene: RPL35 (type: knockout)
+2025-12-19 21:06:03,059 - __main__ - INFO - Perturbing gene: RPL10 (type: knockout)
+2025-12-19 21:06:10,068 - __main__ - INFO - Perturbing gene: RPLP2 (type: knockout)
+2025-12-19 21:06:16,495 - __main__ - INFO - Perturbing gene: RPL14 (type: knockout)
+2025-12-19 21:06:22,881 - __main__ - INFO - Perturbing gene: RPS17 (type: knockout)
+2025-12-19 21:06:29,271 - __main__ - INFO - Perturbing gene: RPL29 (type: knockout)
+2025-12-19 21:06:36,266 - __main__ - INFO - Perturbing gene: MT-ND1 (type: knockout)
+2025-12-19 21:06:43,368 - __main__ - INFO - Perturbing gene: RPS16 (type: knockout)
+2025-12-19 21:06:50,010 - __main__ - INFO - Perturbing gene: YBX1 (type: knockout)
+2025-12-19 21:06:56,603 - __main__ - INFO - Perturbing gene: RPL28 (type: knockout)
+2025-12-19 21:07:03,769 - __main__ - INFO - Perturbing gene: MT-ATP6 (type: knockout)
+2025-12-19 21:07:10,326 - __main__ - INFO - Perturbing gene: RPL11 (type: knockout)
+2025-12-19 21:07:16,938 - __main__ - INFO - Perturbing gene: RPL21 (type: knockout)
+2025-12-19 21:07:23,515 - __main__ - INFO - Perturbing gene: RPL39 (type: knockout)
+2025-12-19 21:07:30,456 - __main__ - INFO - Perturbing gene: RPL13 (type: knockout)
+2025-12-19 21:07:36,793 - __main__ - INFO - Perturbing gene: RPS27A (type: knockout)
+2025-12-19 21:07:43,177 - __main__ - INFO - Perturbing gene: RPL15 (type: knockout)
+2025-12-19 21:07:49,600 - __main__ - INFO - Perturbing gene: RPLP0 (type: knockout)
+2025-12-19 21:07:55,988 - __main__ - INFO - Perturbing gene: RPSA (type: knockout)
+2025-12-19 21:08:02,382 - __main__ - INFO - Perturbing gene: RPS3A (type: knockout)
+2025-12-19 21:08:08,747 - __main__ - INFO - Perturbing gene: MT-ND2 (type: knockout)
+2025-12-19 21:08:15,689 - __main__ - INFO - Perturbing gene: RPL18A (type: knockout)
+2025-12-19 21:08:22,109 - __main__ - INFO - Perturbing gene: RPL37 (type: knockout)
+2025-12-19 21:08:28,639 - __main__ - INFO - Perturbing gene: FTH1 (type: knockout)
+2025-12-19 21:08:35,192 - __main__ - INFO - Perturbing gene: RPS3 (type: knockout)
+2025-12-19 21:08:41,821 - __main__ - INFO - Perturbing gene: RPS15 (type: knockout)
+2025-12-19 21:08:48,429 - __main__ - INFO - Perturbing gene: RPS28 (type: knockout)
+2025-12-19 21:08:55,052 - __main__ - INFO - Perturbing gene: RPL19 (type: knockout)
+2025-12-19 21:09:01,643 - __main__ - INFO - Perturbing gene: RPS8 (type: knockout)
+2025-12-19 21:09:08,203 - __main__ - INFO - Perturbing gene: RPS14 (type: knockout)
+2025-12-19 21:09:14,773 - __main__ - INFO - Perturbing gene: RPL37A (type: knockout)
+2025-12-19 21:09:21,365 - __main__ - INFO - Perturbing gene: MT-ND4 (type: knockout)
+2025-12-19 21:09:28,482 - __main__ - INFO - Perturbing gene: FTL (type: knockout)
+2025-12-19 21:09:35,969 - __main__ - INFO - Perturbing gene: RPL34 (type: knockout)
+2025-12-19 21:09:42,394 - __main__ - INFO - Perturbing gene: RPL32 (type: knockout)
+2025-12-19 21:09:48,780 - __main__ - INFO - Perturbing gene: RPS23 (type: knockout)
+2025-12-19 21:09:55,191 - __main__ - INFO - Perturbing gene: RPS19 (type: knockout)
+2025-12-19 21:10:01,634 - __main__ - INFO - Perturbing gene: RPS29 (type: knockout)
+2025-12-19 21:10:08,077 - __main__ - INFO - Perturbing gene: EEF1A1 (type: knockout)
+2025-12-19 21:10:14,470 - __main__ - INFO - Perturbing gene: RPS12 (type: knockout)
+2025-12-19 21:10:20,847 - __main__ - INFO - Perturbing gene: RPL13A (type: knockout)
+2025-12-19 21:10:27,329 - __main__ - INFO - Perturbing gene: MT-CO1 (type: knockout)
+2025-12-19 21:10:33,789 - __main__ - INFO - Perturbing gene: RPS27 (type: knockout)
+2025-12-19 21:10:40,368 - __main__ - INFO - Perturbing gene: MALAT1 (type: knockout)
+2025-12-19 21:10:46,944 - __main__ - INFO - Perturbing gene: MT-CO2 (type: knockout)
+2025-12-19 21:10:53,564 - __main__ - INFO - Perturbing gene: RPS18 (type: knockout)
+2025-12-19 21:11:00,197 - __main__ - INFO - Perturbing gene: RPLP1 (type: knockout)
+2025-12-19 21:11:06,770 - __main__ - INFO - Perturbing gene: MT-CO3 (type: knockout)
+2025-12-19 21:11:13,377 - __main__ - INFO - Perturbing gene: RPS2 (type: knockout)
+2025-12-19 21:11:19,995 - __main__ - INFO - Perturbations complete.
+2025-12-19 21:11:19,997 - __main__ - INFO - 
+====================================================================================================
+2025-12-19 21:11:19,997 - __main__ - INFO - Running BASELINE (no optimization)...
+2025-12-19 21:11:20,000 - __main__ - INFO - Extracting embeddings...
+2025-12-19 21:26:45,129 - __main__ - INFO - Extracted embeddings shape: (11835, 512)
+2025-12-19 21:26:45,129 - __main__ - INFO - Extracting embeddings for perturbations on 200 genes...
+2025-12-19 21:26:45,130 - __main__ - INFO - Extraxcting embeddings for perturbed: SOD1 (type: knockout)
+2025-12-19 21:26:45,130 - __main__ - INFO - Extracting embeddings...
+2025-12-19 21:42:11,163 - __main__ - INFO - Extracted embeddings shape: (11835, 512)
+2025-12-19 21:42:11,163 - __main__ - INFO - Extraxcting embeddings for perturbed: TBCA (type: knockout)
+2025-12-19 21:42:11,163 - __main__ - INFO - Extracting embeddings...
+2025-12-19 21:57:37,545 - __main__ - INFO - Extracted embeddings shape: (11835, 512)
+2025-12-19 21:57:37,545 - __main__ - INFO - Extraxcting embeddings for perturbed: PARK7 (type: knockout)
+2025-12-19 21:57:37,545 - __main__ - INFO - Extracting embeddings...
+2025-12-19 22:13:02,994 - __main__ - INFO - Extracted embeddings shape: (11835, 512)
+2025-12-19 22:13:02,994 - __main__ - INFO - Extraxcting embeddings for perturbed: OST4 (type: knockout)
+2025-12-19 22:13:02,994 - __main__ - INFO - Extracting embeddings...
+2025-12-19 22:28:28,017 - __main__ - INFO - Extracted embeddings shape: (11835, 512)
+2025-12-19 22:28:28,017 - __main__ - INFO - Extraxcting embeddings for perturbed: SNRPD1 (type: knockout)
+2025-12-19 22:28:28,017 - __main__ - INFO - Extracting embeddings...
+2025-12-19 22:43:53,652 - __main__ - INFO - Extracted embeddings shape: (11835, 512)
+2025-12-19 22:43:53,652 - __main__ - INFO - Extraxcting embeddings for perturbed: MZT2B (type: knockout)
+2025-12-19 22:43:53,652 - __main__ - INFO - Extracting embeddings...
+2025-12-19 22:59:19,605 - __main__ - INFO - Extracted embeddings shape: (11835, 512)
+2025-12-19 22:59:19,606 - __main__ - INFO - Extraxcting embeddings for perturbed: ZFAS1 (type: knockout)
+2025-12-19 22:59:19,606 - __main__ - INFO - Extracting embeddings...
+2025-12-19 23:14:45,381 - __main__ - INFO - Extracted embeddings shape: (11835, 512)
+2025-12-19 23:14:45,382 - __main__ - INFO - Extraxcting embeddings for perturbed: SNRPD2 (type: knockout)
+2025-12-19 23:14:45,382 - __main__ - INFO - Extracting embeddings...
+2025-12-19 23:30:11,048 - __main__ - INFO - Extracted embeddings shape: (11835, 512)
+2025-12-19 23:30:11,048 - __main__ - INFO - Extraxcting embeddings for perturbed: ENO1 (type: knockout)
+2025-12-19 23:30:11,048 - __main__ - INFO - Extracting embeddings...
+2025-12-19 23:45:36,642 - __main__ - INFO - Extracted embeddings shape: (11835, 512)
+2025-12-19 23:45:36,642 - __main__ - INFO - Extraxcting embeddings for perturbed: HSP90AA1 (type: knockout)
+2025-12-19 23:45:36,642 - __main__ - INFO - Extracting embeddings...
+2025-12-20 00:01:02,489 - __main__ - INFO - Extracted embeddings shape: (11835, 512)
+2025-12-20 00:01:02,489 - __main__ - INFO - Extraxcting embeddings for perturbed: UBB (type: knockout)
+2025-12-20 00:01:02,489 - __main__ - INFO - Extracting embeddings...
+2025-12-20 00:16:27,884 - __main__ - INFO - Extracted embeddings shape: (11835, 512)
+2025-12-20 00:16:27,885 - __main__ - INFO - Extraxcting embeddings for perturbed: SUMO2 (type: knockout)
+2025-12-20 00:16:27,885 - __main__ - INFO - Extracting embeddings...
+2025-12-20 00:31:53,646 - __main__ - INFO - Extracted embeddings shape: (11835, 512)
+2025-12-20 00:31:53,646 - __main__ - INFO - Extraxcting embeddings for perturbed: NDUFS6 (type: knockout)
+2025-12-20 00:31:53,646 - __main__ - INFO - Extracting embeddings...
+2025-12-20 00:47:20,119 - __main__ - INFO - Extracted embeddings shape: (11835, 512)
+2025-12-20 00:47:20,119 - __main__ - INFO - Extraxcting embeddings for perturbed: MT-ND5 (type: knockout)
+2025-12-20 00:47:20,119 - __main__ - INFO - Extracting embeddings...
+2025-12-20 01:02:46,045 - __main__ - INFO - Extracted embeddings shape: (11835, 512)
+2025-12-20 01:02:46,045 - __main__ - INFO - Extraxcting embeddings for perturbed: NME1 (type: knockout)
+2025-12-20 01:02:46,045 - __main__ - INFO - Extracting embeddings...
+2025-12-20 01:18:12,127 - __main__ - INFO - Extracted embeddings shape: (11835, 512)
+2025-12-20 01:18:12,127 - __main__ - INFO - Extraxcting embeddings for perturbed: TPI1 (type: knockout)
+2025-12-20 01:18:12,127 - __main__ - INFO - Extracting embeddings...
+2025-12-20 01:33:38,061 - __main__ - INFO - Extracted embeddings shape: (11835, 512)
+2025-12-20 01:33:38,061 - __main__ - INFO - Extraxcting embeddings for perturbed: YDJC (type: knockout)
+2025-12-20 01:33:38,061 - __main__ - INFO - Extracting embeddings...
+2025-12-20 01:49:03,697 - __main__ - INFO - Extracted embeddings shape: (11835, 512)
+2025-12-20 01:49:03,697 - __main__ - INFO - Extraxcting embeddings for perturbed: B2M (type: knockout)
+2025-12-20 01:49:03,697 - __main__ - INFO - Extracting embeddings...
+2025-12-20 02:04:29,962 - __main__ - INFO - Extracted embeddings shape: (11835, 512)
+2025-12-20 02:04:29,962 - __main__ - INFO - Extraxcting embeddings for perturbed: PPP1R14B (type: knockout)
+2025-12-20 02:04:29,962 - __main__ - INFO - Extracting embeddings...
+2025-12-20 02:19:55,854 - __main__ - INFO - Extracted embeddings shape: (11835, 512)
+2025-12-20 02:19:55,854 - __main__ - INFO - Extraxcting embeddings for perturbed: CYCS (type: knockout)
+2025-12-20 02:19:55,854 - __main__ - INFO - Extracting embeddings...
+2025-12-20 02:35:20,885 - __main__ - INFO - Extracted embeddings shape: (11835, 512)
+2025-12-20 02:35:20,885 - __main__ - INFO - Extraxcting embeddings for perturbed: COX7B (type: knockout)
+2025-12-20 02:35:20,885 - __main__ - INFO - Extracting embeddings...
+2025-12-20 02:50:46,351 - __main__ - INFO - Extracted embeddings shape: (11835, 512)
+2025-12-20 02:50:46,351 - __main__ - INFO - Extraxcting embeddings for perturbed: SLIRP (type: knockout)
+2025-12-20 02:50:46,352 - __main__ - INFO - Extracting embeddings...
+2025-12-20 03:06:13,245 - __main__ - INFO - Extracted embeddings shape: (11835, 512)
+2025-12-20 03:06:13,245 - __main__ - INFO - Extraxcting embeddings for perturbed: USMG5 (type: knockout)
+2025-12-20 03:06:13,245 - __main__ - INFO - Extracting embeddings...
+2025-12-20 03:21:39,294 - __main__ - INFO - Extracted embeddings shape: (11835, 512)
+2025-12-20 03:21:39,294 - __main__ - INFO - Extraxcting embeddings for perturbed: NAP1L1 (type: knockout)
+2025-12-20 03:21:39,294 - __main__ - INFO - Extracting embeddings...
+2025-12-20 03:37:04,452 - __main__ - INFO - Extracted embeddings shape: (11835, 512)
+2025-12-20 03:37:04,452 - __main__ - INFO - Extraxcting embeddings for perturbed: ATP5D (type: knockout)
+2025-12-20 03:37:04,452 - __main__ - INFO - Extracting embeddings...
+2025-12-20 03:52:29,421 - __main__ - INFO - Extracted embeddings shape: (11835, 512)
+2025-12-20 03:52:29,421 - __main__ - INFO - Extraxcting embeddings for perturbed: SNRPF (type: knockout)
+2025-12-20 03:52:29,421 - __main__ - INFO - Extracting embeddings...
+2025-12-20 04:07:54,638 - __main__ - INFO - Extracted embeddings shape: (11835, 512)
+2025-12-20 04:07:54,638 - __main__ - INFO - Extraxcting embeddings for perturbed: PABPC1 (type: knockout)
+2025-12-20 04:07:54,638 - __main__ - INFO - Extracting embeddings...
+2025-12-20 04:23:20,034 - __main__ - INFO - Extracted embeddings shape: (11835, 512)
+2025-12-20 04:23:20,035 - __main__ - INFO - Extraxcting embeddings for perturbed: AURKAIP1 (type: knockout)
+2025-12-20 04:23:20,035 - __main__ - INFO - Extracting embeddings...
