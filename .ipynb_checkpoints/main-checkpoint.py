@@ -478,10 +478,10 @@ class GeneformerPerturbationPipeline:
         
         # Setup reproducibility
         if cfg.reproducibility.deterministic:
-            torch.manual_seed(cfg.seed)
-            np.random.seed(cfg.seed)
+            torch.manual_seed(cfg.reproducibility.seed)
+            np.random.seed(cfg.reproducibility.seed)
             if torch.cuda.is_available():
-                torch.cuda.manual_seed_all(cfg.seed)
+                torch.cuda.manual_seed_all(cfg.reproducibility.seed)
                 torch.backends.cudnn.deterministic = True
                 torch.backends.cudnn.benchmark = False
         
