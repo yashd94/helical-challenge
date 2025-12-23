@@ -62,7 +62,7 @@ model:
          # "gf-12L-104M-i4096-CLcancer",
          # "gf-20L-151M-i4096",
          # "gf-18L-316M-i4096",
-  batch_size: 2          # Base batch size for inference
+  batch_size: 16          # Base batch size for inference
   device: 'cuda:0'
 
 
@@ -84,8 +84,8 @@ data:
   min_cells: 3        # Minimum cells per gene
   
   # Subset data for testing
-  max_cells: 100   # Limit number of cells for faster testing
-  max_genes: 100   # Limit number of genes
+  max_cells: 10000  # Limit number of cells for faster testing
+  max_genes: 500   # Limit number of genes
 
 # ============================================================================
 # PERTURBATION CONFIGS
@@ -96,7 +96,7 @@ perturbation:
   # gene_list: ["BRCA1", "TP53", "MYC", "EGFR", "KRAS"]
   
   # Option 2: Number of top variable genes (set gene_list to null if using this)
-  num_genes: 5
+  num_genes: 20
   
   # Perturbation settings
   perturbation_type: "knockout"  # Options: knockout, overexpression
@@ -115,7 +115,7 @@ perturbation:
 optimization:
   # Methods to run: batching, quantization, onnx, distributed, all
   methods:
-    - distributed
+    - all
   
   # Batching optimization
   batching:
@@ -125,7 +125,7 @@ optimization:
   # Quantization optimization
   quantization:
     enabled: true
-    dtype: "qint8"           # Options: qint8, float16, fp8
+    dtype: "fp4"           # Options: qint8, float16, fp8, fp4
     calibration_data_size: 32
   
   # ONNX optimization
@@ -174,7 +174,7 @@ hardware:
 # EXPERIMENT TRACKING
 # ============================================================================
 experiment:
-  name: "geneformer_perturbation_distributed_test"
+  name: "geneformer_perturbation_example"
   tags: []
   notes: ""
 
