@@ -41,7 +41,7 @@ data:
   min_cells: 3        # Minimum cells per gene
   
   # Subset data for testing
-  max_cells: 10000   # Limit number of cells for faster testing
+  max_cells: 10000  # Limit number of cells for faster testing
   max_genes: 500   # Limit number of genes
 
 # ============================================================================
@@ -72,7 +72,7 @@ perturbation:
 optimization:
   # Methods to run: batching, quantization, onnx, distributed, all
   methods:
-    - distributed
+    - all
   
   # Batching optimization
   batching:
@@ -82,7 +82,7 @@ optimization:
   # Quantization optimization
   quantization:
     enabled: true
-    dtype: "qint8"           # Options: qint8, float16, fp8
+    dtype: "fp4"           # Options: qint8, float16, fp8, fp4
     calibration_data_size: 32
   
   # ONNX optimization

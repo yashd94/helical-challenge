@@ -1,0 +1,4 @@
+method_a,method_b,embedding_pearson,embedding_spearman,embedding_cosine_similarity,embedding_mse,embedding_max_abs_diff,mean_perturbation_correlation,min_perturbation_correlation,max_perturbation_correlation,timestamp
+baseline,batching,0.9999962,1.0,1.0,0.0,0.0,0.99999654,0.9999955,0.99999785,2025-12-23T17:02:49.151624
+baseline,quantization,0.9999962,1.0,1.0,0.0,0.0,0.99999654,0.9999955,0.99999785,2025-12-23T17:02:50.188889
+baseline,distributed_ddp,0.9999962,1.0,1.0,0.0,0.0,0.99999654,0.9999956,0.99999785,2025-12-23T17:02:51.232524

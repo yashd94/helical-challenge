@@ -1,0 +1,17 @@
+{
+  "method": "quantization",
+  "embedding_shape": [
+    10000,
+    256
+  ],
+  "num_perturbations": 5,
+  "genes_perturbed": [
+    "ENO1",
+    "AURKAIP1",
+    "HMGN2",
+    "RPL22",
+    "RPL11"
+  ],
+  "precision": "float32",
+  "compression": true
+}

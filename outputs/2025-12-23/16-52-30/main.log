@@ -1,0 +1,587 @@
+[2025-12-23 16:52:30,083][__main__][INFO] - Using device: cuda
+[2025-12-23 16:52:30,085][__main__][INFO] - ====================================================================================================
+[2025-12-23 16:52:30,085][__main__][INFO] - GENEFORMER PERTURBATION PIPELINE
+[2025-12-23 16:52:30,085][__main__][INFO] - ====================================================================================================
+[2025-12-23 16:52:30,086][__main__][INFO] - Experiment: geneformer_perturbation_example
+[2025-12-23 16:52:30,090][__main__][INFO] - 
+Configuration:
+reproducibility:
+  deterministic: true
+  seed: 42
+model:
+  name: gf-6L-10M-i2048
+  batch_size: 16
+  device: cuda:0
+data:
+  pertpy_data_identifier: norman_2019
+  condition_filter: control
+  save_tokenized_data: true
+  gene_names_column: index
+  use_raw_counts: false
+  preprocess: true
+  normalize: false
+  filter_genes: true
+  min_genes: 100
+  min_cells: 3
+  max_cells: 10000
+  max_genes: 500
+perturbation:
+  gene_list: null
+  num_genes: 20
+  perturbation_type: knockout
+  selection_method: top_expressed
+  perturbation_strength: 2.0
+  save_perturbed_data: true
+optimization:
+  methods:
+  - all
+  batching:
+    enabled: true
+    batch_size_multiplier: 2
+  quantization:
+    enabled: true
+    dtype: fp4
+    calibration_data_size: 32
+  onnx:
+    enabled: true
+    use_gpu: true
+    precision: FP16
+  distributed:
+    enabled: true
+    backend: nccl
+output:
+  dir: outputs
+  cache_dir: /scratch
+  save_outputs: true
+  compression: true
+  precision: float32
+  save_detailed_comparisons: true
+  log_level: INFO
+  log_to_file: true
+  log_file: pipeline.log
+hardware:
+  device: auto
+  mixed_precision: false
+  cudnn_benchmark: true
+  empty_cache_between_methods: true
+experiment:
+  name: geneformer_perturbation_example
+  tags: []
+  notes: ''
+advanced:
+  compile_model: false
+  compile_backend: inductor
+  continue_on_error: true
+validation:
+  min_correlation: 0.95
+  max_mse: 0.01
+  warn_on_threshold: true
+  check_nan: true
+  check_inf: true
+
+[2025-12-23 16:52:30,090][__main__][INFO] - Loading Geneformer model...
+[2025-12-23 16:52:33,307][helical.models.geneformer.model][INFO] - Model finished initializing.
+[2025-12-23 16:52:33,308][helical.models.geneformer.model][INFO] - 'gf-6L-10M-i2048' model is in 'eval' mode, on device 'cuda:0' with embedding mode 'cell'.
+[2025-12-23 16:52:33,309][__main__][INFO] - Model loaded: gf-6L-10M-i2048
+[2025-12-23 16:52:33,309][__main__][INFO] - Loading data: norman_2019
+[2025-12-23 16:52:33,311][__main__][INFO] - Found processed data saved to disk.
+[2025-12-23 16:52:33,530][__main__][INFO] - Selected 20 genes using method: top_expressed
+[2025-12-23 16:52:33,530][__main__][INFO] - Performing perturbation on 20 genes...
+[2025-12-23 16:52:33,535][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 16:52:33,581][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 16:52:33,626][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 16:52:33,674][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 16:52:33,720][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 16:52:33,768][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 16:52:33,817][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 16:52:33,865][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 16:52:33,913][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 16:52:33,965][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 16:52:34,010][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 16:52:34,059][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 16:52:34,106][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 16:52:34,154][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 16:52:34,200][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 16:52:34,251][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 16:52:34,260][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 16:52:34,269][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 16:52:34,278][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 16:52:34,287][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 16:52:34,295][__main__][INFO] - Perturbations complete.
+[2025-12-23 16:52:34,295][__main__][INFO] - 
+====================================================================================================
+[2025-12-23 16:52:34,295][__main__][INFO] - Running BASELINE (no optimization)...
+[2025-12-23 16:52:34,297][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:52:34,298][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:52:43,102][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:52:43,102][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:52:43,102][__main__][INFO] - Extracting embeddings for perturbations on 20 genes...
+[2025-12-23 16:52:43,102][__main__][INFO] - Extraxcting embeddings for perturbed: SFPQ (type: knockout)
+[2025-12-23 16:52:43,102][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:52:43,102][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:52:50,783][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:52:50,784][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:52:50,784][__main__][INFO] - Extraxcting embeddings for perturbed: NUDC (type: knockout)
+[2025-12-23 16:52:50,784][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:52:50,784][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:52:58,477][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:52:58,477][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:52:58,477][__main__][INFO] - Extraxcting embeddings for perturbed: AK2 (type: knockout)
+[2025-12-23 16:52:58,477][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:52:58,477][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:53:06,163][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:53:06,163][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:53:06,163][__main__][INFO] - Extraxcting embeddings for perturbed: SSU72 (type: knockout)
+[2025-12-23 16:53:06,163][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:53:06,163][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:53:13,856][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:53:13,856][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:53:13,856][__main__][INFO] - Extraxcting embeddings for perturbed: SRRM1 (type: knockout)
+[2025-12-23 16:53:13,856][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:53:13,856][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:53:21,565][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:53:21,565][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:53:21,565][__main__][INFO] - Extraxcting embeddings for perturbed: EIF3I (type: knockout)
+[2025-12-23 16:53:21,565][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:53:21,565][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:53:29,242][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:53:29,243][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:53:29,243][__main__][INFO] - Extraxcting embeddings for perturbed: MRPL20 (type: knockout)
+[2025-12-23 16:53:29,243][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:53:29,243][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:53:36,910][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:53:36,910][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:53:36,910][__main__][INFO] - Extraxcting embeddings for perturbed: MARCKSL1 (type: knockout)
+[2025-12-23 16:53:36,910][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:53:36,910][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:53:44,599][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:53:44,600][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:53:44,600][__main__][INFO] - Extraxcting embeddings for perturbed: PSMB2 (type: knockout)
+[2025-12-23 16:53:44,600][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:53:44,600][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:53:52,299][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:53:52,299][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:53:52,300][__main__][INFO] - Extraxcting embeddings for perturbed: MRPS15 (type: knockout)
+[2025-12-23 16:53:52,300][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:53:52,300][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:53:59,975][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:53:59,975][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:53:59,975][__main__][INFO] - Extraxcting embeddings for perturbed: SRM (type: knockout)
+[2025-12-23 16:53:59,975][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:53:59,975][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:54:07,675][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:54:07,675][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:54:07,675][__main__][INFO] - Extraxcting embeddings for perturbed: STMN1 (type: knockout)
+[2025-12-23 16:54:07,675][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:54:07,675][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:54:15,366][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:54:15,366][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:54:15,366][__main__][INFO] - Extraxcting embeddings for perturbed: PTP4A2 (type: knockout)
+[2025-12-23 16:54:15,366][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:54:15,366][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:54:23,034][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:54:23,034][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:54:23,034][__main__][INFO] - Extraxcting embeddings for perturbed: PARK7 (type: knockout)
+[2025-12-23 16:54:23,034][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:54:23,034][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:54:30,738][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:54:30,738][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:54:30,738][__main__][INFO] - Extraxcting embeddings for perturbed: ATPIF1 (type: knockout)
+[2025-12-23 16:54:30,739][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:54:30,739][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:54:38,425][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:54:38,425][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:54:38,425][__main__][INFO] - Extraxcting embeddings for perturbed: ENO1 (type: knockout)
+[2025-12-23 16:54:38,425][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:54:38,425][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:54:46,102][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:54:46,102][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:54:46,103][__main__][INFO] - Extraxcting embeddings for perturbed: AURKAIP1 (type: knockout)
+[2025-12-23 16:54:46,103][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:54:46,103][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:54:53,787][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:54:53,787][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:54:53,788][__main__][INFO] - Extraxcting embeddings for perturbed: HMGN2 (type: knockout)
+[2025-12-23 16:54:53,788][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:54:53,788][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:55:01,486][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:55:01,486][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:55:01,486][__main__][INFO] - Extraxcting embeddings for perturbed: RPL22 (type: knockout)
+[2025-12-23 16:55:01,486][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:55:01,486][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:55:09,159][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:55:09,159][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:55:09,160][__main__][INFO] - Extraxcting embeddings for perturbed: RPL11 (type: knockout)
+[2025-12-23 16:55:09,160][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:55:09,160][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:55:16,847][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:55:16,847][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:55:16,847][__main__][INFO] - Finished getting perturbation results.
+[2025-12-23 16:55:26,979][__main__][INFO] - Saved outputs for baseline to outputs/outputs/baseline
+[2025-12-23 16:55:26,993][__main__][INFO] - 
+====================================================================================================
+[2025-12-23 16:55:26,993][__main__][INFO] - Running with BATCHING optimization...
+[2025-12-23 16:55:26,993][__main__][INFO] - Using batch size: 32 (original: 16)
+[2025-12-23 16:55:26,995][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:55:26,995][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:55:32,798][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:55:32,799][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:55:32,799][__main__][INFO] - Extracting embeddings for perturbations on 20 genes...
+[2025-12-23 16:55:32,799][__main__][INFO] - Extraxcting embeddings for perturbed: SFPQ (type: knockout)
+[2025-12-23 16:55:32,799][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:55:32,799][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:55:38,502][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:55:38,502][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:55:38,502][__main__][INFO] - Extraxcting embeddings for perturbed: NUDC (type: knockout)
+[2025-12-23 16:55:38,503][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:55:38,503][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:55:44,211][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:55:44,211][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:55:44,211][__main__][INFO] - Extraxcting embeddings for perturbed: AK2 (type: knockout)
+[2025-12-23 16:55:44,211][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:55:44,211][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:55:49,921][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:55:49,921][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:55:49,922][__main__][INFO] - Extraxcting embeddings for perturbed: SSU72 (type: knockout)
+[2025-12-23 16:55:49,922][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:55:49,922][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:55:55,633][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:55:55,633][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:55:55,633][__main__][INFO] - Extraxcting embeddings for perturbed: SRRM1 (type: knockout)
+[2025-12-23 16:55:55,633][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:55:55,633][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:56:01,340][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:56:01,340][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:56:01,340][__main__][INFO] - Extraxcting embeddings for perturbed: EIF3I (type: knockout)
+[2025-12-23 16:56:01,340][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:56:01,340][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:56:07,045][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:56:07,046][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:56:07,046][__main__][INFO] - Extraxcting embeddings for perturbed: MRPL20 (type: knockout)
+[2025-12-23 16:56:07,046][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:56:07,046][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:56:12,752][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:56:12,752][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:56:12,752][__main__][INFO] - Extraxcting embeddings for perturbed: MARCKSL1 (type: knockout)
+[2025-12-23 16:56:12,752][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:56:12,752][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:56:18,459][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:56:18,459][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:56:18,460][__main__][INFO] - Extraxcting embeddings for perturbed: PSMB2 (type: knockout)
+[2025-12-23 16:56:18,460][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:56:18,460][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:56:24,165][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:56:24,166][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:56:24,166][__main__][INFO] - Extraxcting embeddings for perturbed: MRPS15 (type: knockout)
+[2025-12-23 16:56:24,166][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:56:24,166][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:56:29,877][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:56:29,877][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:56:29,877][__main__][INFO] - Extraxcting embeddings for perturbed: SRM (type: knockout)
+[2025-12-23 16:56:29,877][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:56:29,877][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:56:35,591][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:56:35,591][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:56:35,591][__main__][INFO] - Extraxcting embeddings for perturbed: STMN1 (type: knockout)
+[2025-12-23 16:56:35,591][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:56:35,591][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:56:41,298][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:56:41,299][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:56:41,299][__main__][INFO] - Extraxcting embeddings for perturbed: PTP4A2 (type: knockout)
+[2025-12-23 16:56:41,299][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:56:41,299][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:56:47,011][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:56:47,012][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:56:47,012][__main__][INFO] - Extraxcting embeddings for perturbed: PARK7 (type: knockout)
+[2025-12-23 16:56:47,012][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:56:47,012][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:56:52,721][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:56:52,721][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:56:52,721][__main__][INFO] - Extraxcting embeddings for perturbed: ATPIF1 (type: knockout)
+[2025-12-23 16:56:52,721][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:56:52,721][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:56:58,427][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:56:58,427][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:56:58,427][__main__][INFO] - Extraxcting embeddings for perturbed: ENO1 (type: knockout)
+[2025-12-23 16:56:58,428][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:56:58,428][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:57:04,134][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:57:04,134][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:57:04,134][__main__][INFO] - Extraxcting embeddings for perturbed: AURKAIP1 (type: knockout)
+[2025-12-23 16:57:04,134][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:57:04,134][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:57:09,844][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:57:09,845][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:57:09,845][__main__][INFO] - Extraxcting embeddings for perturbed: HMGN2 (type: knockout)
+[2025-12-23 16:57:09,845][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:57:09,845][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:57:15,554][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:57:15,554][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:57:15,554][__main__][INFO] - Extraxcting embeddings for perturbed: RPL22 (type: knockout)
+[2025-12-23 16:57:15,554][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:57:15,554][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:57:21,260][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:57:21,261][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:57:21,261][__main__][INFO] - Extraxcting embeddings for perturbed: RPL11 (type: knockout)
+[2025-12-23 16:57:21,261][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:57:21,261][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:57:26,972][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:57:26,972][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:57:26,972][__main__][INFO] - Finished getting perturbation results.
+[2025-12-23 16:57:36,828][__main__][INFO] - Saved outputs for batching to outputs/outputs/batching
+[2025-12-23 16:57:36,843][__main__][INFO] - 
+====================================================================================================
+[2025-12-23 16:57:36,843][__main__][INFO] - Running with QUANTIZATION optimization...
+[2025-12-23 16:57:36,843][__main__][WARNING] - Unknown dtype: fp4, using original model
+[2025-12-23 16:57:36,845][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:57:36,845][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:57:44,687][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:57:44,687][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:57:44,687][__main__][INFO] - Extracting embeddings for perturbations on 20 genes...
+[2025-12-23 16:57:44,688][__main__][INFO] - Extraxcting embeddings for perturbed: SFPQ (type: knockout)
+[2025-12-23 16:57:44,688][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:57:44,688][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:57:52,473][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:57:52,473][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:57:52,473][__main__][INFO] - Extraxcting embeddings for perturbed: NUDC (type: knockout)
+[2025-12-23 16:57:52,473][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:57:52,473][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:58:00,261][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:58:00,261][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:58:00,261][__main__][INFO] - Extraxcting embeddings for perturbed: AK2 (type: knockout)
+[2025-12-23 16:58:00,261][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:58:00,261][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:58:08,031][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:58:08,031][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:58:08,031][__main__][INFO] - Extraxcting embeddings for perturbed: SSU72 (type: knockout)
+[2025-12-23 16:58:08,031][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:58:08,031][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:58:15,817][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:58:15,817][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:58:15,817][__main__][INFO] - Extraxcting embeddings for perturbed: SRRM1 (type: knockout)
+[2025-12-23 16:58:15,818][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:58:15,818][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:58:23,595][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:58:23,595][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:58:23,595][__main__][INFO] - Extraxcting embeddings for perturbed: EIF3I (type: knockout)
+[2025-12-23 16:58:23,596][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:58:23,596][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:58:31,384][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:58:31,384][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:58:31,384][__main__][INFO] - Extraxcting embeddings for perturbed: MRPL20 (type: knockout)
+[2025-12-23 16:58:31,384][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:58:31,385][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:58:39,169][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:58:39,170][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:58:39,170][__main__][INFO] - Extraxcting embeddings for perturbed: MARCKSL1 (type: knockout)
+[2025-12-23 16:58:39,170][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:58:39,170][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:58:46,957][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:58:46,957][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:58:46,958][__main__][INFO] - Extraxcting embeddings for perturbed: PSMB2 (type: knockout)
+[2025-12-23 16:58:46,958][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:58:46,958][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:58:54,735][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:58:54,736][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:58:54,736][__main__][INFO] - Extraxcting embeddings for perturbed: MRPS15 (type: knockout)
+[2025-12-23 16:58:54,736][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:58:54,736][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:59:02,521][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:59:02,521][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:59:02,521][__main__][INFO] - Extraxcting embeddings for perturbed: SRM (type: knockout)
+[2025-12-23 16:59:02,521][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:59:02,521][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:59:10,310][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:59:10,310][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:59:10,310][__main__][INFO] - Extraxcting embeddings for perturbed: STMN1 (type: knockout)
+[2025-12-23 16:59:10,310][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:59:10,310][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:59:18,088][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:59:18,088][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:59:18,088][__main__][INFO] - Extraxcting embeddings for perturbed: PTP4A2 (type: knockout)
+[2025-12-23 16:59:18,088][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:59:18,088][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:59:25,862][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:59:25,862][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:59:25,862][__main__][INFO] - Extraxcting embeddings for perturbed: PARK7 (type: knockout)
+[2025-12-23 16:59:25,863][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:59:25,863][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:59:33,641][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:59:33,641][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:59:33,641][__main__][INFO] - Extraxcting embeddings for perturbed: ATPIF1 (type: knockout)
+[2025-12-23 16:59:33,641][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:59:33,641][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:59:41,415][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:59:41,415][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:59:41,415][__main__][INFO] - Extraxcting embeddings for perturbed: ENO1 (type: knockout)
+[2025-12-23 16:59:41,415][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:59:41,415][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:59:49,204][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:59:49,204][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:59:49,204][__main__][INFO] - Extraxcting embeddings for perturbed: AURKAIP1 (type: knockout)
+[2025-12-23 16:59:49,204][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:59:49,204][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:59:56,991][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:59:56,991][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:59:56,991][__main__][INFO] - Extraxcting embeddings for perturbed: HMGN2 (type: knockout)
+[2025-12-23 16:59:56,991][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:59:56,991][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 17:00:04,790][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 17:00:04,790][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 17:00:04,790][__main__][INFO] - Extraxcting embeddings for perturbed: RPL22 (type: knockout)
+[2025-12-23 17:00:04,790][__main__][INFO] - Extracting embeddings...
+[2025-12-23 17:00:04,790][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 17:00:12,576][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 17:00:12,576][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 17:00:12,576][__main__][INFO] - Extraxcting embeddings for perturbed: RPL11 (type: knockout)
+[2025-12-23 17:00:12,576][__main__][INFO] - Extracting embeddings...
+[2025-12-23 17:00:12,576][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 17:00:20,373][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 17:00:20,373][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 17:00:20,373][__main__][INFO] - Finished getting perturbation results.
+[2025-12-23 17:00:30,282][__main__][INFO] - Saved outputs for quantization to outputs/outputs/quantization
+[2025-12-23 17:00:30,296][__main__][INFO] - 
+====================================================================================================
+[2025-12-23 17:00:30,296][__main__][INFO] - Running with DISTRIBUTED optimization...
+[2025-12-23 17:00:30,296][__main__][INFO] - Extracting embeddings...
+[2025-12-23 17:00:30,296][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 17:00:38,117][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 17:00:38,117][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 17:00:38,117][__main__][INFO] - Using 4 GPUs with DDP
+[2025-12-23 17:00:38,159][__main__][INFO] - Using temporary directory: /scratch/ddp_results_8kovmwj3
+[2025-12-23 17:02:33,891][__main__][INFO] - Rank 0 processed 20 genes: ['SFPQ', 'NUDC', 'AK2', 'SSU72', 'SRRM1', 'EIF3I', 'MRPL20', 'MARCKSL1', 'PSMB2', 'MRPS15', 'SRM', 'STMN1', 'PTP4A2', 'PARK7', 'ATPIF1', 'ENO1', 'AURKAIP1', 'HMGN2', 'RPL22', 'RPL11']
+[2025-12-23 17:02:33,896][__main__][INFO] - Rank 1 processed 20 genes: ['SFPQ', 'NUDC', 'AK2', 'SSU72', 'SRRM1', 'EIF3I', 'MRPL20', 'MARCKSL1', 'PSMB2', 'MRPS15', 'SRM', 'STMN1', 'PTP4A2', 'PARK7', 'ATPIF1', 'ENO1', 'AURKAIP1', 'HMGN2', 'RPL22', 'RPL11']
+[2025-12-23 17:02:33,900][__main__][INFO] - Rank 2 processed 20 genes: ['SFPQ', 'NUDC', 'AK2', 'SSU72', 'SRRM1', 'EIF3I', 'MRPL20', 'MARCKSL1', 'PSMB2', 'MRPS15', 'SRM', 'STMN1', 'PTP4A2', 'PARK7', 'ATPIF1', 'ENO1', 'AURKAIP1', 'HMGN2', 'RPL22', 'RPL11']
+[2025-12-23 17:02:33,905][__main__][INFO] - Rank 3 processed 20 genes: ['SFPQ', 'NUDC', 'AK2', 'SSU72', 'SRRM1', 'EIF3I', 'MRPL20', 'MARCKSL1', 'PSMB2', 'MRPS15', 'SRM', 'STMN1', 'PTP4A2', 'PARK7', 'ATPIF1', 'ENO1', 'AURKAIP1', 'HMGN2', 'RPL22', 'RPL11']
+[2025-12-23 17:02:33,905][__main__][INFO] - Total unique genes processed: 20
+[2025-12-23 17:02:33,957][__main__][INFO] - Loaded gene 'ATPIF1' from rank 0: shape (2500, 256)
+[2025-12-23 17:02:34,008][__main__][INFO] - Loaded gene 'ATPIF1' from rank 1: shape (2500, 256)
+[2025-12-23 17:02:34,059][__main__][INFO] - Loaded gene 'ATPIF1' from rank 2: shape (2500, 256)
+[2025-12-23 17:02:34,110][__main__][INFO] - Loaded gene 'ATPIF1' from rank 3: shape (2500, 256)
+[2025-12-23 17:02:34,161][__main__][INFO] - Loaded gene 'SRM' from rank 0: shape (2500, 256)
+[2025-12-23 17:02:34,214][__main__][INFO] - Loaded gene 'SRM' from rank 1: shape (2500, 256)
+[2025-12-23 17:02:34,240][__main__][INFO] - Loaded gene 'SRM' from rank 2: shape (2500, 256)
+[2025-12-23 17:02:34,288][__main__][INFO] - Loaded gene 'SRM' from rank 3: shape (2500, 256)
+[2025-12-23 17:02:34,335][__main__][INFO] - Loaded gene 'RPL22' from rank 0: shape (2500, 256)
+[2025-12-23 17:02:34,388][__main__][INFO] - Loaded gene 'RPL22' from rank 1: shape (2500, 256)
+[2025-12-23 17:02:34,436][__main__][INFO] - Loaded gene 'RPL22' from rank 2: shape (2500, 256)
+[2025-12-23 17:02:34,487][__main__][INFO] - Loaded gene 'RPL22' from rank 3: shape (2500, 256)
+[2025-12-23 17:02:34,511][__main__][INFO] - Loaded gene 'PTP4A2' from rank 0: shape (2500, 256)
+[2025-12-23 17:02:34,533][__main__][INFO] - Loaded gene 'PTP4A2' from rank 1: shape (2500, 256)
+[2025-12-23 17:02:34,586][__main__][INFO] - Loaded gene 'PTP4A2' from rank 2: shape (2500, 256)
+[2025-12-23 17:02:34,610][__main__][INFO] - Loaded gene 'PTP4A2' from rank 3: shape (2500, 256)
+[2025-12-23 17:02:34,658][__main__][INFO] - Loaded gene 'ENO1' from rank 0: shape (2500, 256)
+[2025-12-23 17:02:34,705][__main__][INFO] - Loaded gene 'ENO1' from rank 1: shape (2500, 256)
+[2025-12-23 17:02:34,755][__main__][INFO] - Loaded gene 'ENO1' from rank 2: shape (2500, 256)
+[2025-12-23 17:02:34,806][__main__][INFO] - Loaded gene 'ENO1' from rank 3: shape (2500, 256)
+[2025-12-23 17:02:34,856][__main__][INFO] - Loaded gene 'AK2' from rank 0: shape (2500, 256)
+[2025-12-23 17:02:34,879][__main__][INFO] - Loaded gene 'AK2' from rank 1: shape (2500, 256)
+[2025-12-23 17:02:34,902][__main__][INFO] - Loaded gene 'AK2' from rank 2: shape (2500, 256)
+[2025-12-23 17:02:34,953][__main__][INFO] - Loaded gene 'AK2' from rank 3: shape (2500, 256)
+[2025-12-23 17:02:35,004][__main__][INFO] - Loaded gene 'PSMB2' from rank 0: shape (2500, 256)
+[2025-12-23 17:02:35,059][__main__][INFO] - Loaded gene 'PSMB2' from rank 1: shape (2500, 256)
+[2025-12-23 17:02:35,082][__main__][INFO] - Loaded gene 'PSMB2' from rank 2: shape (2500, 256)
+[2025-12-23 17:02:35,130][__main__][INFO] - Loaded gene 'PSMB2' from rank 3: shape (2500, 256)
+[2025-12-23 17:02:35,184][__main__][INFO] - Loaded gene 'RPL11' from rank 0: shape (2500, 256)
+[2025-12-23 17:02:35,236][__main__][INFO] - Loaded gene 'RPL11' from rank 1: shape (2500, 256)
+[2025-12-23 17:02:35,287][__main__][INFO] - Loaded gene 'RPL11' from rank 2: shape (2500, 256)
+[2025-12-23 17:02:35,341][__main__][INFO] - Loaded gene 'RPL11' from rank 3: shape (2500, 256)
+[2025-12-23 17:02:35,394][__main__][INFO] - Loaded gene 'MRPS15' from rank 0: shape (2500, 256)
+[2025-12-23 17:02:35,417][__main__][INFO] - Loaded gene 'MRPS15' from rank 1: shape (2500, 256)
+[2025-12-23 17:02:35,483][__main__][INFO] - Loaded gene 'MRPS15' from rank 2: shape (2500, 256)
+[2025-12-23 17:02:35,541][__main__][INFO] - Loaded gene 'MRPS15' from rank 3: shape (2500, 256)
+[2025-12-23 17:02:35,565][__main__][INFO] - Loaded gene 'SFPQ' from rank 0: shape (2500, 256)
+[2025-12-23 17:02:35,614][__main__][INFO] - Loaded gene 'SFPQ' from rank 1: shape (2500, 256)
+[2025-12-23 17:02:35,663][__main__][INFO] - Loaded gene 'SFPQ' from rank 2: shape (2500, 256)
+[2025-12-23 17:02:35,715][__main__][INFO] - Loaded gene 'SFPQ' from rank 3: shape (2500, 256)
+[2025-12-23 17:02:35,771][__main__][INFO] - Loaded gene 'MRPL20' from rank 0: shape (2500, 256)
+[2025-12-23 17:02:35,794][__main__][INFO] - Loaded gene 'MRPL20' from rank 1: shape (2500, 256)
+[2025-12-23 17:02:35,817][__main__][INFO] - Loaded gene 'MRPL20' from rank 2: shape (2500, 256)
+[2025-12-23 17:02:35,865][__main__][INFO] - Loaded gene 'MRPL20' from rank 3: shape (2500, 256)
+[2025-12-23 17:02:35,919][__main__][INFO] - Loaded gene 'SRRM1' from rank 0: shape (2500, 256)
+[2025-12-23 17:02:35,968][__main__][INFO] - Loaded gene 'SRRM1' from rank 1: shape (2500, 256)
+[2025-12-23 17:02:36,020][__main__][INFO] - Loaded gene 'SRRM1' from rank 2: shape (2500, 256)
+[2025-12-23 17:02:36,045][__main__][INFO] - Loaded gene 'SRRM1' from rank 3: shape (2500, 256)
+[2025-12-23 17:02:36,101][__main__][INFO] - Loaded gene 'STMN1' from rank 0: shape (2500, 256)
+[2025-12-23 17:02:36,125][__main__][INFO] - Loaded gene 'STMN1' from rank 1: shape (2500, 256)
+[2025-12-23 17:02:36,149][__main__][INFO] - Loaded gene 'STMN1' from rank 2: shape (2500, 256)
+[2025-12-23 17:02:36,199][__main__][INFO] - Loaded gene 'STMN1' from rank 3: shape (2500, 256)
+[2025-12-23 17:02:36,247][__main__][INFO] - Loaded gene 'NUDC' from rank 0: shape (2500, 256)
+[2025-12-23 17:02:36,271][__main__][INFO] - Loaded gene 'NUDC' from rank 1: shape (2500, 256)
+[2025-12-23 17:02:36,322][__main__][INFO] - Loaded gene 'NUDC' from rank 2: shape (2500, 256)
+[2025-12-23 17:02:36,385][__main__][INFO] - Loaded gene 'NUDC' from rank 3: shape (2500, 256)
+[2025-12-23 17:02:36,437][__main__][INFO] - Loaded gene 'SSU72' from rank 0: shape (2500, 256)
+[2025-12-23 17:02:36,488][__main__][INFO] - Loaded gene 'SSU72' from rank 1: shape (2500, 256)
+[2025-12-23 17:02:36,537][__main__][INFO] - Loaded gene 'SSU72' from rank 2: shape (2500, 256)
+[2025-12-23 17:02:36,560][__main__][INFO] - Loaded gene 'SSU72' from rank 3: shape (2500, 256)
+[2025-12-23 17:02:36,606][__main__][INFO] - Loaded gene 'EIF3I' from rank 0: shape (2500, 256)
+[2025-12-23 17:02:36,629][__main__][INFO] - Loaded gene 'EIF3I' from rank 1: shape (2500, 256)
+[2025-12-23 17:02:36,681][__main__][INFO] - Loaded gene 'EIF3I' from rank 2: shape (2500, 256)
+[2025-12-23 17:02:36,705][__main__][INFO] - Loaded gene 'EIF3I' from rank 3: shape (2500, 256)
+[2025-12-23 17:02:36,757][__main__][INFO] - Loaded gene 'MARCKSL1' from rank 0: shape (2500, 256)
+[2025-12-23 17:02:36,781][__main__][INFO] - Loaded gene 'MARCKSL1' from rank 1: shape (2500, 256)
+[2025-12-23 17:02:36,837][__main__][INFO] - Loaded gene 'MARCKSL1' from rank 2: shape (2500, 256)
+[2025-12-23 17:02:36,886][__main__][INFO] - Loaded gene 'MARCKSL1' from rank 3: shape (2500, 256)
+[2025-12-23 17:02:36,909][__main__][INFO] - Loaded gene 'PARK7' from rank 0: shape (2500, 256)
+[2025-12-23 17:02:36,964][__main__][INFO] - Loaded gene 'PARK7' from rank 1: shape (2500, 256)
+[2025-12-23 17:02:36,988][__main__][INFO] - Loaded gene 'PARK7' from rank 2: shape (2500, 256)
+[2025-12-23 17:02:37,035][__main__][INFO] - Loaded gene 'PARK7' from rank 3: shape (2500, 256)
+[2025-12-23 17:02:37,089][__main__][INFO] - Loaded gene 'AURKAIP1' from rank 0: shape (2500, 256)
+[2025-12-23 17:02:37,113][__main__][INFO] - Loaded gene 'AURKAIP1' from rank 1: shape (2500, 256)
+[2025-12-23 17:02:37,161][__main__][INFO] - Loaded gene 'AURKAIP1' from rank 2: shape (2500, 256)
+[2025-12-23 17:02:37,212][__main__][INFO] - Loaded gene 'AURKAIP1' from rank 3: shape (2500, 256)
+[2025-12-23 17:02:37,264][__main__][INFO] - Loaded gene 'HMGN2' from rank 0: shape (2500, 256)
+[2025-12-23 17:02:37,312][__main__][INFO] - Loaded gene 'HMGN2' from rank 1: shape (2500, 256)
+[2025-12-23 17:02:37,362][__main__][INFO] - Loaded gene 'HMGN2' from rank 2: shape (2500, 256)
+[2025-12-23 17:02:37,409][__main__][INFO] - Loaded gene 'HMGN2' from rank 3: shape (2500, 256)
+[2025-12-23 17:02:37,493][__main__][INFO] - Genes with combined perturbation results: 20
+[2025-12-23 17:02:47,907][__main__][INFO] - Saved outputs for distributed_ddp to outputs/outputs/distributed_ddp
+[2025-12-23 17:02:48,105][__main__][INFO] - 
+====================================================================================================
+[2025-12-23 17:02:48,106][__main__][INFO] - COMPARING OUTPUTS TO BASELINE
+[2025-12-23 17:02:48,106][__main__][INFO] - ====================================================================================================
+[2025-12-23 17:02:48,106][__main__][INFO] - Comparing baseline vs batching
+[2025-12-23 17:02:49,151][__main__][INFO] - Comparing baseline vs quantization
+[2025-12-23 17:02:50,189][__main__][INFO] - Comparing baseline vs distributed_ddp
+[2025-12-23 17:02:51,235][__main__][INFO] - Performance metrics saved to: outputs/performance_metrics_20251223_170251.csv
+[2025-12-23 17:02:51,236][__main__][INFO] - Comparison metrics saved to: outputs/comparison_metrics_20251223_170251.csv
+[2025-12-23 17:02:51,237][__main__][INFO] - Per-gene comparison saved to: outputs/gene_comparison_baseline_vs_batching.csv
+[2025-12-23 17:02:51,238][__main__][INFO] - Per-gene comparison saved to: outputs/gene_comparison_baseline_vs_quantization.csv
+[2025-12-23 17:02:51,239][__main__][INFO] - Per-gene comparison saved to: outputs/gene_comparison_baseline_vs_distributed_ddp.csv
+[2025-12-23 17:02:51,239][__main__][INFO] - 
+====================================================================================================
+[2025-12-23 17:02:51,239][__main__][INFO] - PERFORMANCE SUMMARY
+[2025-12-23 17:02:51,239][__main__][INFO] - ====================================================================================================
+[2025-12-23 17:02:51,244][__main__][INFO] - 
+            method  runtime_seconds  cpu_percent    memory_mb  gpu_memory_mb  gpu_utilization  throughput_cells_per_sec  num_cells  num_genes_perturbed                   timestamp extra_optimization  extra_batch_size  extra_original_batch_size  extra_multiplier extra_quantization_dtype  extra_num_gpus extra_backend extra_distribution_method
+0         baseline       162.551856        100.0  1120.003906       9.125000               38                 61.518830      10000                   20  2025-12-23T16:55:16.849047               none               NaN                        NaN               NaN                      NaN             NaN           NaN                       NaN
+1         batching       119.978752        100.0  6249.824219      48.404785               47                 83.348091      10000                   20  2025-12-23T16:57:26.973792                NaN              32.0                       16.0               2.0                      NaN             NaN           NaN                       NaN
+2     quantization       163.529989        100.0  6455.007812      48.404785               38                 61.150863      10000                   20  2025-12-23T17:00:20.375258                NaN               NaN                        NaN               NaN                      fp4             NaN           NaN                       NaN
+3  distributed_ddp       119.804215          2.6  6941.417969       9.125000                0                 83.469518      10000                   20  2025-12-23T17:02:37.923913                NaN               NaN                        NaN               NaN                      NaN             4.0          nccl                       DDP
+
+[2025-12-23 17:02:51,245][__main__][INFO] - 
+SPEEDUP RELATIVE TO BASELINE:
+[2025-12-23 17:02:51,245][__main__][INFO] - --------------------------------------------------
+[2025-12-23 17:02:51,245][__main__][INFO] - batching            : 1.35x
+[2025-12-23 17:02:51,246][__main__][INFO] - quantization        : 0.99x
+[2025-12-23 17:02:51,246][__main__][INFO] - distributed_ddp     : 1.36x
+[2025-12-23 17:02:51,246][__main__][INFO] - 
+====================================================================================================
+[2025-12-23 17:02:51,246][__main__][INFO] - OUTPUT COMPARISON SUMMARY
+[2025-12-23 17:02:51,246][__main__][INFO] - ====================================================================================================
+[2025-12-23 17:02:51,249][__main__][INFO] - 
+   method_a         method_b  embedding_pearson  embedding_spearman  embedding_cosine_similarity  embedding_mse  embedding_max_abs_diff  mean_perturbation_correlation  min_perturbation_correlation  max_perturbation_correlation                   timestamp
+0  baseline         batching           0.999996                 1.0                          1.0            0.0                     0.0                       0.999997                      0.999996                      0.999998  2025-12-23T17:02:49.151624
+1  baseline     quantization           0.999996                 1.0                          1.0            0.0                     0.0                       0.999997                      0.999996                      0.999998  2025-12-23T17:02:50.188889
+2  baseline  distributed_ddp           0.999996                 1.0                          1.0            0.0                     0.0                       0.999997                      0.999996                      0.999998  2025-12-23T17:02:51.232524
+
+[2025-12-23 17:02:51,249][__main__][INFO] - 
+OUTPUT QUALITY ASSESSMENT:
+[2025-12-23 17:02:51,249][__main__][INFO] - --------------------------------------------------
+[2025-12-23 17:02:51,249][__main__][INFO] - ====================================================================================================
+[2025-12-23 17:02:51,249][__main__][INFO] - 
+All outputs saved to: outputs
+[2025-12-23 17:02:51,249][__main__][INFO] - 
+====================================================================================================
+[2025-12-23 17:02:51,249][__main__][INFO] - PIPELINE COMPLETE!
+[2025-12-23 17:02:51,249][__main__][INFO] - ====================================================================================================

@@ -1,0 +1,2 @@
+method,runtime_seconds,cpu_percent,memory_mb,gpu_memory_mb,gpu_utilization,throughput_cells_per_sec,num_cells,num_genes_perturbed,timestamp,extra_optimization
+baseline,48.26121759414673,100.0,950.96484375,9.125,39,207.2057129618054,10000,5,2025-12-23T16:35:17.146011,none

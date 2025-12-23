@@ -1,0 +1,5 @@
+method,runtime_seconds,cpu_percent,memory_mb,gpu_memory_mb,gpu_utilization,throughput_cells_per_sec,num_cells,num_genes_perturbed,timestamp,extra_optimization,extra_batch_size,extra_original_batch_size,extra_multiplier,extra_quantization_dtype,extra_num_gpus,extra_backend,extra_distribution_method
+baseline,162.55185556411743,100.0,1120.00390625,9.125,38,61.51883019296307,10000,20,2025-12-23T16:55:16.849047,none,,,,,,,
+batching,119.97875213623047,100.0,6249.82421875,48.40478515625,47,83.34809140743063,10000,20,2025-12-23T16:57:26.973792,,32.0,16.0,2.0,,,,
+quantization,163.52998852729797,100.0,6455.0078125,48.40478515625,38,61.15086345970547,10000,20,2025-12-23T17:00:20.375258,,,,,fp4,,,
+distributed_ddp,119.80421471595764,2.6,6941.41796875,9.125,0,83.46951752664862,10000,20,2025-12-23T17:02:37.923913,,,,,,4.0,nccl,DDP

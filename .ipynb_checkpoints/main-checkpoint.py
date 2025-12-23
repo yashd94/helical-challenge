@@ -57,7 +57,7 @@ except ImportError:
 import tempfile
 
 # Quantization using nvidia-modelopt
-# import modelopt.torch.quantization as mtq
+import modelopt.torch.quantization as mtq
 
 # Ignore warnings
 warnings.filterwarnings("ignore")
@@ -190,7 +190,6 @@ class PerformanceMonitor:
         if self.gpu_available:
             try:
                 metrics['gpu_memory_mb'] = torch.cuda.memory_allocated() / 1024 / 1024
-                # Note: torch.cuda.utilization() may not be available on all systems
                 try:
                     metrics['gpu_utilization'] = torch.cuda.utilization()
                 except:
@@ -863,7 +862,8 @@ class GeneformerPerturbationPipeline:
         if dtype_str == "qint8" or dtype_str == "fp8":
             
             qconf = {"qint8": mtq.INT8_SMOOTHQUANT_CFG,
-                     "fp8": mtq.FP8_DEFAULT_CFG}
+                     "fp8": mtq.FP8_DEFAULT_CFG,
+                      "fp4": mtq.NVFP4_DEFAULT_CFG}
             
             logger.info("Applying QINT8 quantization using nvidia-modelopt...")
             

@@ -1,0 +1,213 @@
+[2025-12-23 16:34:22,682][__main__][INFO] - Using device: cuda
+[2025-12-23 16:34:22,684][__main__][INFO] - ====================================================================================================
+[2025-12-23 16:34:22,684][__main__][INFO] - GENEFORMER PERTURBATION PIPELINE
+[2025-12-23 16:34:22,684][__main__][INFO] - ====================================================================================================
+[2025-12-23 16:34:22,684][__main__][INFO] - Experiment: geneformer_perturbation_example
+[2025-12-23 16:34:22,688][__main__][INFO] - 
+Configuration:
+reproducibility:
+  deterministic: true
+  seed: 42
+model:
+  name: gf-6L-10M-i2048
+  batch_size: 16
+  device: cuda:0
+data:
+  pertpy_data_identifier: norman_2019
+  condition_filter: control
+  save_tokenized_data: true
+  gene_names_column: index
+  use_raw_counts: false
+  preprocess: true
+  normalize: false
+  filter_genes: true
+  min_genes: 100
+  min_cells: 3
+  max_cells: 100
+  max_genes: 50
+perturbation:
+  gene_list: null
+  num_genes: 5
+  perturbation_type: knockout
+  selection_method: top_expressed
+  perturbation_strength: 2.0
+  save_perturbed_data: true
+optimization:
+  methods:
+  - quantization
+  batching:
+    enabled: true
+    batch_size_multiplier: 2
+  quantization:
+    enabled: true
+    dtype: fp8
+    calibration_data_size: 32
+  onnx:
+    enabled: true
+    use_gpu: true
+    precision: FP16
+  distributed:
+    enabled: true
+    backend: nccl
+output:
+  dir: outputs
+  cache_dir: /scratch
+  save_outputs: true
+  compression: true
+  precision: float32
+  save_detailed_comparisons: true
+  log_level: INFO
+  log_to_file: true
+  log_file: pipeline.log
+hardware:
+  device: auto
+  mixed_precision: false
+  cudnn_benchmark: true
+  empty_cache_between_methods: true
+experiment:
+  name: geneformer_perturbation_example
+  tags: []
+  notes: ''
+advanced:
+  compile_model: false
+  compile_backend: inductor
+  continue_on_error: true
+validation:
+  min_correlation: 0.95
+  max_mse: 0.01
+  warn_on_threshold: true
+  check_nan: true
+  check_inf: true
+
+[2025-12-23 16:34:22,688][__main__][INFO] - Loading Geneformer model...
+[2025-12-23 16:34:22,689][helical.utils.downloader][INFO] - Downloading 'geneformer/v1/gene_median_dictionary.pkl'
+[2025-12-23 16:34:22,689][helical.utils.downloader][INFO] - Starting to download: 'https://helicalpackage.s3.eu-west-2.amazonaws.com/geneformer/v1/gene_median_dictionary.pkl'
+[2025-12-23 16:34:23,490][helical.utils.downloader][INFO] - File saved to: '/root/.cache/helical/models/geneformer/v1/gene_median_dictionary.pkl'
+[2025-12-23 16:34:23,490][helical.utils.downloader][INFO] - Downloading 'geneformer/v1/token_dictionary.pkl'
+[2025-12-23 16:34:23,490][helical.utils.downloader][INFO] - Starting to download: 'https://helicalpackage.s3.eu-west-2.amazonaws.com/geneformer/v1/token_dictionary.pkl'
+[2025-12-23 16:34:23,722][helical.utils.downloader][INFO] - File saved to: '/root/.cache/helical/models/geneformer/v1/token_dictionary.pkl'
+[2025-12-23 16:34:23,722][helical.utils.downloader][INFO] - Downloading 'geneformer/v1/ensembl_mapping_dict.pkl'
+[2025-12-23 16:34:23,722][helical.utils.downloader][INFO] - Starting to download: 'https://helicalpackage.s3.eu-west-2.amazonaws.com/geneformer/v1/ensembl_mapping_dict.pkl'
+[2025-12-23 16:34:24,114][helical.utils.downloader][INFO] - File saved to: '/root/.cache/helical/models/geneformer/v1/ensembl_mapping_dict.pkl'
+[2025-12-23 16:34:24,114][helical.utils.downloader][INFO] - Downloading 'geneformer/v1/gf-6L-10M-i2048/config.json'
+[2025-12-23 16:34:24,114][helical.utils.downloader][INFO] - Starting to download: 'https://helicalpackage.s3.eu-west-2.amazonaws.com/geneformer/v1/gf-6L-10M-i2048/config.json'
+[2025-12-23 16:34:24,310][helical.utils.downloader][INFO] - File saved to: '/root/.cache/helical/models/geneformer/v1/gf-6L-10M-i2048/config.json'
+[2025-12-23 16:34:24,310][helical.utils.downloader][INFO] - Downloading 'geneformer/v1/gf-6L-10M-i2048/training_args.bin'
+[2025-12-23 16:34:24,310][helical.utils.downloader][INFO] - Starting to download: 'https://helicalpackage.s3.eu-west-2.amazonaws.com/geneformer/v1/gf-6L-10M-i2048/training_args.bin'
+[2025-12-23 16:34:24,500][helical.utils.downloader][INFO] - File saved to: '/root/.cache/helical/models/geneformer/v1/gf-6L-10M-i2048/training_args.bin'
+[2025-12-23 16:34:24,500][helical.utils.downloader][INFO] - Downloading 'geneformer/v1/gf-6L-10M-i2048/pytorch_model.bin'
+[2025-12-23 16:34:24,500][helical.utils.downloader][INFO] - Starting to download: 'https://helicalpackage.s3.eu-west-2.amazonaws.com/geneformer/v1/gf-6L-10M-i2048/pytorch_model.bin'
+[2025-12-23 16:34:25,893][helical.utils.downloader][INFO] - File saved to: '/root/.cache/helical/models/geneformer/v1/gf-6L-10M-i2048/pytorch_model.bin'
+[2025-12-23 16:34:28,334][helical.models.geneformer.model][INFO] - Model finished initializing.
+[2025-12-23 16:34:28,335][helical.models.geneformer.model][INFO] - 'gf-6L-10M-i2048' model is in 'eval' mode, on device 'cuda:0' with embedding mode 'cell'.
+[2025-12-23 16:34:28,336][__main__][INFO] - Model loaded: gf-6L-10M-i2048
+[2025-12-23 16:34:28,336][__main__][INFO] - Loading data: norman_2019
+[2025-12-23 16:34:28,348][__main__][INFO] - Found processed data saved to disk.
+[2025-12-23 16:34:28,646][__main__][INFO] - Selected 5 genes using method: top_expressed
+[2025-12-23 16:34:28,646][__main__][INFO] - Performing perturbation on 5 genes...
+[2025-12-23 16:34:28,655][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 16:34:28,701][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 16:34:28,746][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 16:34:28,794][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 16:34:28,840][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 16:34:28,883][__main__][INFO] - Perturbations complete.
+[2025-12-23 16:34:28,883][__main__][INFO] - 
+====================================================================================================
+[2025-12-23 16:34:28,883][__main__][INFO] - Running BASELINE (no optimization)...
+[2025-12-23 16:34:28,886][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:34:28,886][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:34:37,870][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:34:37,870][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:34:37,870][__main__][INFO] - Extracting embeddings for perturbations on 5 genes...
+[2025-12-23 16:34:37,870][__main__][INFO] - Extraxcting embeddings for perturbed: ENO1 (type: knockout)
+[2025-12-23 16:34:37,870][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:34:37,871][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:34:45,721][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:34:45,721][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:34:45,722][__main__][INFO] - Extraxcting embeddings for perturbed: AURKAIP1 (type: knockout)
+[2025-12-23 16:34:45,722][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:34:45,722][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:34:53,585][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:34:53,585][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:34:53,585][__main__][INFO] - Extraxcting embeddings for perturbed: HMGN2 (type: knockout)
+[2025-12-23 16:34:53,585][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:34:53,585][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:35:01,437][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:35:01,437][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:35:01,437][__main__][INFO] - Extraxcting embeddings for perturbed: RPL22 (type: knockout)
+[2025-12-23 16:35:01,437][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:35:01,437][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:35:09,297][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:35:09,297][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:35:09,298][__main__][INFO] - Extraxcting embeddings for perturbed: RPL11 (type: knockout)
+[2025-12-23 16:35:09,298][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:35:09,298][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:35:17,144][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:35:17,144][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:35:17,144][__main__][INFO] - Finished getting perturbation results.
+[2025-12-23 16:35:20,004][__main__][INFO] - Saved outputs for baseline to outputs/outputs/baseline
+[2025-12-23 16:35:20,018][__main__][INFO] - 
+====================================================================================================
+[2025-12-23 16:35:20,018][__main__][INFO] - Running with QUANTIZATION optimization...
+[2025-12-23 16:35:20,018][__main__][INFO] - Applying QINT8 quantization using nvidia-modelopt...
+[2025-12-23 16:35:20,213][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:35:20,213][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:35:41,939][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:35:41,939][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:35:41,939][__main__][INFO] - Extracting embeddings for perturbations on 5 genes...
+[2025-12-23 16:35:41,940][__main__][INFO] - Extraxcting embeddings for perturbed: ENO1 (type: knockout)
+[2025-12-23 16:35:41,940][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:35:41,940][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:36:02,956][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:36:02,956][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:36:02,956][__main__][INFO] - Extraxcting embeddings for perturbed: AURKAIP1 (type: knockout)
+[2025-12-23 16:36:02,956][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:36:02,956][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:36:23,921][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:36:23,921][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:36:23,921][__main__][INFO] - Extraxcting embeddings for perturbed: HMGN2 (type: knockout)
+[2025-12-23 16:36:23,921][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:36:23,921][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:36:44,878][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:36:44,878][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:36:44,879][__main__][INFO] - Extraxcting embeddings for perturbed: RPL22 (type: knockout)
+[2025-12-23 16:36:44,879][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:36:44,879][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:37:05,872][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:37:05,872][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:37:05,872][__main__][INFO] - Extraxcting embeddings for perturbed: RPL11 (type: knockout)
+[2025-12-23 16:37:05,872][__main__][INFO] - Extracting embeddings...
+[2025-12-23 16:37:05,872][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 16:37:26,825][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 16:37:26,826][__main__][INFO] - Extracted embeddings shape: (10000, 256)
+[2025-12-23 16:37:26,826][__main__][INFO] - Finished getting perturbation results.
+[2025-12-23 16:37:26,830][__main__][ERROR] - NaN values found in quantization embeddings
+[2025-12-23 16:37:26,832][__main__][ERROR] - NaN values found in quantization perturbation for ENO1
+[2025-12-23 16:37:26,834][__main__][ERROR] - NaN values found in quantization perturbation for AURKAIP1
+[2025-12-23 16:37:26,837][__main__][ERROR] - NaN values found in quantization perturbation for HMGN2
+[2025-12-23 16:37:26,839][__main__][ERROR] - NaN values found in quantization perturbation for RPL22
+[2025-12-23 16:37:26,841][__main__][ERROR] - NaN values found in quantization perturbation for RPL11
+[2025-12-23 16:37:26,842][__main__][ERROR] - quantization validation failed
+[2025-12-23 16:37:26,855][__main__][INFO] - 
+====================================================================================================
+[2025-12-23 16:37:26,855][__main__][INFO] - COMPARING OUTPUTS TO BASELINE
+[2025-12-23 16:37:26,855][__main__][INFO] - ====================================================================================================
+[2025-12-23 16:37:26,857][__main__][INFO] - Performance metrics saved to: outputs/performance_metrics_20251223_163726.csv
+[2025-12-23 16:37:26,859][__main__][INFO] - 
+====================================================================================================
+[2025-12-23 16:37:26,859][__main__][INFO] - PERFORMANCE SUMMARY
+[2025-12-23 16:37:26,859][__main__][INFO] - ====================================================================================================
+[2025-12-23 16:37:26,862][__main__][INFO] - 
+     method  runtime_seconds  cpu_percent   memory_mb  gpu_memory_mb  gpu_utilization  throughput_cells_per_sec  num_cells  num_genes_perturbed                   timestamp extra_optimization
+0  baseline        48.261218        100.0  950.964844          9.125               39                207.205713      10000                    5  2025-12-23T16:35:17.146011               none
+
+[2025-12-23 16:37:26,862][__main__][INFO] - 
+SPEEDUP RELATIVE TO BASELINE:
+[2025-12-23 16:37:26,862][__main__][INFO] - --------------------------------------------------
+[2025-12-23 16:37:26,863][__main__][INFO] - ====================================================================================================
+[2025-12-23 16:37:26,863][__main__][INFO] - 
+All outputs saved to: outputs
+[2025-12-23 16:37:26,863][__main__][INFO] - 
+====================================================================================================
+[2025-12-23 16:37:26,863][__main__][INFO] - PIPELINE COMPLETE!
+[2025-12-23 16:37:26,863][__main__][INFO] - ====================================================================================================

@@ -1,3 +1,0 @@
-method,runtime_seconds,cpu_percent,memory_mb,gpu_memory_mb,gpu_utilization,throughput_cells_per_sec,num_cells,num_genes_perturbed,timestamp,extra_optimization,extra_num_gpus,extra_backend,extra_distribution_method
-baseline,409.91310572624207,99.9,1456.95703125,9.125,38,24.39541419951193,10000,50,2025-12-23T01:19:56.831306,none,,,
-distributed_ddp,188.30255126953125,-92.9,1061.6796875,-39.27978515625,-37,53.106025025047416,10000,50,2025-12-23T01:23:38.730048,,4.0,nccl,DDP
