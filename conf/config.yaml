@@ -19,7 +19,7 @@ model:
          # "gf-12L-104M-i4096-CLcancer",
          # "gf-20L-151M-i4096",
          # "gf-18L-316M-i4096",
-  batch_size: 2          # Base batch size for inference
+  batch_size: 16          # Base batch size for inference
   device: 'cuda:0'
 
 

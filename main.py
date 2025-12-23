@@ -361,7 +361,8 @@ def get_perturbation_results_ddp(
     rank: int,
     model: Geneformer, 
     perturbed_data_dict: Dict, 
-    genes: List[str]
+    genes: List[str],
+    world_size: int
 ) -> Dict[str, np.ndarray]:
     """Extract post-perturbation embeddings (DDP)"""
     logger.info(f"Extracting embeddings for perturbations on {len(genes)} genes...")
@@ -410,7 +411,7 @@ def run_inference_worker(
         
         # Perform perturbations
         local_perturbation_results = get_perturbation_results_ddp(
-            rank, model, perturbed_data_dict, genes
+            rank, model, perturbed_data_dict, genes, world_size
         )
         
         # Save outputs per gene per rank

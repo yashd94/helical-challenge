@@ -1,0 +1,2 @@
+method_a,method_b,embedding_pearson,embedding_spearman,embedding_cosine_similarity,embedding_mse,embedding_max_abs_diff,mean_perturbation_correlation,min_perturbation_correlation,max_perturbation_correlation,timestamp
+baseline,distributed_ddp,0.9999962,1.0,1.0,0.0,0.0,0.0,0.0,0.0,2025-12-23T01:09:47.830298

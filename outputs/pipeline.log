@@ -411,3 +411,1131 @@ All outputs saved to: outputs
 ====================================================================================================
 2025-12-23 00:41:06,837 - __main__ - INFO - PIPELINE COMPLETE!
 2025-12-23 00:41:06,837 - __main__ - INFO - ====================================================================================================
+2025-12-23 00:57:39,302 - __main__ - INFO - ====================================================================================================
+2025-12-23 00:57:39,302 - __main__ - INFO - GENEFORMER PERTURBATION PIPELINE
+2025-12-23 00:57:39,302 - __main__ - INFO - ====================================================================================================
+2025-12-23 00:57:39,302 - __main__ - INFO - Experiment: geneformer_perturbation_example
+2025-12-23 00:57:39,306 - __main__ - INFO - 
+Configuration:
+reproducibility:
+  deterministic: true
+  seed: 42
+model:
+  name: gf-6L-10M-i2048
+  batch_size: 2
+  device: cuda:0
+data:
+  pertpy_data_identifier: norman_2019
+  condition_filter: control
+  save_tokenized_data: true
+  gene_names_column: index
+  use_raw_counts: false
+  preprocess: true
+  normalize: false
+  filter_genes: true
+  min_genes: 100
+  min_cells: 3
+  max_cells: 10000
+  max_genes: 500
+perturbation:
+  gene_list: null
+  num_genes: 50
+  perturbation_type: knockout
+  selection_method: top_expressed
+  perturbation_strength: 2.0
+  save_perturbed_data: true
+optimization:
+  methods:
+  - distributed
+  batching:
+    enabled: true
+    batch_size_multiplier: 2
+  quantization:
+    enabled: true
+    dtype: qint8
+    calibration_data_size: 32
+  onnx:
+    enabled: true
+    use_gpu: true
+    precision: FP16
+  distributed:
+    enabled: true
+    backend: nccl
+output:
+  dir: outputs
+  cache_dir: /scratch
+  save_outputs: true
+  compression: true
+  precision: float32
+  save_detailed_comparisons: true
+  log_level: INFO
+  log_to_file: true
+  log_file: pipeline.log
+hardware:
+  device: auto
+  mixed_precision: false
+  cudnn_benchmark: true
+  empty_cache_between_methods: true
+experiment:
+  name: geneformer_perturbation_example
+  tags: []
+  notes: ''
+advanced:
+  compile_model: false
+  compile_backend: inductor
+  continue_on_error: true
+validation:
+  min_correlation: 0.95
+  max_mse: 0.01
+  warn_on_threshold: true
+  check_nan: true
+  check_inf: true
+
+2025-12-23 00:57:39,307 - __main__ - INFO - Loading Geneformer model...
+2025-12-23 00:57:45,569 - __main__ - INFO - Model loaded: gf-6L-10M-i2048
+2025-12-23 00:57:45,569 - __main__ - INFO - Loading data: norman_2019
+2025-12-23 00:57:45,571 - __main__ - INFO - No processed data found.
+2025-12-23 00:58:11,175 - __main__ - INFO - Loaded 11835 cells, 19018 genes
+2025-12-23 00:58:11,175 - __main__ - INFO - Preprocessing data...
+2025-12-23 00:58:13,539 - __main__ - INFO - After filtering: 11835 cells, 18215 genes
+2025-12-23 00:58:13,545 - __main__ - INFO - Subsetted to 10000 cells for testing
+2025-12-23 00:58:13,549 - __main__ - INFO - Subsetted to 500 genes for testing
+2025-12-23 00:58:13,549 - __main__ - INFO - Tokenizing data...
+2025-12-23 00:58:16,193 - __main__ - INFO - Tokenization complete.
+2025-12-23 00:58:16,193 - __main__ - INFO - Saving processed data...
+2025-12-23 00:58:16,678 - __main__ - INFO - Saving tokenized data...
+2025-12-23 00:58:16,684 - __main__ - INFO - Selected 50 genes using method: top_expressed
+2025-12-23 00:58:16,685 - __main__ - INFO - Performing perturbation on 50 genes...
+2025-12-23 00:58:16,686 - __main__ - INFO - No data found in cache. Perturbing gene: SNRNP40 (type: knockout)
+2025-12-23 00:58:16,737 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/SNRNP40.dataset
+2025-12-23 00:58:18,607 - __main__ - INFO - No data found in cache. Perturbing gene: HDAC1 (type: knockout)
+2025-12-23 00:58:18,650 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/HDAC1.dataset
+2025-12-23 00:58:20,498 - __main__ - INFO - No data found in cache. Perturbing gene: CAPZB (type: knockout)
+2025-12-23 00:58:20,545 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/CAPZB.dataset
+2025-12-23 00:58:22,403 - __main__ - INFO - No data found in cache. Perturbing gene: TMEM50A (type: knockout)
+2025-12-23 00:58:22,448 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/TMEM50A.dataset
+2025-12-23 00:58:24,298 - __main__ - INFO - No data found in cache. Perturbing gene: YRDC (type: knockout)
+2025-12-23 00:58:24,343 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/YRDC.dataset
+2025-12-23 00:58:26,226 - __main__ - INFO - No data found in cache. Perturbing gene: MAD2L2 (type: knockout)
+2025-12-23 00:58:26,270 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/MAD2L2.dataset
+2025-12-23 00:58:28,161 - __main__ - INFO - No data found in cache. Perturbing gene: YARS (type: knockout)
+2025-12-23 00:58:28,207 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/YARS.dataset
+2025-12-23 00:58:30,102 - __main__ - INFO - No data found in cache. Perturbing gene: ZBTB8OS (type: knockout)
+2025-12-23 00:58:30,147 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/ZBTB8OS.dataset
+2025-12-23 00:58:32,002 - __main__ - INFO - No data found in cache. Perturbing gene: LAPTM5 (type: knockout)
+2025-12-23 00:58:32,046 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/LAPTM5.dataset
+2025-12-23 00:58:33,892 - __main__ - INFO - No data found in cache. Perturbing gene: MEAF6 (type: knockout)
+2025-12-23 00:58:33,935 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/MEAF6.dataset
+2025-12-23 00:58:35,781 - __main__ - INFO - No data found in cache. Perturbing gene: CDC42 (type: knockout)
+2025-12-23 00:58:35,825 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/CDC42.dataset
+2025-12-23 00:58:37,653 - __main__ - INFO - No data found in cache. Perturbing gene: SMIM12 (type: knockout)
+2025-12-23 00:58:37,693 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/SMIM12.dataset
+2025-12-23 00:58:39,545 - __main__ - INFO - No data found in cache. Perturbing gene: EPB41 (type: knockout)
+2025-12-23 00:58:39,585 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/EPB41.dataset
+2025-12-23 00:58:41,449 - __main__ - INFO - No data found in cache. Perturbing gene: WASF2 (type: knockout)
+2025-12-23 00:58:41,487 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/WASF2.dataset
+2025-12-23 00:58:43,490 - __main__ - INFO - No data found in cache. Perturbing gene: ZCCHC17 (type: knockout)
+2025-12-23 00:58:43,531 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/ZCCHC17.dataset
+2025-12-23 00:58:45,814 - __main__ - INFO - No data found in cache. Perturbing gene: SRSF10 (type: knockout)
+2025-12-23 00:58:45,847 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/SRSF10.dataset
+2025-12-23 00:58:47,690 - __main__ - INFO - No data found in cache. Perturbing gene: THRAP3 (type: knockout)
+2025-12-23 00:58:47,724 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/THRAP3.dataset
+2025-12-23 00:58:49,566 - __main__ - INFO - No data found in cache. Perturbing gene: SH3BGRL3 (type: knockout)
+2025-12-23 00:58:49,602 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/SH3BGRL3.dataset
+2025-12-23 00:58:51,434 - __main__ - INFO - No data found in cache. Perturbing gene: FAAP20 (type: knockout)
+2025-12-23 00:58:51,465 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/FAAP20.dataset
+2025-12-23 00:58:53,288 - __main__ - INFO - No data found in cache. Perturbing gene: HNRNPR (type: knockout)
+2025-12-23 00:58:53,319 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/HNRNPR.dataset
+2025-12-23 00:58:55,150 - __main__ - INFO - No data found in cache. Perturbing gene: CAMTA1 (type: knockout)
+2025-12-23 00:58:55,179 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/CAMTA1.dataset
+2025-12-23 00:58:57,019 - __main__ - INFO - No data found in cache. Perturbing gene: SRSF4 (type: knockout)
+2025-12-23 00:58:57,048 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/SRSF4.dataset
+2025-12-23 00:58:58,880 - __main__ - INFO - No data found in cache. Perturbing gene: DNAJC8 (type: knockout)
+2025-12-23 00:58:58,911 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/DNAJC8.dataset
+2025-12-23 00:59:00,748 - __main__ - INFO - No data found in cache. Perturbing gene: KHDRBS1 (type: knockout)
+2025-12-23 00:59:00,777 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/KHDRBS1.dataset
+2025-12-23 00:59:02,616 - __main__ - INFO - No data found in cache. Perturbing gene: ZNF593 (type: knockout)
+2025-12-23 00:59:02,646 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/ZNF593.dataset
+2025-12-23 00:59:04,453 - __main__ - INFO - No data found in cache. Perturbing gene: TRAPPC3 (type: knockout)
+2025-12-23 00:59:04,482 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/TRAPPC3.dataset
+2025-12-23 00:59:06,304 - __main__ - INFO - No data found in cache. Perturbing gene: RBBP4 (type: knockout)
+2025-12-23 00:59:06,331 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/RBBP4.dataset
+2025-12-23 00:59:08,166 - __main__ - INFO - No data found in cache. Perturbing gene: MINOS1 (type: knockout)
+2025-12-23 00:59:08,195 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/MINOS1.dataset
+2025-12-23 00:59:10,036 - __main__ - INFO - No data found in cache. Perturbing gene: LSM10 (type: knockout)
+2025-12-23 00:59:10,063 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/LSM10.dataset
+2025-12-23 00:59:11,898 - __main__ - INFO - No data found in cache. Perturbing gene: C1orf122 (type: knockout)
+2025-12-23 00:59:11,926 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/C1orf122.dataset
+2025-12-23 00:59:13,771 - __main__ - INFO - No data found in cache. Perturbing gene: SFPQ (type: knockout)
+2025-12-23 00:59:13,800 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/SFPQ.dataset
+2025-12-23 00:59:15,637 - __main__ - INFO - No data found in cache. Perturbing gene: NUDC (type: knockout)
+2025-12-23 00:59:15,672 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/NUDC.dataset
+2025-12-23 00:59:17,503 - __main__ - INFO - No data found in cache. Perturbing gene: AK2 (type: knockout)
+2025-12-23 00:59:17,535 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/AK2.dataset
+2025-12-23 00:59:19,382 - __main__ - INFO - No data found in cache. Perturbing gene: SSU72 (type: knockout)
+2025-12-23 00:59:19,412 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/SSU72.dataset
+2025-12-23 00:59:21,238 - __main__ - INFO - No data found in cache. Perturbing gene: SRRM1 (type: knockout)
+2025-12-23 00:59:21,268 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/SRRM1.dataset
+2025-12-23 00:59:23,541 - __main__ - INFO - No data found in cache. Perturbing gene: EIF3I (type: knockout)
+2025-12-23 00:59:23,567 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/EIF3I.dataset
+2025-12-23 00:59:25,398 - __main__ - INFO - No data found in cache. Perturbing gene: MRPL20 (type: knockout)
+2025-12-23 00:59:25,422 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/MRPL20.dataset
+2025-12-23 00:59:27,253 - __main__ - INFO - No data found in cache. Perturbing gene: MARCKSL1 (type: knockout)
+2025-12-23 00:59:27,276 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/MARCKSL1.dataset
+2025-12-23 00:59:29,133 - __main__ - INFO - No data found in cache. Perturbing gene: PSMB2 (type: knockout)
+2025-12-23 00:59:29,157 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/PSMB2.dataset
+2025-12-23 00:59:30,994 - __main__ - INFO - No data found in cache. Perturbing gene: MRPS15 (type: knockout)
+2025-12-23 00:59:31,017 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/MRPS15.dataset
+2025-12-23 00:59:32,847 - __main__ - INFO - No data found in cache. Perturbing gene: SRM (type: knockout)
+2025-12-23 00:59:32,870 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/SRM.dataset
+2025-12-23 00:59:34,709 - __main__ - INFO - No data found in cache. Perturbing gene: STMN1 (type: knockout)
+2025-12-23 00:59:34,732 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/STMN1.dataset
+2025-12-23 00:59:36,561 - __main__ - INFO - No data found in cache. Perturbing gene: PTP4A2 (type: knockout)
+2025-12-23 00:59:36,582 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/PTP4A2.dataset
+2025-12-23 00:59:38,423 - __main__ - INFO - No data found in cache. Perturbing gene: PARK7 (type: knockout)
+2025-12-23 00:59:38,444 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/PARK7.dataset
+2025-12-23 00:59:40,285 - __main__ - INFO - No data found in cache. Perturbing gene: ATPIF1 (type: knockout)
+2025-12-23 00:59:40,307 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/ATPIF1.dataset
+2025-12-23 00:59:42,135 - __main__ - INFO - No data found in cache. Perturbing gene: ENO1 (type: knockout)
+2025-12-23 00:59:42,158 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/ENO1.dataset
+2025-12-23 00:59:43,995 - __main__ - INFO - No data found in cache. Perturbing gene: AURKAIP1 (type: knockout)
+2025-12-23 00:59:44,017 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/AURKAIP1.dataset
+2025-12-23 00:59:45,856 - __main__ - INFO - No data found in cache. Perturbing gene: HMGN2 (type: knockout)
+2025-12-23 00:59:45,881 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/HMGN2.dataset
+2025-12-23 00:59:47,714 - __main__ - INFO - No data found in cache. Perturbing gene: RPL22 (type: knockout)
+2025-12-23 00:59:47,724 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/RPL22.dataset
+2025-12-23 00:59:49,560 - __main__ - INFO - No data found in cache. Perturbing gene: RPL11 (type: knockout)
+2025-12-23 00:59:49,571 - __main__ - INFO - Saving perturbed data to: /scratch/geneformer_perturbation_example/perturbations/RPL11.dataset
+2025-12-23 00:59:51,396 - __main__ - INFO - Perturbations complete.
+2025-12-23 00:59:51,397 - __main__ - INFO - 
+====================================================================================================
+2025-12-23 00:59:51,397 - __main__ - INFO - Running BASELINE (no optimization)...
+2025-12-23 00:59:51,400 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:01:16,775 - __main__ - INFO - ====================================================================================================
+2025-12-23 01:01:16,775 - __main__ - INFO - GENEFORMER PERTURBATION PIPELINE
+2025-12-23 01:01:16,775 - __main__ - INFO - ====================================================================================================
+2025-12-23 01:01:16,775 - __main__ - INFO - Experiment: geneformer_perturbation_example
+2025-12-23 01:01:16,779 - __main__ - INFO - 
+Configuration:
+reproducibility:
+  deterministic: true
+  seed: 42
+model:
+  name: gf-6L-10M-i2048
+  batch_size: 16
+  device: cuda:0
+data:
+  pertpy_data_identifier: norman_2019
+  condition_filter: control
+  save_tokenized_data: true
+  gene_names_column: index
+  use_raw_counts: false
+  preprocess: true
+  normalize: false
+  filter_genes: true
+  min_genes: 100
+  min_cells: 3
+  max_cells: 10000
+  max_genes: 500
+perturbation:
+  gene_list: null
+  num_genes: 50
+  perturbation_type: knockout
+  selection_method: top_expressed
+  perturbation_strength: 2.0
+  save_perturbed_data: true
+optimization:
+  methods:
+  - distributed
+  batching:
+    enabled: true
+    batch_size_multiplier: 2
+  quantization:
+    enabled: true
+    dtype: qint8
+    calibration_data_size: 32
+  onnx:
+    enabled: true
+    use_gpu: true
+    precision: FP16
+  distributed:
+    enabled: true
+    backend: nccl
+output:
+  dir: outputs
+  cache_dir: /scratch
+  save_outputs: true
+  compression: true
+  precision: float32
+  save_detailed_comparisons: true
+  log_level: INFO
+  log_to_file: true
+  log_file: pipeline.log
+hardware:
+  device: auto
+  mixed_precision: false
+  cudnn_benchmark: true
+  empty_cache_between_methods: true
+experiment:
+  name: geneformer_perturbation_example
+  tags: []
+  notes: ''
+advanced:
+  compile_model: false
+  compile_backend: inductor
+  continue_on_error: true
+validation:
+  min_correlation: 0.95
+  max_mse: 0.01
+  warn_on_threshold: true
+  check_nan: true
+  check_inf: true
+
+2025-12-23 01:01:16,780 - __main__ - INFO - Loading Geneformer model...
+2025-12-23 01:01:23,079 - __main__ - INFO - Model loaded: gf-6L-10M-i2048
+2025-12-23 01:01:23,080 - __main__ - INFO - Loading data: norman_2019
+2025-12-23 01:01:23,082 - __main__ - INFO - Found processed data saved to disk.
+2025-12-23 01:01:23,335 - __main__ - INFO - Selected 50 genes using method: top_expressed
+2025-12-23 01:01:23,335 - __main__ - INFO - Performing perturbation on 50 genes...
+2025-12-23 01:01:23,339 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:23,372 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:23,401 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:23,426 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:23,456 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:23,483 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:23,507 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:23,533 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:23,557 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:23,581 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:23,606 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:23,629 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:23,654 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:23,680 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:23,707 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:23,734 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:23,761 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:23,790 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:23,815 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:23,841 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:23,871 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:23,899 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:23,924 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:23,951 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:23,979 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:24,005 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:24,031 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:24,058 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:24,086 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:24,112 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:24,141 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:24,167 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:24,195 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:24,225 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:24,251 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:24,276 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:24,301 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:24,324 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:24,347 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:24,375 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:24,404 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:24,434 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:24,458 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:24,484 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:24,509 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:24,538 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:24,564 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:24,592 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:24,620 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:24,647 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:01:24,674 - __main__ - INFO - Perturbations complete.
+2025-12-23 01:01:24,674 - __main__ - INFO - 
+====================================================================================================
+2025-12-23 01:01:24,674 - __main__ - INFO - Running BASELINE (no optimization)...
+2025-12-23 01:01:24,677 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:01:34,192 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:01:34,192 - __main__ - INFO - Extracting embeddings for perturbations on 50 genes...
+2025-12-23 01:01:34,192 - __main__ - INFO - Extraxcting embeddings for perturbed: SNRNP40 (type: knockout)
+2025-12-23 01:01:34,192 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:01:42,110 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:01:42,110 - __main__ - INFO - Extraxcting embeddings for perturbed: HDAC1 (type: knockout)
+2025-12-23 01:01:42,110 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:01:50,003 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:01:50,003 - __main__ - INFO - Extraxcting embeddings for perturbed: CAPZB (type: knockout)
+2025-12-23 01:01:50,003 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:01:57,895 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:01:57,896 - __main__ - INFO - Extraxcting embeddings for perturbed: TMEM50A (type: knockout)
+2025-12-23 01:01:57,896 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:02:05,803 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:02:05,803 - __main__ - INFO - Extraxcting embeddings for perturbed: YRDC (type: knockout)
+2025-12-23 01:02:05,804 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:02:13,712 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:02:13,712 - __main__ - INFO - Extraxcting embeddings for perturbed: MAD2L2 (type: knockout)
+2025-12-23 01:02:13,712 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:02:21,609 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:02:21,609 - __main__ - INFO - Extraxcting embeddings for perturbed: YARS (type: knockout)
+2025-12-23 01:02:21,609 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:02:29,522 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:02:29,522 - __main__ - INFO - Extraxcting embeddings for perturbed: ZBTB8OS (type: knockout)
+2025-12-23 01:02:29,522 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:02:37,426 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:02:37,426 - __main__ - INFO - Extraxcting embeddings for perturbed: LAPTM5 (type: knockout)
+2025-12-23 01:02:37,426 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:02:45,322 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:02:45,322 - __main__ - INFO - Extraxcting embeddings for perturbed: MEAF6 (type: knockout)
+2025-12-23 01:02:45,322 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:02:53,232 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:02:53,232 - __main__ - INFO - Extraxcting embeddings for perturbed: CDC42 (type: knockout)
+2025-12-23 01:02:53,232 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:03:01,129 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:03:01,129 - __main__ - INFO - Extraxcting embeddings for perturbed: SMIM12 (type: knockout)
+2025-12-23 01:03:01,129 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:03:09,039 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:03:09,040 - __main__ - INFO - Extraxcting embeddings for perturbed: EPB41 (type: knockout)
+2025-12-23 01:03:09,040 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:03:16,950 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:03:16,950 - __main__ - INFO - Extraxcting embeddings for perturbed: WASF2 (type: knockout)
+2025-12-23 01:03:16,950 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:03:24,850 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:03:24,850 - __main__ - INFO - Extraxcting embeddings for perturbed: ZCCHC17 (type: knockout)
+2025-12-23 01:03:24,850 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:03:32,808 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:03:32,808 - __main__ - INFO - Extraxcting embeddings for perturbed: SRSF10 (type: knockout)
+2025-12-23 01:03:32,808 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:03:40,714 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:03:40,714 - __main__ - INFO - Extraxcting embeddings for perturbed: THRAP3 (type: knockout)
+2025-12-23 01:03:40,714 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:03:48,619 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:03:48,619 - __main__ - INFO - Extraxcting embeddings for perturbed: SH3BGRL3 (type: knockout)
+2025-12-23 01:03:48,619 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:03:56,530 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:03:56,530 - __main__ - INFO - Extraxcting embeddings for perturbed: FAAP20 (type: knockout)
+2025-12-23 01:03:56,531 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:04:04,443 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:04:04,443 - __main__ - INFO - Extraxcting embeddings for perturbed: HNRNPR (type: knockout)
+2025-12-23 01:04:04,443 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:04:12,356 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:04:12,356 - __main__ - INFO - Extraxcting embeddings for perturbed: CAMTA1 (type: knockout)
+2025-12-23 01:04:12,356 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:04:20,266 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:04:20,266 - __main__ - INFO - Extraxcting embeddings for perturbed: SRSF4 (type: knockout)
+2025-12-23 01:04:20,266 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:04:28,177 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:04:28,177 - __main__ - INFO - Extraxcting embeddings for perturbed: DNAJC8 (type: knockout)
+2025-12-23 01:04:28,177 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:04:36,079 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:04:36,079 - __main__ - INFO - Extraxcting embeddings for perturbed: KHDRBS1 (type: knockout)
+2025-12-23 01:04:36,079 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:04:43,994 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:04:43,994 - __main__ - INFO - Extraxcting embeddings for perturbed: ZNF593 (type: knockout)
+2025-12-23 01:04:43,994 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:04:51,896 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:04:51,896 - __main__ - INFO - Extraxcting embeddings for perturbed: TRAPPC3 (type: knockout)
+2025-12-23 01:04:51,896 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:04:59,802 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:04:59,802 - __main__ - INFO - Extraxcting embeddings for perturbed: RBBP4 (type: knockout)
+2025-12-23 01:04:59,802 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:05:07,711 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:05:07,712 - __main__ - INFO - Extraxcting embeddings for perturbed: MINOS1 (type: knockout)
+2025-12-23 01:05:07,712 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:05:15,617 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:05:15,617 - __main__ - INFO - Extraxcting embeddings for perturbed: LSM10 (type: knockout)
+2025-12-23 01:05:15,617 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:05:23,516 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:05:23,516 - __main__ - INFO - Extraxcting embeddings for perturbed: C1orf122 (type: knockout)
+2025-12-23 01:05:23,516 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:05:31,419 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:05:31,419 - __main__ - INFO - Extraxcting embeddings for perturbed: SFPQ (type: knockout)
+2025-12-23 01:05:31,419 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:05:39,316 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:05:39,316 - __main__ - INFO - Extraxcting embeddings for perturbed: NUDC (type: knockout)
+2025-12-23 01:05:39,316 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:05:47,226 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:05:47,226 - __main__ - INFO - Extraxcting embeddings for perturbed: AK2 (type: knockout)
+2025-12-23 01:05:47,226 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:05:55,132 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:05:55,132 - __main__ - INFO - Extraxcting embeddings for perturbed: SSU72 (type: knockout)
+2025-12-23 01:05:55,132 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:06:03,034 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:06:03,034 - __main__ - INFO - Extraxcting embeddings for perturbed: SRRM1 (type: knockout)
+2025-12-23 01:06:03,034 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:06:10,941 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:06:10,941 - __main__ - INFO - Extraxcting embeddings for perturbed: EIF3I (type: knockout)
+2025-12-23 01:06:10,941 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:06:18,837 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:06:18,837 - __main__ - INFO - Extraxcting embeddings for perturbed: MRPL20 (type: knockout)
+2025-12-23 01:06:18,837 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:06:26,746 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:06:26,746 - __main__ - INFO - Extraxcting embeddings for perturbed: MARCKSL1 (type: knockout)
+2025-12-23 01:06:26,746 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:06:34,645 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:06:34,645 - __main__ - INFO - Extraxcting embeddings for perturbed: PSMB2 (type: knockout)
+2025-12-23 01:06:34,645 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:06:42,548 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:06:42,548 - __main__ - INFO - Extraxcting embeddings for perturbed: MRPS15 (type: knockout)
+2025-12-23 01:06:42,548 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:06:50,465 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:06:50,465 - __main__ - INFO - Extraxcting embeddings for perturbed: SRM (type: knockout)
+2025-12-23 01:06:50,465 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:06:58,376 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:06:58,376 - __main__ - INFO - Extraxcting embeddings for perturbed: STMN1 (type: knockout)
+2025-12-23 01:06:58,376 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:07:06,272 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:07:06,273 - __main__ - INFO - Extraxcting embeddings for perturbed: PTP4A2 (type: knockout)
+2025-12-23 01:07:06,273 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:07:14,188 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:07:14,188 - __main__ - INFO - Extraxcting embeddings for perturbed: PARK7 (type: knockout)
+2025-12-23 01:07:14,188 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:07:22,081 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:07:22,081 - __main__ - INFO - Extraxcting embeddings for perturbed: ATPIF1 (type: knockout)
+2025-12-23 01:07:22,081 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:07:29,997 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:07:29,997 - __main__ - INFO - Extraxcting embeddings for perturbed: ENO1 (type: knockout)
+2025-12-23 01:07:29,997 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:07:37,903 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:07:37,903 - __main__ - INFO - Extraxcting embeddings for perturbed: AURKAIP1 (type: knockout)
+2025-12-23 01:07:37,903 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:07:45,812 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:07:45,812 - __main__ - INFO - Extraxcting embeddings for perturbed: HMGN2 (type: knockout)
+2025-12-23 01:07:45,812 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:07:53,718 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:07:53,718 - __main__ - INFO - Extraxcting embeddings for perturbed: RPL22 (type: knockout)
+2025-12-23 01:07:53,718 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:08:01,631 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:08:01,631 - __main__ - INFO - Extraxcting embeddings for perturbed: RPL11 (type: knockout)
+2025-12-23 01:08:01,631 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:08:09,544 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:08:09,545 - __main__ - INFO - Finished getting perturbation results.
+2025-12-23 01:08:33,784 - __main__ - INFO - Saved outputs for baseline to outputs/outputs/baseline
+2025-12-23 01:08:33,909 - __main__ - INFO - 
+====================================================================================================
+2025-12-23 01:08:33,909 - __main__ - INFO - Running with DISTRIBUTED optimization...
+2025-12-23 01:08:33,909 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:08:41,897 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:08:41,897 - __main__ - INFO - Using 4 GPUs with DDP
+2025-12-23 01:08:41,955 - __main__ - INFO - Using temporary directory: /scratch/ddp_results_ynvwyn88
+2025-12-23 01:09:46,669 - __main__ - ERROR - Error from rank 0:
+name 'world_size' is not defined
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 412, in run_inference_worker
+    local_perturbation_results = get_perturbation_results_ddp(
+  File "/root/capsule/code/helical-challenge/main.py", line 379, in get_perturbation_results_ddp
+    sharded_perturbed_data = perturbed_data_dict[gene].shard(num_shards = world_size,
+NameError: name 'world_size' is not defined
+
+2025-12-23 01:09:46,672 - __main__ - ERROR - Error from rank 1:
+name 'world_size' is not defined
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 412, in run_inference_worker
+    local_perturbation_results = get_perturbation_results_ddp(
+  File "/root/capsule/code/helical-challenge/main.py", line 379, in get_perturbation_results_ddp
+    sharded_perturbed_data = perturbed_data_dict[gene].shard(num_shards = world_size,
+NameError: name 'world_size' is not defined
+
+2025-12-23 01:09:46,676 - __main__ - ERROR - Error from rank 2:
+name 'world_size' is not defined
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 412, in run_inference_worker
+    local_perturbation_results = get_perturbation_results_ddp(
+  File "/root/capsule/code/helical-challenge/main.py", line 379, in get_perturbation_results_ddp
+    sharded_perturbed_data = perturbed_data_dict[gene].shard(num_shards = world_size,
+NameError: name 'world_size' is not defined
+
+2025-12-23 01:09:46,679 - __main__ - ERROR - Error from rank 3:
+name 'world_size' is not defined
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 412, in run_inference_worker
+    local_perturbation_results = get_perturbation_results_ddp(
+  File "/root/capsule/code/helical-challenge/main.py", line 379, in get_perturbation_results_ddp
+    sharded_perturbed_data = perturbed_data_dict[gene].shard(num_shards = world_size,
+NameError: name 'world_size' is not defined
+
+2025-12-23 01:09:46,679 - __main__ - INFO - Total unique genes processed: 0
+2025-12-23 01:09:46,680 - __main__ - INFO - Genes with combined perturbation results: 0
+2025-12-23 01:09:46,680 - __main__ - WARNING - Missing results for 50 genes: {'HDAC1', 'KHDRBS1', 'MINOS1', 'EIF3I', 'YRDC', 'RPL22', 'SRSF4', 'HMGN2', 'TRAPPC3', 'MRPS15', 'SRSF10', 'STMN1', 'TMEM50A', 'WASF2', 'RBBP4', 'ENO1', 'MARCKSL1', 'CAPZB', 'MEAF6', 'FAAP20', 'AURKAIP1', 'CDC42', 'EPB41', 'SRM', 'LSM10', 'C1orf122', 'SNRNP40', 'ZCCHC17', 'PTP4A2', 'SH3BGRL3', 'DNAJC8', 'YARS', 'HNRNPR', 'RPL11', 'MAD2L2', 'ZNF593', 'ZBTB8OS', 'MRPL20', 'ATPIF1', 'NUDC', 'SRRM1', 'LAPTM5', 'SFPQ', 'SMIM12', 'SSU72', 'CAMTA1', 'AK2', 'PARK7', 'PSMB2', 'THRAP3'}
+2025-12-23 01:09:47,200 - __main__ - INFO - Saved outputs for distributed_ddp to outputs/outputs/distributed_ddp
+2025-12-23 01:09:47,290 - __main__ - INFO - 
+====================================================================================================
+2025-12-23 01:09:47,290 - __main__ - INFO - COMPARING OUTPUTS TO BASELINE
+2025-12-23 01:09:47,290 - __main__ - INFO - ====================================================================================================
+2025-12-23 01:09:47,290 - __main__ - INFO - Comparing baseline vs distributed_ddp
+2025-12-23 01:09:47,833 - __main__ - INFO - Performance metrics saved to: outputs/performance_metrics_20251223_010947.csv
+2025-12-23 01:09:47,834 - __main__ - INFO - Comparison metrics saved to: outputs/comparison_metrics_20251223_010947.csv
+2025-12-23 01:09:47,834 - __main__ - INFO - 
+====================================================================================================
+2025-12-23 01:09:47,834 - __main__ - INFO - PERFORMANCE SUMMARY
+2025-12-23 01:09:47,834 - __main__ - INFO - ====================================================================================================
+2025-12-23 01:09:47,839 - __main__ - INFO - 
+            method  runtime_seconds  cpu_percent    memory_mb  gpu_memory_mb  gpu_utilization  throughput_cells_per_sec  num_cells  num_genes_perturbed                   timestamp extra_optimization  extra_num_gpus extra_backend extra_distribution_method
+0         baseline       404.870207         99.9  1457.652344       9.125000               38                 24.699274      10000                   50  2025-12-23T01:08:09.613978               none             NaN           NaN                       NaN
+1  distributed_ddp        64.806167        -97.4    77.718750     -39.279785              -19                154.306303      10000                   50  2025-12-23T01:09:46.705833                NaN             4.0          nccl                       DDP
+
+2025-12-23 01:09:47,840 - __main__ - INFO - 
+SPEEDUP RELATIVE TO BASELINE:
+2025-12-23 01:09:47,840 - __main__ - INFO - --------------------------------------------------
+2025-12-23 01:09:47,840 - __main__ - INFO - distributed_ddp     : 6.25x
+2025-12-23 01:09:47,840 - __main__ - INFO - 
+====================================================================================================
+2025-12-23 01:09:47,840 - __main__ - INFO - OUTPUT COMPARISON SUMMARY
+2025-12-23 01:09:47,840 - __main__ - INFO - ====================================================================================================
+2025-12-23 01:09:47,843 - __main__ - INFO - 
+   method_a         method_b  embedding_pearson  embedding_spearman  embedding_cosine_similarity  embedding_mse  embedding_max_abs_diff  mean_perturbation_correlation  min_perturbation_correlation  max_perturbation_correlation                   timestamp
+0  baseline  distributed_ddp           0.999996                 1.0                          1.0            0.0                     0.0                            0.0                           0.0                           0.0  2025-12-23T01:09:47.830298
+
+2025-12-23 01:09:47,843 - __main__ - INFO - 
+OUTPUT QUALITY ASSESSMENT:
+2025-12-23 01:09:47,843 - __main__ - INFO - --------------------------------------------------
+2025-12-23 01:09:47,843 - __main__ - INFO - ====================================================================================================
+2025-12-23 01:09:47,843 - __main__ - INFO - 
+All outputs saved to: outputs
+2025-12-23 01:09:47,843 - __main__ - INFO - 
+====================================================================================================
+2025-12-23 01:09:47,843 - __main__ - INFO - PIPELINE COMPLETE!
+2025-12-23 01:09:47,843 - __main__ - INFO - ====================================================================================================
+2025-12-23 01:12:59,857 - __main__ - INFO - ====================================================================================================
+2025-12-23 01:12:59,857 - __main__ - INFO - GENEFORMER PERTURBATION PIPELINE
+2025-12-23 01:12:59,857 - __main__ - INFO - ====================================================================================================
+2025-12-23 01:12:59,857 - __main__ - INFO - Experiment: geneformer_perturbation_example
+2025-12-23 01:12:59,862 - __main__ - INFO - 
+Configuration:
+reproducibility:
+  deterministic: true
+  seed: 42
+model:
+  name: gf-6L-10M-i2048
+  batch_size: 16
+  device: cuda:0
+data:
+  pertpy_data_identifier: norman_2019
+  condition_filter: control
+  save_tokenized_data: true
+  gene_names_column: index
+  use_raw_counts: false
+  preprocess: true
+  normalize: false
+  filter_genes: true
+  min_genes: 100
+  min_cells: 3
+  max_cells: 10000
+  max_genes: 500
+perturbation:
+  gene_list: null
+  num_genes: 50
+  perturbation_type: knockout
+  selection_method: top_expressed
+  perturbation_strength: 2.0
+  save_perturbed_data: true
+optimization:
+  methods:
+  - distributed
+  batching:
+    enabled: true
+    batch_size_multiplier: 2
+  quantization:
+    enabled: true
+    dtype: qint8
+    calibration_data_size: 32
+  onnx:
+    enabled: true
+    use_gpu: true
+    precision: FP16
+  distributed:
+    enabled: true
+    backend: nccl
+output:
+  dir: outputs
+  cache_dir: /scratch
+  save_outputs: true
+  compression: true
+  precision: float32
+  save_detailed_comparisons: true
+  log_level: INFO
+  log_to_file: true
+  log_file: pipeline.log
+hardware:
+  device: auto
+  mixed_precision: false
+  cudnn_benchmark: true
+  empty_cache_between_methods: true
+experiment:
+  name: geneformer_perturbation_example
+  tags: []
+  notes: ''
+advanced:
+  compile_model: false
+  compile_backend: inductor
+  continue_on_error: true
+validation:
+  min_correlation: 0.95
+  max_mse: 0.01
+  warn_on_threshold: true
+  check_nan: true
+  check_inf: true
+
+2025-12-23 01:12:59,862 - __main__ - INFO - Loading Geneformer model...
+2025-12-23 01:13:06,120 - __main__ - INFO - Model loaded: gf-6L-10M-i2048
+2025-12-23 01:13:06,121 - __main__ - INFO - Loading data: norman_2019
+2025-12-23 01:13:06,123 - __main__ - INFO - Found processed data saved to disk.
+2025-12-23 01:13:06,366 - __main__ - INFO - Selected 50 genes using method: top_expressed
+2025-12-23 01:13:06,366 - __main__ - INFO - Performing perturbation on 50 genes...
+2025-12-23 01:13:06,367 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,376 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,386 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,395 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,405 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,414 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,423 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,433 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,443 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,451 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,460 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,469 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,477 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,486 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,495 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,504 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,514 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,523 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,532 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,541 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,550 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,559 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,568 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,577 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,586 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,596 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,605 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,614 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,625 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,636 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,646 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,655 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,666 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,676 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,688 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,698 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,707 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,717 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,728 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,738 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,749 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,759 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,770 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,780 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,791 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,802 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,812 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,823 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,835 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,871 - __main__ - INFO - Perturbed data found in cache. Loading from disk.
+2025-12-23 01:13:06,881 - __main__ - INFO - Perturbations complete.
+2025-12-23 01:13:06,881 - __main__ - INFO - 
+====================================================================================================
+2025-12-23 01:13:06,881 - __main__ - INFO - Running BASELINE (no optimization)...
+2025-12-23 01:13:06,884 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:13:16,413 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:13:16,413 - __main__ - INFO - Extracting embeddings for perturbations on 50 genes...
+2025-12-23 01:13:16,414 - __main__ - INFO - Extraxcting embeddings for perturbed: SNRNP40 (type: knockout)
+2025-12-23 01:13:16,414 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:13:24,414 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:13:24,414 - __main__ - INFO - Extraxcting embeddings for perturbed: HDAC1 (type: knockout)
+2025-12-23 01:13:24,414 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:13:32,420 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:13:32,420 - __main__ - INFO - Extraxcting embeddings for perturbed: CAPZB (type: knockout)
+2025-12-23 01:13:32,420 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:13:40,436 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:13:40,436 - __main__ - INFO - Extraxcting embeddings for perturbed: TMEM50A (type: knockout)
+2025-12-23 01:13:40,436 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:13:48,452 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:13:48,452 - __main__ - INFO - Extraxcting embeddings for perturbed: YRDC (type: knockout)
+2025-12-23 01:13:48,452 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:13:56,468 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:13:56,468 - __main__ - INFO - Extraxcting embeddings for perturbed: MAD2L2 (type: knockout)
+2025-12-23 01:13:56,468 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:14:04,474 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:14:04,474 - __main__ - INFO - Extraxcting embeddings for perturbed: YARS (type: knockout)
+2025-12-23 01:14:04,474 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:14:12,471 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:14:12,471 - __main__ - INFO - Extraxcting embeddings for perturbed: ZBTB8OS (type: knockout)
+2025-12-23 01:14:12,471 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:14:20,462 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:14:20,462 - __main__ - INFO - Extraxcting embeddings for perturbed: LAPTM5 (type: knockout)
+2025-12-23 01:14:20,462 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:14:28,464 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:14:28,464 - __main__ - INFO - Extraxcting embeddings for perturbed: MEAF6 (type: knockout)
+2025-12-23 01:14:28,464 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:14:36,461 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:14:36,461 - __main__ - INFO - Extraxcting embeddings for perturbed: CDC42 (type: knockout)
+2025-12-23 01:14:36,461 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:14:44,473 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:14:44,473 - __main__ - INFO - Extraxcting embeddings for perturbed: SMIM12 (type: knockout)
+2025-12-23 01:14:44,473 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:14:52,496 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:14:52,496 - __main__ - INFO - Extraxcting embeddings for perturbed: EPB41 (type: knockout)
+2025-12-23 01:14:52,496 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:15:00,491 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:15:00,491 - __main__ - INFO - Extraxcting embeddings for perturbed: WASF2 (type: knockout)
+2025-12-23 01:15:00,491 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:15:08,488 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:15:08,488 - __main__ - INFO - Extraxcting embeddings for perturbed: ZCCHC17 (type: knockout)
+2025-12-23 01:15:08,488 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:15:16,483 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:15:16,483 - __main__ - INFO - Extraxcting embeddings for perturbed: SRSF10 (type: knockout)
+2025-12-23 01:15:16,484 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:15:24,482 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:15:24,482 - __main__ - INFO - Extraxcting embeddings for perturbed: THRAP3 (type: knockout)
+2025-12-23 01:15:24,482 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:15:32,493 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:15:32,493 - __main__ - INFO - Extraxcting embeddings for perturbed: SH3BGRL3 (type: knockout)
+2025-12-23 01:15:32,493 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:15:40,495 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:15:40,495 - __main__ - INFO - Extraxcting embeddings for perturbed: FAAP20 (type: knockout)
+2025-12-23 01:15:40,495 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:15:48,508 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:15:48,508 - __main__ - INFO - Extraxcting embeddings for perturbed: HNRNPR (type: knockout)
+2025-12-23 01:15:48,508 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:15:56,516 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:15:56,516 - __main__ - INFO - Extraxcting embeddings for perturbed: CAMTA1 (type: knockout)
+2025-12-23 01:15:56,516 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:16:04,516 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:16:04,516 - __main__ - INFO - Extraxcting embeddings for perturbed: SRSF4 (type: knockout)
+2025-12-23 01:16:04,516 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:16:12,513 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:16:12,513 - __main__ - INFO - Extraxcting embeddings for perturbed: DNAJC8 (type: knockout)
+2025-12-23 01:16:12,513 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:16:20,523 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:16:20,523 - __main__ - INFO - Extraxcting embeddings for perturbed: KHDRBS1 (type: knockout)
+2025-12-23 01:16:20,523 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:16:28,534 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:16:28,534 - __main__ - INFO - Extraxcting embeddings for perturbed: ZNF593 (type: knockout)
+2025-12-23 01:16:28,534 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:16:36,546 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:16:36,546 - __main__ - INFO - Extraxcting embeddings for perturbed: TRAPPC3 (type: knockout)
+2025-12-23 01:16:36,546 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:16:44,540 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:16:44,540 - __main__ - INFO - Extraxcting embeddings for perturbed: RBBP4 (type: knockout)
+2025-12-23 01:16:44,540 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:16:52,539 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:16:52,539 - __main__ - INFO - Extraxcting embeddings for perturbed: MINOS1 (type: knockout)
+2025-12-23 01:16:52,540 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:17:00,546 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:17:00,546 - __main__ - INFO - Extraxcting embeddings for perturbed: LSM10 (type: knockout)
+2025-12-23 01:17:00,546 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:17:08,547 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:17:08,547 - __main__ - INFO - Extraxcting embeddings for perturbed: C1orf122 (type: knockout)
+2025-12-23 01:17:08,547 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:17:16,553 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:17:16,554 - __main__ - INFO - Extraxcting embeddings for perturbed: SFPQ (type: knockout)
+2025-12-23 01:17:16,554 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:17:24,572 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:17:24,572 - __main__ - INFO - Extraxcting embeddings for perturbed: NUDC (type: knockout)
+2025-12-23 01:17:24,572 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:17:32,576 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:17:32,576 - __main__ - INFO - Extraxcting embeddings for perturbed: AK2 (type: knockout)
+2025-12-23 01:17:32,576 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:17:40,587 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:17:40,587 - __main__ - INFO - Extraxcting embeddings for perturbed: SSU72 (type: knockout)
+2025-12-23 01:17:40,587 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:17:48,603 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:17:48,603 - __main__ - INFO - Extraxcting embeddings for perturbed: SRRM1 (type: knockout)
+2025-12-23 01:17:48,603 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:17:56,606 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:17:56,607 - __main__ - INFO - Extraxcting embeddings for perturbed: EIF3I (type: knockout)
+2025-12-23 01:17:56,607 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:18:04,618 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:18:04,618 - __main__ - INFO - Extraxcting embeddings for perturbed: MRPL20 (type: knockout)
+2025-12-23 01:18:04,618 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:18:12,633 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:18:12,634 - __main__ - INFO - Extraxcting embeddings for perturbed: MARCKSL1 (type: knockout)
+2025-12-23 01:18:12,634 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:18:20,637 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:18:20,637 - __main__ - INFO - Extraxcting embeddings for perturbed: PSMB2 (type: knockout)
+2025-12-23 01:18:20,637 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:18:28,659 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:18:28,659 - __main__ - INFO - Extraxcting embeddings for perturbed: MRPS15 (type: knockout)
+2025-12-23 01:18:28,659 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:18:36,661 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:18:36,661 - __main__ - INFO - Extraxcting embeddings for perturbed: SRM (type: knockout)
+2025-12-23 01:18:36,661 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:18:44,663 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:18:44,663 - __main__ - INFO - Extraxcting embeddings for perturbed: STMN1 (type: knockout)
+2025-12-23 01:18:44,663 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:18:52,668 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:18:52,668 - __main__ - INFO - Extraxcting embeddings for perturbed: PTP4A2 (type: knockout)
+2025-12-23 01:18:52,668 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:19:00,675 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:19:00,675 - __main__ - INFO - Extraxcting embeddings for perturbed: PARK7 (type: knockout)
+2025-12-23 01:19:00,675 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:19:08,694 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:19:08,694 - __main__ - INFO - Extraxcting embeddings for perturbed: ATPIF1 (type: knockout)
+2025-12-23 01:19:08,694 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:19:16,700 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:19:16,700 - __main__ - INFO - Extraxcting embeddings for perturbed: ENO1 (type: knockout)
+2025-12-23 01:19:16,700 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:19:24,723 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:19:24,723 - __main__ - INFO - Extraxcting embeddings for perturbed: AURKAIP1 (type: knockout)
+2025-12-23 01:19:24,723 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:19:32,742 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:19:32,743 - __main__ - INFO - Extraxcting embeddings for perturbed: HMGN2 (type: knockout)
+2025-12-23 01:19:32,743 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:19:40,766 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:19:40,766 - __main__ - INFO - Extraxcting embeddings for perturbed: RPL22 (type: knockout)
+2025-12-23 01:19:40,767 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:19:48,782 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:19:48,782 - __main__ - INFO - Extraxcting embeddings for perturbed: RPL11 (type: knockout)
+2025-12-23 01:19:48,782 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:19:56,794 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:19:56,794 - __main__ - INFO - Finished getting perturbation results.
+2025-12-23 01:20:22,288 - __main__ - INFO - Saved outputs for baseline to outputs/outputs/baseline
+2025-12-23 01:20:22,474 - __main__ - INFO - 
+====================================================================================================
+2025-12-23 01:20:22,474 - __main__ - INFO - Running with DISTRIBUTED optimization...
+2025-12-23 01:20:22,474 - __main__ - INFO - Extracting embeddings...
+2025-12-23 01:20:30,425 - __main__ - INFO - Extracted embeddings shape: (10000, 256)
+2025-12-23 01:20:30,425 - __main__ - INFO - Using 4 GPUs with DDP
+2025-12-23 01:20:30,469 - __main__ - INFO - Using temporary directory: /scratch/ddp_results_d0grvxpg
+2025-12-23 01:23:28,565 - __main__ - INFO - Rank 0 processed 50 genes: ['SNRNP40', 'HDAC1', 'CAPZB', 'TMEM50A', 'YRDC', 'MAD2L2', 'YARS', 'ZBTB8OS', 'LAPTM5', 'MEAF6', 'CDC42', 'SMIM12', 'EPB41', 'WASF2', 'ZCCHC17', 'SRSF10', 'THRAP3', 'SH3BGRL3', 'FAAP20', 'HNRNPR', 'CAMTA1', 'SRSF4', 'DNAJC8', 'KHDRBS1', 'ZNF593', 'TRAPPC3', 'RBBP4', 'MINOS1', 'LSM10', 'C1orf122', 'SFPQ', 'NUDC', 'AK2', 'SSU72', 'SRRM1', 'EIF3I', 'MRPL20', 'MARCKSL1', 'PSMB2', 'MRPS15', 'SRM', 'STMN1', 'PTP4A2', 'PARK7', 'ATPIF1', 'ENO1', 'AURKAIP1', 'HMGN2', 'RPL22', 'RPL11']
+2025-12-23 01:23:28,570 - __main__ - INFO - Rank 1 processed 50 genes: ['SNRNP40', 'HDAC1', 'CAPZB', 'TMEM50A', 'YRDC', 'MAD2L2', 'YARS', 'ZBTB8OS', 'LAPTM5', 'MEAF6', 'CDC42', 'SMIM12', 'EPB41', 'WASF2', 'ZCCHC17', 'SRSF10', 'THRAP3', 'SH3BGRL3', 'FAAP20', 'HNRNPR', 'CAMTA1', 'SRSF4', 'DNAJC8', 'KHDRBS1', 'ZNF593', 'TRAPPC3', 'RBBP4', 'MINOS1', 'LSM10', 'C1orf122', 'SFPQ', 'NUDC', 'AK2', 'SSU72', 'SRRM1', 'EIF3I', 'MRPL20', 'MARCKSL1', 'PSMB2', 'MRPS15', 'SRM', 'STMN1', 'PTP4A2', 'PARK7', 'ATPIF1', 'ENO1', 'AURKAIP1', 'HMGN2', 'RPL22', 'RPL11']
+2025-12-23 01:23:28,576 - __main__ - INFO - Rank 2 processed 50 genes: ['SNRNP40', 'HDAC1', 'CAPZB', 'TMEM50A', 'YRDC', 'MAD2L2', 'YARS', 'ZBTB8OS', 'LAPTM5', 'MEAF6', 'CDC42', 'SMIM12', 'EPB41', 'WASF2', 'ZCCHC17', 'SRSF10', 'THRAP3', 'SH3BGRL3', 'FAAP20', 'HNRNPR', 'CAMTA1', 'SRSF4', 'DNAJC8', 'KHDRBS1', 'ZNF593', 'TRAPPC3', 'RBBP4', 'MINOS1', 'LSM10', 'C1orf122', 'SFPQ', 'NUDC', 'AK2', 'SSU72', 'SRRM1', 'EIF3I', 'MRPL20', 'MARCKSL1', 'PSMB2', 'MRPS15', 'SRM', 'STMN1', 'PTP4A2', 'PARK7', 'ATPIF1', 'ENO1', 'AURKAIP1', 'HMGN2', 'RPL22', 'RPL11']
+2025-12-23 01:23:28,581 - __main__ - INFO - Rank 3 processed 50 genes: ['SNRNP40', 'HDAC1', 'CAPZB', 'TMEM50A', 'YRDC', 'MAD2L2', 'YARS', 'ZBTB8OS', 'LAPTM5', 'MEAF6', 'CDC42', 'SMIM12', 'EPB41', 'WASF2', 'ZCCHC17', 'SRSF10', 'THRAP3', 'SH3BGRL3', 'FAAP20', 'HNRNPR', 'CAMTA1', 'SRSF4', 'DNAJC8', 'KHDRBS1', 'ZNF593', 'TRAPPC3', 'RBBP4', 'MINOS1', 'LSM10', 'C1orf122', 'SFPQ', 'NUDC', 'AK2', 'SSU72', 'SRRM1', 'EIF3I', 'MRPL20', 'MARCKSL1', 'PSMB2', 'MRPS15', 'SRM', 'STMN1', 'PTP4A2', 'PARK7', 'ATPIF1', 'ENO1', 'AURKAIP1', 'HMGN2', 'RPL22', 'RPL11']
+2025-12-23 01:23:28,581 - __main__ - INFO - Total unique genes processed: 50
+2025-12-23 01:23:28,632 - __main__ - INFO - Loaded gene 'YRDC' from rank 0: shape (2500, 256)
+2025-12-23 01:23:28,656 - __main__ - INFO - Loaded gene 'YRDC' from rank 1: shape (2500, 256)
+2025-12-23 01:23:28,705 - __main__ - INFO - Loaded gene 'YRDC' from rank 2: shape (2500, 256)
+2025-12-23 01:23:28,729 - __main__ - INFO - Loaded gene 'YRDC' from rank 3: shape (2500, 256)
+2025-12-23 01:23:28,778 - __main__ - INFO - Loaded gene 'YARS' from rank 0: shape (2500, 256)
+2025-12-23 01:23:28,801 - __main__ - INFO - Loaded gene 'YARS' from rank 1: shape (2500, 256)
+2025-12-23 01:23:28,853 - __main__ - INFO - Loaded gene 'YARS' from rank 2: shape (2500, 256)
+2025-12-23 01:23:28,905 - __main__ - INFO - Loaded gene 'YARS' from rank 3: shape (2500, 256)
+2025-12-23 01:23:28,956 - __main__ - INFO - Loaded gene 'CAPZB' from rank 0: shape (2500, 256)
+2025-12-23 01:23:28,981 - __main__ - INFO - Loaded gene 'CAPZB' from rank 1: shape (2500, 256)
+2025-12-23 01:23:29,032 - __main__ - INFO - Loaded gene 'CAPZB' from rank 2: shape (2500, 256)
+2025-12-23 01:23:29,083 - __main__ - INFO - Loaded gene 'CAPZB' from rank 3: shape (2500, 256)
+2025-12-23 01:23:29,132 - __main__ - INFO - Loaded gene 'MRPL20' from rank 0: shape (2500, 256)
+2025-12-23 01:23:29,183 - __main__ - INFO - Loaded gene 'MRPL20' from rank 1: shape (2500, 256)
+2025-12-23 01:23:29,207 - __main__ - INFO - Loaded gene 'MRPL20' from rank 2: shape (2500, 256)
+2025-12-23 01:23:29,254 - __main__ - INFO - Loaded gene 'MRPL20' from rank 3: shape (2500, 256)
+2025-12-23 01:23:29,304 - __main__ - INFO - Loaded gene 'EIF3I' from rank 0: shape (2500, 256)
+2025-12-23 01:23:29,353 - __main__ - INFO - Loaded gene 'EIF3I' from rank 1: shape (2500, 256)
+2025-12-23 01:23:29,402 - __main__ - INFO - Loaded gene 'EIF3I' from rank 2: shape (2500, 256)
+2025-12-23 01:23:29,453 - __main__ - INFO - Loaded gene 'EIF3I' from rank 3: shape (2500, 256)
+2025-12-23 01:23:29,511 - __main__ - INFO - Loaded gene 'FAAP20' from rank 0: shape (2500, 256)
+2025-12-23 01:23:29,562 - __main__ - INFO - Loaded gene 'FAAP20' from rank 1: shape (2500, 256)
+2025-12-23 01:23:29,615 - __main__ - INFO - Loaded gene 'FAAP20' from rank 2: shape (2500, 256)
+2025-12-23 01:23:29,638 - __main__ - INFO - Loaded gene 'FAAP20' from rank 3: shape (2500, 256)
+2025-12-23 01:23:29,662 - __main__ - INFO - Loaded gene 'ENO1' from rank 0: shape (2500, 256)
+2025-12-23 01:23:29,719 - __main__ - INFO - Loaded gene 'ENO1' from rank 1: shape (2500, 256)
+2025-12-23 01:23:29,772 - __main__ - INFO - Loaded gene 'ENO1' from rank 2: shape (2500, 256)
+2025-12-23 01:23:29,821 - __main__ - INFO - Loaded gene 'ENO1' from rank 3: shape (2500, 256)
+2025-12-23 01:23:29,870 - __main__ - INFO - Loaded gene 'CDC42' from rank 0: shape (2500, 256)
+2025-12-23 01:23:29,919 - __main__ - INFO - Loaded gene 'CDC42' from rank 1: shape (2500, 256)
+2025-12-23 01:23:29,970 - __main__ - INFO - Loaded gene 'CDC42' from rank 2: shape (2500, 256)
+2025-12-23 01:23:30,024 - __main__ - INFO - Loaded gene 'CDC42' from rank 3: shape (2500, 256)
+2025-12-23 01:23:30,047 - __main__ - INFO - Loaded gene 'DNAJC8' from rank 0: shape (2500, 256)
+2025-12-23 01:23:30,100 - __main__ - INFO - Loaded gene 'DNAJC8' from rank 1: shape (2500, 256)
+2025-12-23 01:23:30,123 - __main__ - INFO - Loaded gene 'DNAJC8' from rank 2: shape (2500, 256)
+2025-12-23 01:23:30,171 - __main__ - INFO - Loaded gene 'DNAJC8' from rank 3: shape (2500, 256)
+2025-12-23 01:23:30,194 - __main__ - INFO - Loaded gene 'ZCCHC17' from rank 0: shape (2500, 256)
+2025-12-23 01:23:30,248 - __main__ - INFO - Loaded gene 'ZCCHC17' from rank 1: shape (2500, 256)
+2025-12-23 01:23:30,298 - __main__ - INFO - Loaded gene 'ZCCHC17' from rank 2: shape (2500, 256)
+2025-12-23 01:23:30,351 - __main__ - INFO - Loaded gene 'ZCCHC17' from rank 3: shape (2500, 256)
+2025-12-23 01:23:30,402 - __main__ - INFO - Loaded gene 'AURKAIP1' from rank 0: shape (2500, 256)
+2025-12-23 01:23:30,452 - __main__ - INFO - Loaded gene 'AURKAIP1' from rank 1: shape (2500, 256)
+2025-12-23 01:23:30,505 - __main__ - INFO - Loaded gene 'AURKAIP1' from rank 2: shape (2500, 256)
+2025-12-23 01:23:30,529 - __main__ - INFO - Loaded gene 'AURKAIP1' from rank 3: shape (2500, 256)
+2025-12-23 01:23:30,552 - __main__ - INFO - Loaded gene 'RPL22' from rank 0: shape (2500, 256)
+2025-12-23 01:23:30,602 - __main__ - INFO - Loaded gene 'RPL22' from rank 1: shape (2500, 256)
+2025-12-23 01:23:30,651 - __main__ - INFO - Loaded gene 'RPL22' from rank 2: shape (2500, 256)
+2025-12-23 01:23:30,703 - __main__ - INFO - Loaded gene 'RPL22' from rank 3: shape (2500, 256)
+2025-12-23 01:23:30,753 - __main__ - INFO - Loaded gene 'STMN1' from rank 0: shape (2500, 256)
+2025-12-23 01:23:30,804 - __main__ - INFO - Loaded gene 'STMN1' from rank 1: shape (2500, 256)
+2025-12-23 01:23:30,857 - __main__ - INFO - Loaded gene 'STMN1' from rank 2: shape (2500, 256)
+2025-12-23 01:23:30,906 - __main__ - INFO - Loaded gene 'STMN1' from rank 3: shape (2500, 256)
+2025-12-23 01:23:30,953 - __main__ - INFO - Loaded gene 'CAMTA1' from rank 0: shape (2500, 256)
+2025-12-23 01:23:31,006 - __main__ - INFO - Loaded gene 'CAMTA1' from rank 1: shape (2500, 256)
+2025-12-23 01:23:31,030 - __main__ - INFO - Loaded gene 'CAMTA1' from rank 2: shape (2500, 256)
+2025-12-23 01:23:31,082 - __main__ - INFO - Loaded gene 'CAMTA1' from rank 3: shape (2500, 256)
+2025-12-23 01:23:31,132 - __main__ - INFO - Loaded gene 'LSM10' from rank 0: shape (2500, 256)
+2025-12-23 01:23:31,180 - __main__ - INFO - Loaded gene 'LSM10' from rank 1: shape (2500, 256)
+2025-12-23 01:23:31,205 - __main__ - INFO - Loaded gene 'LSM10' from rank 2: shape (2500, 256)
+2025-12-23 01:23:31,228 - __main__ - INFO - Loaded gene 'LSM10' from rank 3: shape (2500, 256)
+2025-12-23 01:23:31,276 - __main__ - INFO - Loaded gene 'ZNF593' from rank 0: shape (2500, 256)
+2025-12-23 01:23:31,328 - __main__ - INFO - Loaded gene 'ZNF593' from rank 1: shape (2500, 256)
+2025-12-23 01:23:31,377 - __main__ - INFO - Loaded gene 'ZNF593' from rank 2: shape (2500, 256)
+2025-12-23 01:23:31,401 - __main__ - INFO - Loaded gene 'ZNF593' from rank 3: shape (2500, 256)
+2025-12-23 01:23:31,455 - __main__ - INFO - Loaded gene 'SRM' from rank 0: shape (2500, 256)
+2025-12-23 01:23:31,503 - __main__ - INFO - Loaded gene 'SRM' from rank 1: shape (2500, 256)
+2025-12-23 01:23:31,555 - __main__ - INFO - Loaded gene 'SRM' from rank 2: shape (2500, 256)
+2025-12-23 01:23:31,605 - __main__ - INFO - Loaded gene 'SRM' from rank 3: shape (2500, 256)
+2025-12-23 01:23:31,653 - __main__ - INFO - Loaded gene 'PARK7' from rank 0: shape (2500, 256)
+2025-12-23 01:23:31,702 - __main__ - INFO - Loaded gene 'PARK7' from rank 1: shape (2500, 256)
+2025-12-23 01:23:31,751 - __main__ - INFO - Loaded gene 'PARK7' from rank 2: shape (2500, 256)
+2025-12-23 01:23:31,799 - __main__ - INFO - Loaded gene 'PARK7' from rank 3: shape (2500, 256)
+2025-12-23 01:23:31,846 - __main__ - INFO - Loaded gene 'ATPIF1' from rank 0: shape (2500, 256)
+2025-12-23 01:23:31,895 - __main__ - INFO - Loaded gene 'ATPIF1' from rank 1: shape (2500, 256)
+2025-12-23 01:23:31,946 - __main__ - INFO - Loaded gene 'ATPIF1' from rank 2: shape (2500, 256)
+2025-12-23 01:23:31,994 - __main__ - INFO - Loaded gene 'ATPIF1' from rank 3: shape (2500, 256)
+2025-12-23 01:23:32,047 - __main__ - INFO - Loaded gene 'SFPQ' from rank 0: shape (2500, 256)
+2025-12-23 01:23:32,070 - __main__ - INFO - Loaded gene 'SFPQ' from rank 1: shape (2500, 256)
+2025-12-23 01:23:32,123 - __main__ - INFO - Loaded gene 'SFPQ' from rank 2: shape (2500, 256)
+2025-12-23 01:23:32,170 - __main__ - INFO - Loaded gene 'SFPQ' from rank 3: shape (2500, 256)
+2025-12-23 01:23:32,221 - __main__ - INFO - Loaded gene 'WASF2' from rank 0: shape (2500, 256)
+2025-12-23 01:23:32,271 - __main__ - INFO - Loaded gene 'WASF2' from rank 1: shape (2500, 256)
+2025-12-23 01:23:32,323 - __main__ - INFO - Loaded gene 'WASF2' from rank 2: shape (2500, 256)
+2025-12-23 01:23:32,375 - __main__ - INFO - Loaded gene 'WASF2' from rank 3: shape (2500, 256)
+2025-12-23 01:23:32,427 - __main__ - INFO - Loaded gene 'SRSF10' from rank 0: shape (2500, 256)
+2025-12-23 01:23:32,482 - __main__ - INFO - Loaded gene 'SRSF10' from rank 1: shape (2500, 256)
+2025-12-23 01:23:32,532 - __main__ - INFO - Loaded gene 'SRSF10' from rank 2: shape (2500, 256)
+2025-12-23 01:23:32,555 - __main__ - INFO - Loaded gene 'SRSF10' from rank 3: shape (2500, 256)
+2025-12-23 01:23:32,605 - __main__ - INFO - Loaded gene 'HMGN2' from rank 0: shape (2500, 256)
+2025-12-23 01:23:32,652 - __main__ - INFO - Loaded gene 'HMGN2' from rank 1: shape (2500, 256)
+2025-12-23 01:23:32,700 - __main__ - INFO - Loaded gene 'HMGN2' from rank 2: shape (2500, 256)
+2025-12-23 01:23:32,748 - __main__ - INFO - Loaded gene 'HMGN2' from rank 3: shape (2500, 256)
+2025-12-23 01:23:32,770 - __main__ - INFO - Loaded gene 'NUDC' from rank 0: shape (2500, 256)
+2025-12-23 01:23:32,818 - __main__ - INFO - Loaded gene 'NUDC' from rank 1: shape (2500, 256)
+2025-12-23 01:23:32,869 - __main__ - INFO - Loaded gene 'NUDC' from rank 2: shape (2500, 256)
+2025-12-23 01:23:32,892 - __main__ - INFO - Loaded gene 'NUDC' from rank 3: shape (2500, 256)
+2025-12-23 01:23:32,946 - __main__ - INFO - Loaded gene 'MARCKSL1' from rank 0: shape (2500, 256)
+2025-12-23 01:23:32,995 - __main__ - INFO - Loaded gene 'MARCKSL1' from rank 1: shape (2500, 256)
+2025-12-23 01:23:33,044 - __main__ - INFO - Loaded gene 'MARCKSL1' from rank 2: shape (2500, 256)
+2025-12-23 01:23:33,098 - __main__ - INFO - Loaded gene 'MARCKSL1' from rank 3: shape (2500, 256)
+2025-12-23 01:23:33,148 - __main__ - INFO - Loaded gene 'PTP4A2' from rank 0: shape (2500, 256)
+2025-12-23 01:23:33,200 - __main__ - INFO - Loaded gene 'PTP4A2' from rank 1: shape (2500, 256)
+2025-12-23 01:23:33,254 - __main__ - INFO - Loaded gene 'PTP4A2' from rank 2: shape (2500, 256)
+2025-12-23 01:23:33,306 - __main__ - INFO - Loaded gene 'PTP4A2' from rank 3: shape (2500, 256)
+2025-12-23 01:23:33,355 - __main__ - INFO - Loaded gene 'THRAP3' from rank 0: shape (2500, 256)
+2025-12-23 01:23:33,407 - __main__ - INFO - Loaded gene 'THRAP3' from rank 1: shape (2500, 256)
+2025-12-23 01:23:33,457 - __main__ - INFO - Loaded gene 'THRAP3' from rank 2: shape (2500, 256)
+2025-12-23 01:23:33,505 - __main__ - INFO - Loaded gene 'THRAP3' from rank 3: shape (2500, 256)
+2025-12-23 01:23:33,528 - __main__ - INFO - Loaded gene 'SNRNP40' from rank 0: shape (2500, 256)
+2025-12-23 01:23:33,577 - __main__ - INFO - Loaded gene 'SNRNP40' from rank 1: shape (2500, 256)
+2025-12-23 01:23:33,626 - __main__ - INFO - Loaded gene 'SNRNP40' from rank 2: shape (2500, 256)
+2025-12-23 01:23:33,675 - __main__ - INFO - Loaded gene 'SNRNP40' from rank 3: shape (2500, 256)
+2025-12-23 01:23:33,724 - __main__ - INFO - Loaded gene 'HDAC1' from rank 0: shape (2500, 256)
+2025-12-23 01:23:33,774 - __main__ - INFO - Loaded gene 'HDAC1' from rank 1: shape (2500, 256)
+2025-12-23 01:23:33,827 - __main__ - INFO - Loaded gene 'HDAC1' from rank 2: shape (2500, 256)
+2025-12-23 01:23:33,878 - __main__ - INFO - Loaded gene 'HDAC1' from rank 3: shape (2500, 256)
+2025-12-23 01:23:33,902 - __main__ - INFO - Loaded gene 'TMEM50A' from rank 0: shape (2500, 256)
+2025-12-23 01:23:33,951 - __main__ - INFO - Loaded gene 'TMEM50A' from rank 1: shape (2500, 256)
+2025-12-23 01:23:34,003 - __main__ - INFO - Loaded gene 'TMEM50A' from rank 2: shape (2500, 256)
+2025-12-23 01:23:34,025 - __main__ - INFO - Loaded gene 'TMEM50A' from rank 3: shape (2500, 256)
+2025-12-23 01:23:34,074 - __main__ - INFO - Loaded gene 'SH3BGRL3' from rank 0: shape (2500, 256)
+2025-12-23 01:23:34,127 - __main__ - INFO - Loaded gene 'SH3BGRL3' from rank 1: shape (2500, 256)
+2025-12-23 01:23:34,176 - __main__ - INFO - Loaded gene 'SH3BGRL3' from rank 2: shape (2500, 256)
+2025-12-23 01:23:34,225 - __main__ - INFO - Loaded gene 'SH3BGRL3' from rank 3: shape (2500, 256)
+2025-12-23 01:23:34,274 - __main__ - INFO - Loaded gene 'MEAF6' from rank 0: shape (2500, 256)
+2025-12-23 01:23:34,327 - __main__ - INFO - Loaded gene 'MEAF6' from rank 1: shape (2500, 256)
+2025-12-23 01:23:34,376 - __main__ - INFO - Loaded gene 'MEAF6' from rank 2: shape (2500, 256)
+2025-12-23 01:23:34,399 - __main__ - INFO - Loaded gene 'MEAF6' from rank 3: shape (2500, 256)
+2025-12-23 01:23:34,448 - __main__ - INFO - Loaded gene 'SRSF4' from rank 0: shape (2500, 256)
+2025-12-23 01:23:34,471 - __main__ - INFO - Loaded gene 'SRSF4' from rank 1: shape (2500, 256)
+2025-12-23 01:23:34,522 - __main__ - INFO - Loaded gene 'SRSF4' from rank 2: shape (2500, 256)
+2025-12-23 01:23:34,574 - __main__ - INFO - Loaded gene 'SRSF4' from rank 3: shape (2500, 256)
+2025-12-23 01:23:34,624 - __main__ - INFO - Loaded gene 'MAD2L2' from rank 0: shape (2500, 256)
+2025-12-23 01:23:34,675 - __main__ - INFO - Loaded gene 'MAD2L2' from rank 1: shape (2500, 256)
+2025-12-23 01:23:34,726 - __main__ - INFO - Loaded gene 'MAD2L2' from rank 2: shape (2500, 256)
+2025-12-23 01:23:34,749 - __main__ - INFO - Loaded gene 'MAD2L2' from rank 3: shape (2500, 256)
+2025-12-23 01:23:34,800 - __main__ - INFO - Loaded gene 'SMIM12' from rank 0: shape (2500, 256)
+2025-12-23 01:23:34,823 - __main__ - INFO - Loaded gene 'SMIM12' from rank 1: shape (2500, 256)
+2025-12-23 01:23:34,847 - __main__ - INFO - Loaded gene 'SMIM12' from rank 2: shape (2500, 256)
+2025-12-23 01:23:34,898 - __main__ - INFO - Loaded gene 'SMIM12' from rank 3: shape (2500, 256)
+2025-12-23 01:23:34,921 - __main__ - INFO - Loaded gene 'MRPS15' from rank 0: shape (2500, 256)
+2025-12-23 01:23:34,970 - __main__ - INFO - Loaded gene 'MRPS15' from rank 1: shape (2500, 256)
+2025-12-23 01:23:35,022 - __main__ - INFO - Loaded gene 'MRPS15' from rank 2: shape (2500, 256)
+2025-12-23 01:23:35,045 - __main__ - INFO - Loaded gene 'MRPS15' from rank 3: shape (2500, 256)
+2025-12-23 01:23:35,068 - __main__ - INFO - Loaded gene 'RPL11' from rank 0: shape (2500, 256)
+2025-12-23 01:23:35,120 - __main__ - INFO - Loaded gene 'RPL11' from rank 1: shape (2500, 256)
+2025-12-23 01:23:35,171 - __main__ - INFO - Loaded gene 'RPL11' from rank 2: shape (2500, 256)
+2025-12-23 01:23:35,220 - __main__ - INFO - Loaded gene 'RPL11' from rank 3: shape (2500, 256)
+2025-12-23 01:23:35,268 - __main__ - INFO - Loaded gene 'KHDRBS1' from rank 0: shape (2500, 256)
+2025-12-23 01:23:35,317 - __main__ - INFO - Loaded gene 'KHDRBS1' from rank 1: shape (2500, 256)
+2025-12-23 01:23:35,364 - __main__ - INFO - Loaded gene 'KHDRBS1' from rank 2: shape (2500, 256)
+2025-12-23 01:23:35,414 - __main__ - INFO - Loaded gene 'KHDRBS1' from rank 3: shape (2500, 256)
+2025-12-23 01:23:35,464 - __main__ - INFO - Loaded gene 'EPB41' from rank 0: shape (2500, 256)
+2025-12-23 01:23:35,487 - __main__ - INFO - Loaded gene 'EPB41' from rank 1: shape (2500, 256)
+2025-12-23 01:23:35,511 - __main__ - INFO - Loaded gene 'EPB41' from rank 2: shape (2500, 256)
+2025-12-23 01:23:35,533 - __main__ - INFO - Loaded gene 'EPB41' from rank 3: shape (2500, 256)
+2025-12-23 01:23:35,584 - __main__ - INFO - Loaded gene 'PSMB2' from rank 0: shape (2500, 256)
+2025-12-23 01:23:35,607 - __main__ - INFO - Loaded gene 'PSMB2' from rank 1: shape (2500, 256)
+2025-12-23 01:23:35,657 - __main__ - INFO - Loaded gene 'PSMB2' from rank 2: shape (2500, 256)
+2025-12-23 01:23:35,707 - __main__ - INFO - Loaded gene 'PSMB2' from rank 3: shape (2500, 256)
+2025-12-23 01:23:35,757 - __main__ - INFO - Loaded gene 'AK2' from rank 0: shape (2500, 256)
+2025-12-23 01:23:35,807 - __main__ - INFO - Loaded gene 'AK2' from rank 1: shape (2500, 256)
+2025-12-23 01:23:35,858 - __main__ - INFO - Loaded gene 'AK2' from rank 2: shape (2500, 256)
+2025-12-23 01:23:35,909 - __main__ - INFO - Loaded gene 'AK2' from rank 3: shape (2500, 256)
+2025-12-23 01:23:35,957 - __main__ - INFO - Loaded gene 'SRRM1' from rank 0: shape (2500, 256)
+2025-12-23 01:23:36,007 - __main__ - INFO - Loaded gene 'SRRM1' from rank 1: shape (2500, 256)
+2025-12-23 01:23:36,031 - __main__ - INFO - Loaded gene 'SRRM1' from rank 2: shape (2500, 256)
+2025-12-23 01:23:36,055 - __main__ - INFO - Loaded gene 'SRRM1' from rank 3: shape (2500, 256)
+2025-12-23 01:23:36,105 - __main__ - INFO - Loaded gene 'HNRNPR' from rank 0: shape (2500, 256)
+2025-12-23 01:23:36,153 - __main__ - INFO - Loaded gene 'HNRNPR' from rank 1: shape (2500, 256)
+2025-12-23 01:23:36,202 - __main__ - INFO - Loaded gene 'HNRNPR' from rank 2: shape (2500, 256)
+2025-12-23 01:23:36,225 - __main__ - INFO - Loaded gene 'HNRNPR' from rank 3: shape (2500, 256)
+2025-12-23 01:23:36,270 - __main__ - INFO - Loaded gene 'MINOS1' from rank 0: shape (2500, 256)
+2025-12-23 01:23:36,319 - __main__ - INFO - Loaded gene 'MINOS1' from rank 1: shape (2500, 256)
+2025-12-23 01:23:36,367 - __main__ - INFO - Loaded gene 'MINOS1' from rank 2: shape (2500, 256)
+2025-12-23 01:23:36,416 - __main__ - INFO - Loaded gene 'MINOS1' from rank 3: shape (2500, 256)
+2025-12-23 01:23:36,464 - __main__ - INFO - Loaded gene 'SSU72' from rank 0: shape (2500, 256)
+2025-12-23 01:23:36,514 - __main__ - INFO - Loaded gene 'SSU72' from rank 1: shape (2500, 256)
+2025-12-23 01:23:36,538 - __main__ - INFO - Loaded gene 'SSU72' from rank 2: shape (2500, 256)
+2025-12-23 01:23:36,560 - __main__ - INFO - Loaded gene 'SSU72' from rank 3: shape (2500, 256)
+2025-12-23 01:23:36,583 - __main__ - INFO - Loaded gene 'TRAPPC3' from rank 0: shape (2500, 256)
+2025-12-23 01:23:36,638 - __main__ - INFO - Loaded gene 'TRAPPC3' from rank 1: shape (2500, 256)
+2025-12-23 01:23:36,688 - __main__ - INFO - Loaded gene 'TRAPPC3' from rank 2: shape (2500, 256)
+2025-12-23 01:23:36,711 - __main__ - INFO - Loaded gene 'TRAPPC3' from rank 3: shape (2500, 256)
+2025-12-23 01:23:36,763 - __main__ - INFO - Loaded gene 'LAPTM5' from rank 0: shape (2500, 256)
+2025-12-23 01:23:36,787 - __main__ - INFO - Loaded gene 'LAPTM5' from rank 1: shape (2500, 256)
+2025-12-23 01:23:36,838 - __main__ - INFO - Loaded gene 'LAPTM5' from rank 2: shape (2500, 256)
+2025-12-23 01:23:36,885 - __main__ - INFO - Loaded gene 'LAPTM5' from rank 3: shape (2500, 256)
+2025-12-23 01:23:36,909 - __main__ - INFO - Loaded gene 'RBBP4' from rank 0: shape (2500, 256)
+2025-12-23 01:23:36,973 - __main__ - INFO - Loaded gene 'RBBP4' from rank 1: shape (2500, 256)
+2025-12-23 01:23:37,023 - __main__ - INFO - Loaded gene 'RBBP4' from rank 2: shape (2500, 256)
+2025-12-23 01:23:37,070 - __main__ - INFO - Loaded gene 'RBBP4' from rank 3: shape (2500, 256)
+2025-12-23 01:23:37,093 - __main__ - INFO - Loaded gene 'C1orf122' from rank 0: shape (2500, 256)
+2025-12-23 01:23:37,116 - __main__ - INFO - Loaded gene 'C1orf122' from rank 1: shape (2500, 256)
+2025-12-23 01:23:37,165 - __main__ - INFO - Loaded gene 'C1orf122' from rank 2: shape (2500, 256)
+2025-12-23 01:23:37,188 - __main__ - INFO - Loaded gene 'C1orf122' from rank 3: shape (2500, 256)
+2025-12-23 01:23:37,237 - __main__ - INFO - Loaded gene 'ZBTB8OS' from rank 0: shape (2500, 256)
+2025-12-23 01:23:37,291 - __main__ - INFO - Loaded gene 'ZBTB8OS' from rank 1: shape (2500, 256)
+2025-12-23 01:23:37,340 - __main__ - INFO - Loaded gene 'ZBTB8OS' from rank 2: shape (2500, 256)
+2025-12-23 01:23:37,391 - __main__ - INFO - Loaded gene 'ZBTB8OS' from rank 3: shape (2500, 256)
+2025-12-23 01:23:37,604 - __main__ - INFO - Genes with combined perturbation results: 50
+2025-12-23 01:24:02,945 - __main__ - INFO - Saved outputs for distributed_ddp to outputs/outputs/distributed_ddp
+2025-12-23 01:24:03,089 - __main__ - INFO - 
+====================================================================================================
+2025-12-23 01:24:03,089 - __main__ - INFO - COMPARING OUTPUTS TO BASELINE
+2025-12-23 01:24:03,089 - __main__ - INFO - ====================================================================================================
+2025-12-23 01:24:03,089 - __main__ - INFO - Comparing baseline vs distributed_ddp
+2025-12-23 01:24:04,901 - __main__ - INFO - Performance metrics saved to: outputs/performance_metrics_20251223_012404.csv
+2025-12-23 01:24:04,902 - __main__ - INFO - Comparison metrics saved to: outputs/comparison_metrics_20251223_012404.csv
+2025-12-23 01:24:04,904 - __main__ - INFO - Per-gene comparison saved to: outputs/gene_comparison_baseline_vs_distributed_ddp.csv
+2025-12-23 01:24:04,904 - __main__ - INFO - 
+====================================================================================================
+2025-12-23 01:24:04,904 - __main__ - INFO - PERFORMANCE SUMMARY
+2025-12-23 01:24:04,904 - __main__ - INFO - ====================================================================================================
+2025-12-23 01:24:04,908 - __main__ - INFO - 
+            method  runtime_seconds  cpu_percent    memory_mb  gpu_memory_mb  gpu_utilization  throughput_cells_per_sec  num_cells  num_genes_perturbed                   timestamp extra_optimization  extra_num_gpus extra_backend extra_distribution_method
+0         baseline       409.913106         99.9  1456.957031       9.125000               38                 24.395414      10000                   50  2025-12-23T01:19:56.831306               none             NaN           NaN                       NaN
+1  distributed_ddp       188.302551        -92.9  1061.679688     -39.279785              -37                 53.106025      10000                   50  2025-12-23T01:23:38.730048                NaN             4.0          nccl                       DDP
+
+2025-12-23 01:24:04,908 - __main__ - INFO - 
+SPEEDUP RELATIVE TO BASELINE:
+2025-12-23 01:24:04,909 - __main__ - INFO - --------------------------------------------------
+2025-12-23 01:24:04,909 - __main__ - INFO - distributed_ddp     : 2.18x
+2025-12-23 01:24:04,909 - __main__ - INFO - 
+====================================================================================================
+2025-12-23 01:24:04,909 - __main__ - INFO - OUTPUT COMPARISON SUMMARY
+2025-12-23 01:24:04,909 - __main__ - INFO - ====================================================================================================
+2025-12-23 01:24:04,911 - __main__ - INFO - 
+   method_a         method_b  embedding_pearson  embedding_spearman  embedding_cosine_similarity  embedding_mse  embedding_max_abs_diff  mean_perturbation_correlation  min_perturbation_correlation  max_perturbation_correlation                   timestamp
+0  baseline  distributed_ddp           0.999996                 1.0                          1.0            0.0                     0.0                       0.999997                      0.999996                      0.999998  2025-12-23T01:24:04.898625
+
+2025-12-23 01:24:04,912 - __main__ - INFO - 
+OUTPUT QUALITY ASSESSMENT:
+2025-12-23 01:24:04,912 - __main__ - INFO - --------------------------------------------------
+2025-12-23 01:24:04,912 - __main__ - INFO - ====================================================================================================
+2025-12-23 01:24:04,912 - __main__ - INFO - 
+All outputs saved to: outputs
+2025-12-23 01:24:04,912 - __main__ - INFO - 
+====================================================================================================
+2025-12-23 01:24:04,912 - __main__ - INFO - PIPELINE COMPLETE!
+2025-12-23 01:24:04,912 - __main__ - INFO - ====================================================================================================
