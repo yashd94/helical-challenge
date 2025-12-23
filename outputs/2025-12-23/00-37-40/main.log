@@ -1,0 +1,217 @@
+[2025-12-23 00:37:43,658][__main__][INFO] - Using device: cuda
+[2025-12-23 00:37:43,661][__main__][INFO] - ====================================================================================================
+[2025-12-23 00:37:43,661][__main__][INFO] - GENEFORMER PERTURBATION PIPELINE
+[2025-12-23 00:37:43,662][__main__][INFO] - ====================================================================================================
+[2025-12-23 00:37:43,662][__main__][INFO] - Experiment: geneformer_perturbation_distributed_test
+[2025-12-23 00:37:43,666][__main__][INFO] - 
+Configuration:
+seed: 42
+model:
+  name: gf-6L-10M-i2048
+  batch_size: 2
+  device: cuda:0
+data:
+  pertpy_data_identifier: norman_2019
+  condition_filter: control
+  save_tokenized_data: true
+  gene_names_column: index
+  use_raw_counts: false
+  preprocess: true
+  normalize: false
+  filter_genes: true
+  min_genes: 100
+  min_cells: 3
+  max_cells: 100
+  max_genes: 100
+perturbation:
+  gene_list: null
+  num_genes: 5
+  perturbation_type: knockout
+  selection_method: top_expressed
+  perturbation_strength: 2.0
+  save_perturbed_data: true
+optimization:
+  methods:
+  - distributed
+  batching:
+    enabled: true
+    batch_size_multiplier: 2
+  quantization:
+    enabled: true
+    dtype: qint8
+    calibration_data_size: 32
+  onnx:
+    enabled: true
+    use_gpu: true
+    precision: FP16
+  distributed:
+    enabled: true
+    backend: nccl
+output:
+  dir: outputs
+  cache_dir: /scratch
+  save_outputs: true
+  compression: true
+  precision: float32
+  save_detailed_comparisons: true
+  log_level: INFO
+  log_to_file: true
+  log_file: pipeline.log
+hardware:
+  device: auto
+  mixed_precision: false
+  cudnn_benchmark: true
+  empty_cache_between_methods: true
+experiment:
+  name: geneformer_perturbation_distributed_test
+  tags: []
+  notes: ''
+reproducibility:
+  deterministic: true
+advanced:
+  compile_model: false
+  compile_backend: inductor
+  continue_on_error: true
+validation:
+  min_correlation: 0.95
+  max_mse: 0.01
+  warn_on_threshold: true
+  check_nan: true
+  check_inf: true
+
+[2025-12-23 00:37:43,666][__main__][INFO] - Loading Geneformer model...
+[2025-12-23 00:37:49,807][helical.models.geneformer.model][INFO] - Model finished initializing.
+[2025-12-23 00:37:49,807][helical.models.geneformer.model][INFO] - 'gf-6L-10M-i2048' model is in 'eval' mode, on device 'cuda:0' with embedding mode 'cell'.
+[2025-12-23 00:37:49,809][__main__][INFO] - Model loaded: gf-6L-10M-i2048
+[2025-12-23 00:37:49,809][__main__][INFO] - Loading data: norman_2019
+[2025-12-23 00:37:49,811][__main__][INFO] - Found processed data saved to disk.
+[2025-12-23 00:37:49,921][__main__][INFO] - Selected 5 genes using method: top_expressed
+[2025-12-23 00:37:49,921][__main__][INFO] - Performing perturbation on 5 genes...
+[2025-12-23 00:37:49,923][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 00:37:49,931][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 00:37:49,941][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 00:37:49,950][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 00:37:49,959][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 00:37:49,968][__main__][INFO] - Perturbations complete.
+[2025-12-23 00:37:49,968][__main__][INFO] - 
+====================================================================================================
+[2025-12-23 00:37:49,968][__main__][INFO] - Running BASELINE (no optimization)...
+[2025-12-23 00:37:49,971][__main__][INFO] - Extracting embeddings...
+[2025-12-23 00:37:49,971][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 00:37:51,848][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 00:37:51,848][__main__][INFO] - Extracted embeddings shape: (100, 256)
+[2025-12-23 00:37:51,848][__main__][INFO] - Extracting embeddings for perturbations on 5 genes...
+[2025-12-23 00:37:51,848][__main__][INFO] - Extraxcting embeddings for perturbed: FAAP20 (type: knockout)
+[2025-12-23 00:37:51,848][__main__][INFO] - Extracting embeddings...
+[2025-12-23 00:37:51,848][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 00:37:52,244][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 00:37:52,244][__main__][INFO] - Extracted embeddings shape: (100, 256)
+[2025-12-23 00:37:52,244][__main__][INFO] - Extraxcting embeddings for perturbed: SSU72 (type: knockout)
+[2025-12-23 00:37:52,245][__main__][INFO] - Extracting embeddings...
+[2025-12-23 00:37:52,245][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 00:37:52,634][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 00:37:52,634][__main__][INFO] - Extracted embeddings shape: (100, 256)
+[2025-12-23 00:37:52,634][__main__][INFO] - Extraxcting embeddings for perturbed: MRPL20 (type: knockout)
+[2025-12-23 00:37:52,634][__main__][INFO] - Extracting embeddings...
+[2025-12-23 00:37:52,634][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 00:37:53,031][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 00:37:53,032][__main__][INFO] - Extracted embeddings shape: (100, 256)
+[2025-12-23 00:37:53,032][__main__][INFO] - Extraxcting embeddings for perturbed: AURKAIP1 (type: knockout)
+[2025-12-23 00:37:53,032][__main__][INFO] - Extracting embeddings...
+[2025-12-23 00:37:53,032][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 00:37:53,421][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 00:37:53,421][__main__][INFO] - Extracted embeddings shape: (100, 256)
+[2025-12-23 00:37:53,421][__main__][INFO] - Extraxcting embeddings for perturbed: RPL22 (type: knockout)
+[2025-12-23 00:37:53,421][__main__][INFO] - Extracting embeddings...
+[2025-12-23 00:37:53,421][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 00:37:53,818][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 00:37:53,818][__main__][INFO] - Extracted embeddings shape: (100, 256)
+[2025-12-23 00:37:53,818][__main__][INFO] - Finished getting perturbation results.
+[2025-12-23 00:37:53,883][__main__][INFO] - Saved outputs for baseline to outputs/outputs/baseline
+[2025-12-23 00:37:53,884][__main__][INFO] - 
+====================================================================================================
+[2025-12-23 00:37:53,884][__main__][INFO] - Running with DISTRIBUTED optimization...
+[2025-12-23 00:37:53,884][__main__][INFO] - Extracting embeddings...
+[2025-12-23 00:37:53,884][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 00:37:54,275][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 00:37:54,275][__main__][INFO] - Extracted embeddings shape: (100, 256)
+[2025-12-23 00:37:54,275][__main__][INFO] - Using 4 GPUs with DDP
+[2025-12-23 00:37:54,317][__main__][INFO] - Using temporary directory: /scratch/ddp_results_ie2mq6gg
+[2025-12-23 00:38:59,177][__main__][ERROR] - Error from rank 0:
+name 'world_size' is not defined
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 419, in run_inference_worker
+    local_perturbation_results = get_perturbation_results_ddp(
+  File "/root/capsule/code/helical-challenge/main.py", line 386, in get_perturbation_results_ddp
+    sharded_perturbed_data = perturbed_data_dict[gene].shard(num_shards = world_size,
+NameError: name 'world_size' is not defined
+
+[2025-12-23 00:38:59,180][__main__][ERROR] - Error from rank 1:
+name 'world_size' is not defined
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 419, in run_inference_worker
+    local_perturbation_results = get_perturbation_results_ddp(
+  File "/root/capsule/code/helical-challenge/main.py", line 386, in get_perturbation_results_ddp
+    sharded_perturbed_data = perturbed_data_dict[gene].shard(num_shards = world_size,
+NameError: name 'world_size' is not defined
+
+[2025-12-23 00:38:59,184][__main__][ERROR] - Error from rank 2:
+name 'world_size' is not defined
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 419, in run_inference_worker
+    local_perturbation_results = get_perturbation_results_ddp(
+  File "/root/capsule/code/helical-challenge/main.py", line 386, in get_perturbation_results_ddp
+    sharded_perturbed_data = perturbed_data_dict[gene].shard(num_shards = world_size,
+NameError: name 'world_size' is not defined
+
+[2025-12-23 00:38:59,187][__main__][ERROR] - Error from rank 3:
+name 'world_size' is not defined
+Traceback (most recent call last):
+  File "/root/capsule/code/helical-challenge/main.py", line 419, in run_inference_worker
+    local_perturbation_results = get_perturbation_results_ddp(
+  File "/root/capsule/code/helical-challenge/main.py", line 386, in get_perturbation_results_ddp
+    sharded_perturbed_data = perturbed_data_dict[gene].shard(num_shards = world_size,
+NameError: name 'world_size' is not defined
+
+[2025-12-23 00:38:59,188][__main__][INFO] - Total unique genes processed: 0
+[2025-12-23 00:38:59,188][__main__][INFO] - Genes with combined perturbation results: 0
+[2025-12-23 00:38:59,188][__main__][WARNING] - Missing results for 5 genes: {'MRPL20', 'FAAP20', 'RPL22', 'SSU72', 'AURKAIP1'}
+[2025-12-23 00:38:59,224][__main__][INFO] - Saved outputs for distributed_ddp to outputs/outputs/distributed_ddp
+[2025-12-23 00:38:59,228][__main__][INFO] - 
+====================================================================================================
+[2025-12-23 00:38:59,228][__main__][INFO] - COMPARING OUTPUTS TO BASELINE
+[2025-12-23 00:38:59,228][__main__][INFO] - ====================================================================================================
+[2025-12-23 00:38:59,228][__main__][INFO] - Comparing baseline vs distributed_ddp
+[2025-12-23 00:38:59,238][__main__][INFO] - Performance metrics saved to: outputs/performance_metrics_20251223_003859.csv
+[2025-12-23 00:38:59,239][__main__][INFO] - Comparison metrics saved to: outputs/comparison_metrics_20251223_003859.csv
+[2025-12-23 00:38:59,239][__main__][INFO] - 
+====================================================================================================
+[2025-12-23 00:38:59,240][__main__][INFO] - PERFORMANCE SUMMARY
+[2025-12-23 00:38:59,240][__main__][INFO] - ====================================================================================================
+[2025-12-23 00:38:59,244][__main__][INFO] - 
+            method  runtime_seconds  cpu_percent    memory_mb  gpu_memory_mb  gpu_utilization  throughput_cells_per_sec  num_cells  num_genes_perturbed                   timestamp extra_optimization  extra_num_gpus extra_backend extra_distribution_method
+0         baseline         3.850038         88.3  5719.757812      48.404785               18                 25.973771        100                    5  2025-12-23T00:37:53.852110               none             NaN           NaN                       NaN
+1  distributed_ddp        64.938815          2.0  5799.136719       9.125000               19                  1.539911        100                    5  2025-12-23T00:38:59.216695                NaN             4.0          nccl                       DDP
+
+[2025-12-23 00:38:59,244][__main__][INFO] - 
+SPEEDUP RELATIVE TO BASELINE:
+[2025-12-23 00:38:59,244][__main__][INFO] - --------------------------------------------------
+[2025-12-23 00:38:59,245][__main__][INFO] - distributed_ddp     : 0.06x
+[2025-12-23 00:38:59,245][__main__][INFO] - 
+====================================================================================================
+[2025-12-23 00:38:59,245][__main__][INFO] - OUTPUT COMPARISON SUMMARY
+[2025-12-23 00:38:59,245][__main__][INFO] - ====================================================================================================
+[2025-12-23 00:38:59,247][__main__][INFO] - 
+   method_a         method_b  embedding_pearson  embedding_spearman  embedding_cosine_similarity  embedding_mse  embedding_max_abs_diff  mean_perturbation_correlation  min_perturbation_correlation  max_perturbation_correlation                   timestamp
+0  baseline  distributed_ddp                1.0                 1.0                          1.0            0.0                     0.0                            0.0                           0.0                           0.0  2025-12-23T00:38:59.236270
+
+[2025-12-23 00:38:59,248][__main__][INFO] - 
+OUTPUT QUALITY ASSESSMENT:
+[2025-12-23 00:38:59,248][__main__][INFO] - --------------------------------------------------
+[2025-12-23 00:38:59,248][__main__][INFO] - ====================================================================================================
+[2025-12-23 00:38:59,248][__main__][INFO] - 
+All outputs saved to: outputs
+[2025-12-23 00:38:59,248][__main__][INFO] - 
+====================================================================================================
+[2025-12-23 00:38:59,248][__main__][INFO] - PIPELINE COMPLETE!
+[2025-12-23 00:38:59,248][__main__][INFO] - ====================================================================================================

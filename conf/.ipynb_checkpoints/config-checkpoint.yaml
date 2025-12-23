@@ -1,8 +1,10 @@
 # ============================================================================
-# GLOBAL SETTINGS
+# REPRODUCIBILITY
 # ============================================================================
-seed: 42
-
+reproducibility:
+  deterministic: true               # Set seed
+  seed: 42
+  
 # ============================================================================
 # MODEL CONFIGS
 # ============================================================================
@@ -39,8 +41,8 @@ data:
   min_cells: 3        # Minimum cells per gene
   
   # Subset data for testing
-  max_cells: 100   # Limit number of cells for faster testing
-  max_genes: 100   # Limit number of genes
+  max_cells: 10000   # Limit number of cells for faster testing
+  max_genes: 500   # Limit number of genes
 
 # ============================================================================
 # PERTURBATION CONFIGS
@@ -51,7 +53,7 @@ perturbation:
   # gene_list: ["BRCA1", "TP53", "MYC", "EGFR", "KRAS"]
   
   # Option 2: Number of top variable genes (set gene_list to null if using this)
-  num_genes: 5
+  num_genes: 50
   
   # Perturbation settings
   perturbation_type: "knockout"  # Options: knockout, overexpression
@@ -129,15 +131,9 @@ hardware:
 # EXPERIMENT TRACKING
 # ============================================================================
 experiment:
-  name: "geneformer_perturbation_distributed_test"
+  name: "geneformer_perturbation_example"
   tags: []
   notes: ""
-
-# ============================================================================
-# REPRODUCIBILITY
-# ============================================================================
-reproducibility:
-  deterministic: true               # Set seed
 
 # ============================================================================
 # ADVANCED OPTIONS

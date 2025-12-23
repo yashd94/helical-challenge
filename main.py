@@ -11,6 +11,7 @@ from typing import List, Optional, Dict, Any, Tuple
 from dataclasses import dataclass, field
 from datetime import datetime
 import warnings
+import tqdm
 from tqdm.auto import trange
 
 import hydra
@@ -56,7 +57,7 @@ except ImportError:
 import tempfile
 
 # Quantization using nvidia-modelopt
-import modelopt.torch.quantization as mtq
+# import modelopt.torch.quantization as mtq
 
 # Ignore warnings
 warnings.filterwarnings("ignore")
@@ -367,21 +368,20 @@ def get_perturbation_results_ddp(
 
     # Move model to GPU [rank]
     model.model = model.model.to(rank)
-    world_size = dist.get_world_size()
-
-    # Distribute genes across GPUs
-    genes_per_gpu = len(genes) // world_size
-    start_idx = rank * genes_per_gpu
-    end_idx = start_idx + genes_per_gpu if rank < world_size - 1 else len(genes)
-    local_genes = genes[start_idx:end_idx]
 
     local_results = {}
 
-    for gene in local_genes:
+    for gene in genes:
         if gene in perturbed_data_dict.keys():
             logger.info(f"Extraxcting embeddings for perturbed: {gene}")
-
-            perturbed_emb = extract_embeddings(model, perturbed_data_dict[gene], rank)
+            
+            # Distribute data across GPUs
+            sharded_perturbed_data = perturbed_data_dict[gene].shard(num_shards = world_size,
+                                                                     index = rank,
+                                                                     contiguous = True)
+            sharded_perturbed_data.set_format(type = "torch", columns = sharded_perturbed_data.column_names)
+            
+            perturbed_emb = extract_embeddings(model, sharded_perturbed_data, rank = rank)
             local_results[gene] = perturbed_emb
         else:
             logger.warning(f"Gene {gene} not found in perturbed data, skipping")
@@ -407,23 +407,35 @@ def run_inference_worker(
 
         # Move model to GPU [rank]
         model.model = model.model.to(rank)
-
-        # Extract embeddings
-        local_embeddings = extract_embeddings(model, data, rank)
-
+        
         # Perform perturbations
         local_perturbation_results = get_perturbation_results_ddp(
             rank, model, perturbed_data_dict, genes
         )
-
-        # Save results to disk instead of shared memory
-        result_path = os.path.join(temp_dir, f'rank_{rank}_results.pt')
+        
+        # Save outputs per gene per rank
+        genes_processed = []
+        for gene, gene_results in local_perturbation_results.items():
+            result_path = os.path.join(temp_dir, f'rank_{rank}_gene_{gene}.pt')
+            torch.save({
+                'gene': gene,
+                'rank': rank,
+                'gene_results': gene_results,
+                'shard_size': gene_results.shape[0]
+            }, result_path)
+            genes_processed.append(gene)
+            logger.info(f"Rank {rank}: Saved gene '{gene}' to {result_path}")
+        
+        # Save rank summary
+        summary_path = os.path.join(temp_dir, f'rank_{rank}_summary.pt')
         torch.save({
-            'embeddings': local_embeddings,
-            'perturbation_results': local_perturbation_results
-        }, result_path)
-
-        logger.info(f"Rank {rank}: Saved results to {result_path}")
+            'rank': rank,
+            'genes_processed': genes_processed,
+            'num_genes': len(genes_processed),
+            'num_samples': len(data) // world_size
+        }, summary_path)
+        
+        logger.info(f"Rank {rank}: Saved summary to {summary_path}")
 
         cleanup_ddp()
 
@@ -493,7 +505,6 @@ class GeneformerPerturbationPipeline:
     # ------------------------------------------------------------------------
     # Data loading, pre-processing
     # ------------------------------------------------------------------------
-    
     def load_model(self) -> Geneformer:
         """Load Geneformer model."""
         logger.info("Loading Geneformer model...")
@@ -605,7 +616,7 @@ class GeneformerPerturbationPipeline:
                 top_indices = np.argsort(mean_expr)[-num_genes:]
                 genes = adata.var_names[top_indices].tolist()
             elif selection_method == "random":
-                np.random.seed(self.cfg.seed)
+                np.random.seed(self.cfg.reproducibility.seed)
                 genes = np.random.choice(adata.var_names, num_genes, replace=False).tolist()
             else:
                 genes = adata.var_names[:num_genes].tolist()
@@ -735,10 +746,10 @@ class GeneformerPerturbationPipeline:
         perf_metrics = PerformanceMetrics(
             method='baseline',
             runtime_seconds=runtime,
-            cpu_percent=end_metrics['cpu_percent'],
-            memory_mb=end_metrics['memory_mb'],
-            gpu_memory_mb=end_metrics['gpu_memory_mb'],
-            gpu_utilization=end_metrics['gpu_utilization'],
+            cpu_percent=end_metrics['cpu_percent'] - start_metrics['cpu_percent'],
+            memory_mb=end_metrics['memory_mb'] - start_metrics['memory_mb'],
+            gpu_memory_mb=end_metrics['gpu_memory_mb'] - start_metrics['gpu_memory_mb'],
+            gpu_utilization=end_metrics['gpu_utilization'] - start_metrics['gpu_utilization'],
             throughput_cells_per_sec=adata.n_obs / runtime if runtime > 0 else 0,
             num_cells=adata.n_obs,
             num_genes_perturbed=len(genes),
@@ -805,10 +816,10 @@ class GeneformerPerturbationPipeline:
         perf_metrics = PerformanceMetrics(
             method='batching',
             runtime_seconds=runtime,
-            cpu_percent=end_metrics['cpu_percent'],
-            memory_mb=end_metrics['memory_mb'],
-            gpu_memory_mb=end_metrics['gpu_memory_mb'],
-            gpu_utilization=end_metrics['gpu_utilization'],
+            cpu_percent=end_metrics['cpu_percent'] - start_metrics['cpu_percent'],
+            memory_mb=end_metrics['memory_mb'] - start_metrics['memory_mb'],
+            gpu_memory_mb=end_metrics['gpu_memory_mb'] - start_metrics['gpu_memory_mb'],
+            gpu_utilization=end_metrics['gpu_utilization'] - start_metrics['gpu_utilization'],
             throughput_cells_per_sec=adata.n_obs / runtime if runtime > 0 else 0,
             num_cells=adata.n_obs,
             num_genes_perturbed=len(genes),
@@ -916,10 +927,10 @@ class GeneformerPerturbationPipeline:
         perf_metrics = PerformanceMetrics(
             method='quantization',
             runtime_seconds=runtime,
-            cpu_percent=end_metrics['cpu_percent'],
-            memory_mb=end_metrics['memory_mb'],
-            gpu_memory_mb=end_metrics['gpu_memory_mb'],
-            gpu_utilization=end_metrics['gpu_utilization'],
+            cpu_percent=end_metrics['cpu_percent'] - start_metrics['cpu_percent'],
+            memory_mb=end_metrics['memory_mb'] - start_metrics['memory_mb'],
+            gpu_memory_mb=end_metrics['gpu_memory_mb'] - start_metrics['gpu_memory_mb'],
+            gpu_utilization=end_metrics['gpu_utilization'] - start_metrics['gpu_utilization'],
             throughput_cells_per_sec=adata.n_obs / runtime if runtime > 0 else 0,
             num_cells=adata.n_obs,
             num_genes_perturbed=len(genes),
@@ -986,10 +997,10 @@ class GeneformerPerturbationPipeline:
         perf_metrics = PerformanceMetrics(
             method='onnx',
             runtime_seconds=runtime,
-            cpu_percent=end_metrics['cpu_percent'],
-            memory_mb=end_metrics['memory_mb'],
-            gpu_memory_mb=end_metrics['gpu_memory_mb'],
-            gpu_utilization=end_metrics['gpu_utilization'],
+            cpu_percent=end_metrics['cpu_percent'] - start_metrics['cpu_percent'],
+            memory_mb=end_metrics['memory_mb'] - start_metrics['memory_mb'],
+            gpu_memory_mb=end_metrics['gpu_memory_mb'] - start_metrics['gpu_memory_mb'],
+            gpu_utilization=end_metrics['gpu_utilization'] - start_metrics['gpu_utilization'],
             throughput_cells_per_sec=adata.n_obs / runtime if runtime > 0 else 0,
             num_cells=adata.n_obs,
             num_genes_perturbed=len(genes),
@@ -1027,10 +1038,13 @@ class GeneformerPerturbationPipeline:
             logger.warning("Distributed is disabled in config")
             return None, None
 
-        logger.info("Running with DDP DISTRIBUTED optimization...")
+        logger.info("Running with DISTRIBUTED optimization...")
 
         num_gpus = torch.cuda.device_count()
-
+        
+        # Extract embeddings
+        embeddings = extract_embeddings(model, data)
+        
         logger.info(f"Using {num_gpus} GPUs with DDP")
 
         # Set multiprocessing method
@@ -1052,7 +1066,7 @@ class GeneformerPerturbationPipeline:
         # Create temporary directory for results
         temp_dir = tempfile.mkdtemp(prefix=f'{self.cfg.output.cache_dir}/ddp_results_')
         logger.info(f"Using temporary directory: {temp_dir}")
-
+        
         try:
             # Spawn processes for each GPU
             mp.spawn(
@@ -1062,12 +1076,13 @@ class GeneformerPerturbationPipeline:
                 join=True
             )
 
-            # Load results from disk
-            all_embeddings = []
-            all_perturbation_results = {}
+            # Load results from disk and gather
+            gene_results_by_rank = {}
+            all_genes_processed = set()
 
+            # Load rank summaries
             for rank in range(num_gpus):
-                result_path = os.path.join(temp_dir, f'rank_{rank}_results.pt')
+                summary_path = os.path.join(temp_dir, f'rank_{rank}_summary.pt')
                 error_path = os.path.join(temp_dir, f'rank_{rank}_error.txt')
 
                 if os.path.exists(error_path):
@@ -1075,20 +1090,59 @@ class GeneformerPerturbationPipeline:
                         logger.error(f"Error from rank {rank}:\n{f.read()}")
                     continue
 
-                if not os.path.exists(result_path):
-                    logger.error(f"No results from rank {rank}")
+                if not os.path.exists(summary_path):
+                    logger.error(f"No summary from rank {rank}")
                     continue
 
-                results = torch.load(result_path)
-                all_embeddings.append(results['embeddings'])
+                summary = torch.load(summary_path)
+                genes_from_rank = summary['genes_processed']
+                all_genes_processed.update(genes_from_rank)
+                logger.info(f"Rank {rank} processed {len(genes_from_rank)} genes: {genes_from_rank}")
 
-                # Merge perturbation results
-                for gene, gene_results in results['perturbation_results'].items():
-                    all_perturbation_results[gene] = gene_results
+            logger.info(f"Total unique genes processed: {len(all_genes_processed)}")
 
-            # Concatenate embeddings from all GPUs
-            embeddings = torch.cat(all_embeddings, dim=0) if all_embeddings else None
+            # Load gene and rank specific outputs
+            for gene in all_genes_processed:
+                gene_results_by_rank[gene] = {}
 
+                # Load this gene's results from all ranks
+                for rank in range(num_gpus):
+                    gene_file = os.path.join(temp_dir, f'rank_{rank}_gene_{gene}.pt')
+
+                    if os.path.exists(gene_file):
+                        gene_data = torch.load(gene_file, weights_only = False)
+                        gene_results_by_rank[gene][rank] = gene_data['gene_results']
+                        logger.info(f"Loaded gene '{gene}' from rank {rank}: shape {gene_data['gene_results'].shape}")
+
+            # Combine shards for each gene
+            combined_perturbation_results = {}
+
+            for gene in all_genes_processed:
+                if gene not in gene_results_by_rank or not gene_results_by_rank[gene]:
+                    logger.warning(f"Gene '{gene}' was processed but has no results")
+                    continue
+
+                # Collect all shards for this gene from all ranks (in order)
+                gene_shards = []
+                for rank in sorted(gene_results_by_rank[gene].keys()):
+                    gene_results = gene_results_by_rank[gene][rank]
+                    gene_shards.append(gene_results)
+                    # logger.info(f"Gene '{gene}' rank {rank}: shard shape {gene_results.shape}")
+
+                # Concatenate all shards for this gene
+                if gene_shards:
+                    combined_perturbation_results[gene] = np.concatenate(gene_shards, axis=0)
+                    # logger.info(f"Gene '{gene}': Combined shape {combined_perturbation_results[gene].shape}")
+                else:
+                    logger.warning(f"Gene '{gene}' has no shards to combine")
+
+            logger.info(f"Genes with combined perturbation results: {len(combined_perturbation_results)}")
+
+            # Verify we got all genes
+            missing_genes = set(genes) - set(combined_perturbation_results.keys())
+            if missing_genes:
+                logger.warning(f"Missing results for {len(missing_genes)} genes: {missing_genes}")
+                
         finally:
             # Clean up temporary directory
             import shutil
@@ -1102,10 +1156,10 @@ class GeneformerPerturbationPipeline:
         perf_metrics = PerformanceMetrics(
             method='distributed_ddp',
             runtime_seconds=runtime,
-            cpu_percent=end_metrics['cpu_percent'],
-            memory_mb=end_metrics['memory_mb'],
-            gpu_memory_mb=end_metrics['gpu_memory_mb'],
-            gpu_utilization=end_metrics['gpu_utilization'],
+            cpu_percent=end_metrics['cpu_percent'] - start_metrics['cpu_percent'],
+            memory_mb=end_metrics['memory_mb'] - start_metrics['memory_mb'],
+            gpu_memory_mb=end_metrics['gpu_memory_mb'] - start_metrics['gpu_memory_mb'],
+            gpu_utilization=end_metrics['gpu_utilization'] - start_metrics['gpu_utilization'],
             throughput_cells_per_sec=adata.n_obs / runtime if runtime > 0 else 0,
             num_cells=adata.n_obs,
             num_genes_perturbed=len(genes),
@@ -1120,7 +1174,7 @@ class GeneformerPerturbationPipeline:
         outputs = ModelOutputs(
             method='distributed_ddp',
             embeddings=embeddings,
-            perturbation_results=all_perturbation_results,
+            perturbation_results=combined_perturbation_results,
             cell_ids=adata.obs_names.tolist() if hasattr(adata, 'obs_names') else None,
             gene_names=genes
         )

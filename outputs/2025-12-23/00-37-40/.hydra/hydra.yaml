@@ -140,7 +140,7 @@ hydra:
     - path: ''
       schema: structured
       provider: schema
-    output_dir: /root/capsule/code/helical-challenge/outputs/2025-12-22/19-26-49
+    output_dir: /root/capsule/code/helical-challenge/outputs/2025-12-23/00-37-40
     choices:
       hydra/env: default
       hydra/callbacks: null

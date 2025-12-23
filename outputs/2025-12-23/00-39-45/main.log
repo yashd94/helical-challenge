@@ -1,0 +1,230 @@
+[2025-12-23 00:39:48,934][__main__][INFO] - Using device: cuda
+[2025-12-23 00:39:48,937][__main__][INFO] - ====================================================================================================
+[2025-12-23 00:39:48,938][__main__][INFO] - GENEFORMER PERTURBATION PIPELINE
+[2025-12-23 00:39:48,938][__main__][INFO] - ====================================================================================================
+[2025-12-23 00:39:48,938][__main__][INFO] - Experiment: geneformer_perturbation_distributed_test
+[2025-12-23 00:39:48,942][__main__][INFO] - 
+Configuration:
+seed: 42
+model:
+  name: gf-6L-10M-i2048
+  batch_size: 2
+  device: cuda:0
+data:
+  pertpy_data_identifier: norman_2019
+  condition_filter: control
+  save_tokenized_data: true
+  gene_names_column: index
+  use_raw_counts: false
+  preprocess: true
+  normalize: false
+  filter_genes: true
+  min_genes: 100
+  min_cells: 3
+  max_cells: 100
+  max_genes: 100
+perturbation:
+  gene_list: null
+  num_genes: 5
+  perturbation_type: knockout
+  selection_method: top_expressed
+  perturbation_strength: 2.0
+  save_perturbed_data: true
+optimization:
+  methods:
+  - distributed
+  batching:
+    enabled: true
+    batch_size_multiplier: 2
+  quantization:
+    enabled: true
+    dtype: qint8
+    calibration_data_size: 32
+  onnx:
+    enabled: true
+    use_gpu: true
+    precision: FP16
+  distributed:
+    enabled: true
+    backend: nccl
+output:
+  dir: outputs
+  cache_dir: /scratch
+  save_outputs: true
+  compression: true
+  precision: float32
+  save_detailed_comparisons: true
+  log_level: INFO
+  log_to_file: true
+  log_file: pipeline.log
+hardware:
+  device: auto
+  mixed_precision: false
+  cudnn_benchmark: true
+  empty_cache_between_methods: true
+experiment:
+  name: geneformer_perturbation_distributed_test
+  tags: []
+  notes: ''
+reproducibility:
+  deterministic: true
+advanced:
+  compile_model: false
+  compile_backend: inductor
+  continue_on_error: true
+validation:
+  min_correlation: 0.95
+  max_mse: 0.01
+  warn_on_threshold: true
+  check_nan: true
+  check_inf: true
+
+[2025-12-23 00:39:48,942][__main__][INFO] - Loading Geneformer model...
+[2025-12-23 00:39:55,088][helical.models.geneformer.model][INFO] - Model finished initializing.
+[2025-12-23 00:39:55,088][helical.models.geneformer.model][INFO] - 'gf-6L-10M-i2048' model is in 'eval' mode, on device 'cuda:0' with embedding mode 'cell'.
+[2025-12-23 00:39:55,090][__main__][INFO] - Model loaded: gf-6L-10M-i2048
+[2025-12-23 00:39:55,090][__main__][INFO] - Loading data: norman_2019
+[2025-12-23 00:39:55,092][__main__][INFO] - Found processed data saved to disk.
+[2025-12-23 00:39:55,205][__main__][INFO] - Selected 5 genes using method: top_expressed
+[2025-12-23 00:39:55,205][__main__][INFO] - Performing perturbation on 5 genes...
+[2025-12-23 00:39:55,207][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 00:39:55,215][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 00:39:55,223][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 00:39:55,232][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 00:39:55,240][__main__][INFO] - Perturbed data found in cache. Loading from disk.
+[2025-12-23 00:39:55,248][__main__][INFO] - Perturbations complete.
+[2025-12-23 00:39:55,248][__main__][INFO] - 
+====================================================================================================
+[2025-12-23 00:39:55,248][__main__][INFO] - Running BASELINE (no optimization)...
+[2025-12-23 00:39:55,251][__main__][INFO] - Extracting embeddings...
+[2025-12-23 00:39:55,251][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 00:39:57,150][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 00:39:57,150][__main__][INFO] - Extracted embeddings shape: (100, 256)
+[2025-12-23 00:39:57,150][__main__][INFO] - Extracting embeddings for perturbations on 5 genes...
+[2025-12-23 00:39:57,150][__main__][INFO] - Extraxcting embeddings for perturbed: FAAP20 (type: knockout)
+[2025-12-23 00:39:57,150][__main__][INFO] - Extracting embeddings...
+[2025-12-23 00:39:57,150][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 00:39:57,533][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 00:39:57,533][__main__][INFO] - Extracted embeddings shape: (100, 256)
+[2025-12-23 00:39:57,533][__main__][INFO] - Extraxcting embeddings for perturbed: SSU72 (type: knockout)
+[2025-12-23 00:39:57,533][__main__][INFO] - Extracting embeddings...
+[2025-12-23 00:39:57,533][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 00:39:57,915][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 00:39:57,916][__main__][INFO] - Extracted embeddings shape: (100, 256)
+[2025-12-23 00:39:57,916][__main__][INFO] - Extraxcting embeddings for perturbed: MRPL20 (type: knockout)
+[2025-12-23 00:39:57,916][__main__][INFO] - Extracting embeddings...
+[2025-12-23 00:39:57,916][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 00:39:58,295][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 00:39:58,295][__main__][INFO] - Extracted embeddings shape: (100, 256)
+[2025-12-23 00:39:58,295][__main__][INFO] - Extraxcting embeddings for perturbed: AURKAIP1 (type: knockout)
+[2025-12-23 00:39:58,295][__main__][INFO] - Extracting embeddings...
+[2025-12-23 00:39:58,295][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 00:39:58,672][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 00:39:58,672][__main__][INFO] - Extracted embeddings shape: (100, 256)
+[2025-12-23 00:39:58,672][__main__][INFO] - Extraxcting embeddings for perturbed: RPL22 (type: knockout)
+[2025-12-23 00:39:58,672][__main__][INFO] - Extracting embeddings...
+[2025-12-23 00:39:58,672][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 00:39:59,052][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 00:39:59,052][__main__][INFO] - Extracted embeddings shape: (100, 256)
+[2025-12-23 00:39:59,052][__main__][INFO] - Finished getting perturbation results.
+[2025-12-23 00:39:59,211][__main__][INFO] - Saved outputs for baseline to outputs/outputs/baseline
+[2025-12-23 00:39:59,239][__main__][INFO] - 
+====================================================================================================
+[2025-12-23 00:39:59,239][__main__][INFO] - Running with DISTRIBUTED optimization...
+[2025-12-23 00:39:59,239][__main__][INFO] - Extracting embeddings...
+[2025-12-23 00:39:59,239][helical.models.geneformer.model][INFO] - Started getting embeddings:
+[2025-12-23 00:39:59,616][helical.models.geneformer.model][INFO] - Finished getting embeddings.
+[2025-12-23 00:39:59,616][__main__][INFO] - Extracted embeddings shape: (100, 256)
+[2025-12-23 00:39:59,617][__main__][INFO] - Using 4 GPUs with DDP
+[2025-12-23 00:39:59,659][__main__][INFO] - Using temporary directory: /scratch/ddp_results_6wx63aol
+[2025-12-23 00:41:06,557][__main__][INFO] - Rank 0 processed 5 genes: ['FAAP20', 'SSU72', 'MRPL20', 'AURKAIP1', 'RPL22']
+[2025-12-23 00:41:06,563][__main__][INFO] - Rank 1 processed 5 genes: ['FAAP20', 'SSU72', 'MRPL20', 'AURKAIP1', 'RPL22']
+[2025-12-23 00:41:06,569][__main__][INFO] - Rank 2 processed 5 genes: ['FAAP20', 'SSU72', 'MRPL20', 'AURKAIP1', 'RPL22']
+[2025-12-23 00:41:06,574][__main__][INFO] - Rank 3 processed 5 genes: ['FAAP20', 'SSU72', 'MRPL20', 'AURKAIP1', 'RPL22']
+[2025-12-23 00:41:06,574][__main__][INFO] - Total unique genes processed: 5
+[2025-12-23 00:41:06,578][__main__][INFO] - Loaded gene 'RPL22' from rank 0: shape (25, 256)
+[2025-12-23 00:41:06,583][__main__][INFO] - Loaded gene 'RPL22' from rank 1: shape (25, 256)
+[2025-12-23 00:41:06,587][__main__][INFO] - Loaded gene 'RPL22' from rank 2: shape (25, 256)
+[2025-12-23 00:41:06,591][__main__][INFO] - Loaded gene 'RPL22' from rank 3: shape (25, 256)
+[2025-12-23 00:41:06,595][__main__][INFO] - Loaded gene 'AURKAIP1' from rank 0: shape (25, 256)
+[2025-12-23 00:41:06,598][__main__][INFO] - Loaded gene 'AURKAIP1' from rank 1: shape (25, 256)
+[2025-12-23 00:41:06,601][__main__][INFO] - Loaded gene 'AURKAIP1' from rank 2: shape (25, 256)
+[2025-12-23 00:41:06,605][__main__][INFO] - Loaded gene 'AURKAIP1' from rank 3: shape (25, 256)
+[2025-12-23 00:41:06,608][__main__][INFO] - Loaded gene 'FAAP20' from rank 0: shape (25, 256)
+[2025-12-23 00:41:06,612][__main__][INFO] - Loaded gene 'FAAP20' from rank 1: shape (25, 256)
+[2025-12-23 00:41:06,616][__main__][INFO] - Loaded gene 'FAAP20' from rank 2: shape (25, 256)
+[2025-12-23 00:41:06,620][__main__][INFO] - Loaded gene 'FAAP20' from rank 3: shape (25, 256)
+[2025-12-23 00:41:06,624][__main__][INFO] - Loaded gene 'MRPL20' from rank 0: shape (25, 256)
+[2025-12-23 00:41:06,627][__main__][INFO] - Loaded gene 'MRPL20' from rank 1: shape (25, 256)
+[2025-12-23 00:41:06,632][__main__][INFO] - Loaded gene 'MRPL20' from rank 2: shape (25, 256)
+[2025-12-23 00:41:06,636][__main__][INFO] - Loaded gene 'MRPL20' from rank 3: shape (25, 256)
+[2025-12-23 00:41:06,639][__main__][INFO] - Loaded gene 'SSU72' from rank 0: shape (25, 256)
+[2025-12-23 00:41:06,643][__main__][INFO] - Loaded gene 'SSU72' from rank 1: shape (25, 256)
+[2025-12-23 00:41:06,646][__main__][INFO] - Loaded gene 'SSU72' from rank 2: shape (25, 256)
+[2025-12-23 00:41:06,650][__main__][INFO] - Loaded gene 'SSU72' from rank 3: shape (25, 256)
+[2025-12-23 00:41:06,650][__main__][INFO] - Gene 'RPL22' rank 0: shard shape (25, 256)
+[2025-12-23 00:41:06,650][__main__][INFO] - Gene 'RPL22' rank 1: shard shape (25, 256)
+[2025-12-23 00:41:06,650][__main__][INFO] - Gene 'RPL22' rank 2: shard shape (25, 256)
+[2025-12-23 00:41:06,650][__main__][INFO] - Gene 'RPL22' rank 3: shard shape (25, 256)
+[2025-12-23 00:41:06,651][__main__][INFO] - Gene 'RPL22': Combined shape (100, 256)
+[2025-12-23 00:41:06,651][__main__][INFO] - Gene 'AURKAIP1' rank 0: shard shape (25, 256)
+[2025-12-23 00:41:06,651][__main__][INFO] - Gene 'AURKAIP1' rank 1: shard shape (25, 256)
+[2025-12-23 00:41:06,651][__main__][INFO] - Gene 'AURKAIP1' rank 2: shard shape (25, 256)
+[2025-12-23 00:41:06,651][__main__][INFO] - Gene 'AURKAIP1' rank 3: shard shape (25, 256)
+[2025-12-23 00:41:06,651][__main__][INFO] - Gene 'AURKAIP1': Combined shape (100, 256)
+[2025-12-23 00:41:06,651][__main__][INFO] - Gene 'FAAP20' rank 0: shard shape (25, 256)
+[2025-12-23 00:41:06,651][__main__][INFO] - Gene 'FAAP20' rank 1: shard shape (25, 256)
+[2025-12-23 00:41:06,651][__main__][INFO] - Gene 'FAAP20' rank 2: shard shape (25, 256)
+[2025-12-23 00:41:06,651][__main__][INFO] - Gene 'FAAP20' rank 3: shard shape (25, 256)
+[2025-12-23 00:41:06,651][__main__][INFO] - Gene 'FAAP20': Combined shape (100, 256)
+[2025-12-23 00:41:06,651][__main__][INFO] - Gene 'MRPL20' rank 0: shard shape (25, 256)
+[2025-12-23 00:41:06,651][__main__][INFO] - Gene 'MRPL20' rank 1: shard shape (25, 256)
+[2025-12-23 00:41:06,651][__main__][INFO] - Gene 'MRPL20' rank 2: shard shape (25, 256)
+[2025-12-23 00:41:06,651][__main__][INFO] - Gene 'MRPL20' rank 3: shard shape (25, 256)
+[2025-12-23 00:41:06,652][__main__][INFO] - Gene 'MRPL20': Combined shape (100, 256)
+[2025-12-23 00:41:06,652][__main__][INFO] - Gene 'SSU72' rank 0: shard shape (25, 256)
+[2025-12-23 00:41:06,652][__main__][INFO] - Gene 'SSU72' rank 1: shard shape (25, 256)
+[2025-12-23 00:41:06,652][__main__][INFO] - Gene 'SSU72' rank 2: shard shape (25, 256)
+[2025-12-23 00:41:06,652][__main__][INFO] - Gene 'SSU72' rank 3: shard shape (25, 256)
+[2025-12-23 00:41:06,652][__main__][INFO] - Gene 'SSU72': Combined shape (100, 256)
+[2025-12-23 00:41:06,652][__main__][INFO] - Genes with combined perturbation results: 5
+[2025-12-23 00:41:06,806][__main__][INFO] - Saved outputs for distributed_ddp to outputs/outputs/distributed_ddp
+[2025-12-23 00:41:06,810][__main__][INFO] - 
+====================================================================================================
+[2025-12-23 00:41:06,811][__main__][INFO] - COMPARING OUTPUTS TO BASELINE
+[2025-12-23 00:41:06,811][__main__][INFO] - ====================================================================================================
+[2025-12-23 00:41:06,811][__main__][INFO] - Comparing baseline vs distributed_ddp
+[2025-12-23 00:41:06,826][__main__][INFO] - Performance metrics saved to: outputs/performance_metrics_20251223_004106.csv
+[2025-12-23 00:41:06,827][__main__][INFO] - Comparison metrics saved to: outputs/comparison_metrics_20251223_004106.csv
+[2025-12-23 00:41:06,828][__main__][INFO] - Per-gene comparison saved to: outputs/gene_comparison_baseline_vs_distributed_ddp.csv
+[2025-12-23 00:41:06,828][__main__][INFO] - 
+====================================================================================================
+[2025-12-23 00:41:06,828][__main__][INFO] - PERFORMANCE SUMMARY
+[2025-12-23 00:41:06,828][__main__][INFO] - ====================================================================================================
+[2025-12-23 00:41:06,832][__main__][INFO] - 
+            method  runtime_seconds  cpu_percent    memory_mb  gpu_memory_mb  gpu_utilization  throughput_cells_per_sec  num_cells  num_genes_perturbed                   timestamp extra_optimization  extra_num_gpus extra_backend extra_distribution_method
+0         baseline         3.804256         87.0  5721.609375      48.404785               19                 26.286347        100                    5  2025-12-23T00:39:59.180689               none             NaN           NaN                       NaN
+1  distributed_ddp        67.155325          2.0  5799.425781       9.125000                3                  1.489085        100                    5  2025-12-23T00:41:06.774588                NaN             4.0          nccl                       DDP
+
+[2025-12-23 00:41:06,833][__main__][INFO] - 
+SPEEDUP RELATIVE TO BASELINE:
+[2025-12-23 00:41:06,833][__main__][INFO] - --------------------------------------------------
+[2025-12-23 00:41:06,833][__main__][INFO] - distributed_ddp     : 0.06x
+[2025-12-23 00:41:06,833][__main__][INFO] - 
+====================================================================================================
+[2025-12-23 00:41:06,833][__main__][INFO] - OUTPUT COMPARISON SUMMARY
+[2025-12-23 00:41:06,834][__main__][INFO] - ====================================================================================================
+[2025-12-23 00:41:06,836][__main__][INFO] - 
+   method_a         method_b  embedding_pearson  embedding_spearman  embedding_cosine_similarity  embedding_mse  embedding_max_abs_diff  mean_perturbation_correlation  min_perturbation_correlation  max_perturbation_correlation                   timestamp
+0  baseline  distributed_ddp                1.0                 1.0                          1.0            0.0                     0.0                            1.0                           1.0                           1.0  2025-12-23T00:41:06.823836
+
+[2025-12-23 00:41:06,836][__main__][INFO] - 
+OUTPUT QUALITY ASSESSMENT:
+[2025-12-23 00:41:06,836][__main__][INFO] - --------------------------------------------------
+[2025-12-23 00:41:06,836][__main__][INFO] - ====================================================================================================
+[2025-12-23 00:41:06,836][__main__][INFO] - 
+All outputs saved to: outputs
+[2025-12-23 00:41:06,837][__main__][INFO] - 
+====================================================================================================
+[2025-12-23 00:41:06,837][__main__][INFO] - PIPELINE COMPLETE!
+[2025-12-23 00:41:06,837][__main__][INFO] - ====================================================================================================
