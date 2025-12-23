@@ -53,7 +53,7 @@ perturbation:
   # gene_list: ["BRCA1", "TP53", "MYC", "EGFR", "KRAS"]
   
   # Option 2: Number of top variable genes (set gene_list to null if using this)
-  num_genes: 50
+  num_genes: 20
   
   # Perturbation settings
   perturbation_type: "knockout"  # Options: knockout, overexpression

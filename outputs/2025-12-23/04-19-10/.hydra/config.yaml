@@ -1,0 +1,73 @@
+reproducibility:
+  deterministic: true
+  seed: 42
+model:
+  name: gf-6L-10M-i2048
+  batch_size: 16
+  device: cuda:0
+data:
+  pertpy_data_identifier: norman_2019
+  condition_filter: control
+  save_tokenized_data: true
+  gene_names_column: index
+  use_raw_counts: false
+  preprocess: true
+  normalize: false
+  filter_genes: true
+  min_genes: 100
+  min_cells: 3
+  max_cells: 10000
+  max_genes: 500
+perturbation:
+  gene_list: null
+  num_genes: 20
+  perturbation_type: knockout
+  selection_method: top_expressed
+  perturbation_strength: 2.0
+  save_perturbed_data: true
+optimization:
+  methods:
+  - distributed
+  batching:
+    enabled: true
+    batch_size_multiplier: 2
+  quantization:
+    enabled: true
+    dtype: qint8
+    calibration_data_size: 32
+  onnx:
+    enabled: true
+    use_gpu: true
+    precision: FP16
+  distributed:
+    enabled: true
+    backend: nccl
+output:
+  dir: outputs
+  cache_dir: /scratch
+  save_outputs: true
+  compression: true
+  precision: float32
+  save_detailed_comparisons: true
+  log_level: INFO
+  log_to_file: true
+  log_file: pipeline.log
+hardware:
+  device: auto
+  mixed_precision: false
+  cudnn_benchmark: true
+  empty_cache_between_methods: true
+experiment:
+  name: geneformer_perturbation_example
+  tags: []
+  notes: ''
+advanced:
+  compile_model: false
+  compile_backend: inductor
+  continue_on_error: true
+validation:
+  min_correlation: 0.95
+  max_mse: 0.01
+  warn_on_threshold: true
+  check_nan: true
+  check_inf: true
